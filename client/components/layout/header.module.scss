@@ -1,7 +1,22 @@
 .header {
   display: flex;
   list-style: none;
-  li {
-    margin-left: 2em;
+  color: #fff;
+  .left {
+    display: flex;
+  }
+  .center {
+    display: flex;
+    margin-left: 3rem;
+    li {
+      margin-left: 3rem;
+    }
+  }
+  .right {
+    display: flex;
+    margin-left: 30rem;
+    li {
+      margin-left: 1rem;
+    }
   }
 }
