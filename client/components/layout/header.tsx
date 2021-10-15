@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 const Header = () => {
   return (
-    <div>
+    <>
       <ul className={styles.header}>
         <div className={styles.left}>
           <li className={styles.logo}>
@@ -34,7 +34,7 @@ const Header = () => {
           </li>
         </div>
       </ul>
-    </div>
+    </>
   );
 };
 
