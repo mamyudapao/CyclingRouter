@@ -13,10 +13,12 @@
     "@emotion/styled": "^11.3.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/react-fontawesome": "^0.1.15",
-    "@mui/material": "^5.0.3",
+    "@mui/material": "^5.0.4",
+    "@react-google-maps/api": "^2.5.0",
     "next": "11.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-google-maps": "^9.4.5",
     "sass": "^1.42.1"
   },
   "devDependencies": {
