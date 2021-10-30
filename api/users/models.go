@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/mamyudapao/CyclingRouter/common"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -17,4 +18,13 @@ func AutoMigrate() {
 	db := common.GetDB()
 
 	db.AutoMigrate(&UserModel{})
+}
+
+func (userModel *UserModel) CheckPassword(providedPassword string) error {
+	err := bcrypt.CompareHashAndPassword(userModel.PasswordHash, []byte(providedPassword))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

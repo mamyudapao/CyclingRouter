@@ -125,7 +125,7 @@ const home = () => {
             <Divider
               icon={faBurn}
               primary="消費カロリー"
-              secondary={10 * 65 * (distance / 1000 / 25) * 1.05}
+              secondary={10 * 65 * (distance / 1000 / 25) * 1.05 + "kcal"}
             />
           </div>
         </Card>
