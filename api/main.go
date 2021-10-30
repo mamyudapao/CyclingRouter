@@ -1,24 +1,25 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/common"
+	"github.com/mamyudapao/CyclingRouter/users"
+	"gorm.io/gorm"
 )
+
+// モデルをマイグレートする
+func Migrate(db *gorm.DB) {
+	users.AutoMigrate()
+}
 
 func main() {
 
-	common.Init() //DBに接続
+	db := common.Init() //DBに接続
+	Migrate(db)
 
 	r := gin.Default()
-	// Dont worry about this line just yet, it will make sense in the Dockerise bit!
-	r.Use(static.Serve("/", static.LocalFile("./web", true)))
-	api := r.Group("/api")
-	api.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 
+	v1 := r.Group("/api")
+	users.UsersRegister(v1.Group("users/"))
 	r.Run()
 }
