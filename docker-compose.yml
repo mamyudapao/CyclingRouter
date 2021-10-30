@@ -12,3 +12,31 @@ services:
       - "8080:8080"
     volumes:
       - "./api:/app"
+    networks:
+      - cycle-net
+    depends_on:
+      - mysql
+  mysql:
+    platform: linux/x86_64
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 51015101Ab!
+      MYSQL_DATABASE: cycling_router
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: mysql-container
+    networks:
+      - cycle-net
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
+
+networks:
+  cycle-net:
+    driver: bridge

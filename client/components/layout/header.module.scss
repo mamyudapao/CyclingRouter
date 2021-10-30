@@ -1,0 +1,22 @@
+.header {
+  display: grid;
+  list-style: none;
+  color: #fff;
+  grid-template-columns: 1fr 5fr 1fr;
+  .left {
+    display: flex;
+  }
+  .center {
+    display: flex;
+    li {
+      margin-left: 3rem;
+    }
+  }
+  .right {
+    display: flex;
+    margin-left: 3rem;
+    li {
+      margin-left: 1rem;
+    }
+  }
+}
