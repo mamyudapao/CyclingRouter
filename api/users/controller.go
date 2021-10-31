@@ -76,7 +76,7 @@ func UsersLogin(c *gin.Context) {
 
 	jwtWrapper := auth.JwtWrapper{
 		SecretKey:       "verysecretkey",
-		Issuer:          "AuthService",
+		Issuer:          "CyclingRouter",
 		ExpirationHours: 24,
 	}
 
