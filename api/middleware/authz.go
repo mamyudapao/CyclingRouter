@@ -27,8 +27,9 @@ func Authz() gin.HandlerFunc {
 		}
 
 		jwtWrapper := auth.JwtWrapper{
-			SecretKey: "verysecretkey",
-			Issuer:    "AuthService",
+			SecretKey:       "verysecretkey",
+			Issuer:          "CyclingRouter",
+			ExpirationHours: 24,
 		}
 
 		claims, err := jwtWrapper.ValidateToken(clientToken)

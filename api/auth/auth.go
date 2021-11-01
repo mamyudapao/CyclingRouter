@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -18,7 +19,10 @@ type JwtClaim struct {
 	jwt.StandardClaims
 }
 
-func (j *JwtWrapper) GenerateToken(email string) (signedToken string, err error) {
+/*
+	access_tokenとrefesh_tokenを生成する
+*/
+func (j *JwtWrapper) GenerateToken(email string) (signedToken string, refreshSignedToken string) {
 	claims := &JwtClaim{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
@@ -26,17 +30,24 @@ func (j *JwtWrapper) GenerateToken(email string) (signedToken string, err error)
 			Issuer:    j.Issuer,
 		},
 	}
+	refreshClaims := &JwtClaim{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24*7)).Unix(),
+			Issuer:    j.Issuer,
+		},
+	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 
-	signedToken, err = token.SignedString([]byte(j.SecretKey))
-	if err != nil {
-		return
-	}
+	signedToken, _ = token.SignedString([]byte(j.SecretKey))
+	refreshSignedToken, _ = refreshToken.SignedString([]byte(j.SecretKey))
 
 	return
 }
 
+//access_tokenとrefesh_tokenどちらもこちらでValidationする
 func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
@@ -55,6 +66,7 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 		err = errors.New("Couldn't parse claims")
 		return
 	}
+	fmt.Println(claims.Email)
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		err = errors.New("JWT is expired")
@@ -63,4 +75,33 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 
 	return
 
+}
+
+// accessTokenを生成する
+func (j *JwtWrapper) GenerateAccessToken(email string) (signedToken string){
+	claims := &JwtClaim{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(j.ExpirationHours)).Unix(),
+			Issuer:    j.Issuer,
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedToken, _ = token.SignedString([]byte(j.SecretKey))
+
+	return signedToken
+}
+
+// refreshTokenを生成する
+func (j *JwtWrapper) GenerateRefreshToken(email string) (refreshSignedToken string) {
+	refreshClaims := &JwtClaim{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24*7)).Unix(),
+			Issuer:    j.Issuer,
+		},
+	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
+	refreshSignedToken, _ = refreshToken.SignedString([]byte(j.SecretKey))
+	return refreshSignedToken
 }

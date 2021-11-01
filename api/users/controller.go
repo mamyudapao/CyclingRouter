@@ -34,7 +34,17 @@ type LoginPayload struct {
 }
 
 type LoginResponse struct {
-	Token string `json:"token"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+type RefreshResponse struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 func UsersLogin(c *gin.Context) {
@@ -80,7 +90,7 @@ func UsersLogin(c *gin.Context) {
 		ExpirationHours: 24,
 	}
 
-	signedToken, err := jwtWrapper.GenerateToken(user.Email)
+	signedToken, refreshSignedToken := jwtWrapper.GenerateToken(user.Email)
 	if err != nil {
 		log.Println(err)
 		c.JSON(500, gin.H{
@@ -91,7 +101,39 @@ func UsersLogin(c *gin.Context) {
 	}
 
 	tokenResponse := LoginResponse{
-		Token: signedToken,
+		Token:        signedToken,
+		RefreshToken: refreshSignedToken,
+	}
+
+	c.JSON(200, tokenResponse)
+
+	return
+
+}
+
+func RefreshTokens(c *gin.Context) {
+	var oldRefreshToken RefreshRequest
+	c.BindJSON(&oldRefreshToken)
+	jwtWrapper := auth.JwtWrapper{
+		SecretKey:       "verysecretkey",
+		Issuer:          "CyclingRouter",
+		ExpirationHours: 24,
+	}
+	// refresh tokenをvalidateする
+	claims, err := jwtWrapper.ValidateToken(oldRefreshToken.RefreshToken)
+	if err != nil {
+		log.Println(err)
+		c.JSON(500, gin.H{
+			"msg": "error refresh token",
+		})
+		c.Abort()
+		return
+	}
+	accessToken := jwtWrapper.GenerateAccessToken(claims.Email)
+	refreshToken := jwtWrapper.GenerateRefreshToken(claims.Email)
+	tokenResponse := LoginResponse{
+		Token:        accessToken,
+		RefreshToken: refreshToken,
 	}
 
 	c.JSON(200, tokenResponse)
