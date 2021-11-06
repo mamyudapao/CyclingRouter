@@ -22,7 +22,7 @@ func UsersRegistration(c *gin.Context) {
 	password := []byte(userValidation.Password)
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	//gormを使ってDBに保存する
-	user := UserModel{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword, Bio: userValidation.Bio}
+	user := UserModel{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
 	db := common.GetDB()
 
 	db.Create(&user)
