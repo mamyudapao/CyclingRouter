@@ -27,15 +27,10 @@ const Header = () => {
         </div>
         <div className={styles.right}>
           <li>
-            <FontAwesomeIcon icon={faSearch} />
+            <Link href="signup">SignUp</Link>
           </li>
           <li>
-            <FontAwesomeIcon icon={faBell} />
-          </li>
-          <li>
-            <Link href="signup">
-              <FontAwesomeIcon icon={faSignInAlt} />
-            </Link>
+            <Link href="login">LogIn</Link>
           </li>
         </div>
       </ul>
