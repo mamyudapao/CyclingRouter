@@ -17,9 +17,9 @@ const Header = () => {
           </li>
         </div>
         <div className={styles.center}>
-          <Link href="home">
-            <li>Home</li>
-          </Link>
+          <li>
+            <Link href="home">Home</Link>
+          </li>
           <li>AUTHORS</li>
           <li>EXPLORE</li>
           <li>BLOG</li>
