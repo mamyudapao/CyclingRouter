@@ -15,15 +15,26 @@ import { MouseEventHandler } from "react-transition-group/node_modules/@types/re
 // iconのインポート
 import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
 
+// TODO: 経路計測時のQueryLIMITについて調査
+
 const home = () => {
   // 経路のリクエスト用
-  const [destination, setDestination] = useState(null); //TODO: dispatch <any>を解消する
-  const [origin, setOrigin] = useState(null);
-  const [distance, setDistance] = useState(null);
+  const [destination, setDestination] = useState(
+    null as google.maps.LatLngLiteral
+  );
+  const [center, setCenter] = useState({
+    lat: 35.69575,
+    lng: 139.77521,
+  } as google.maps.LatLngLiteral); //
+  const [origin, setOrigin] = useState(null as google.maps.LatLngLiteral);
+  const [distance, setDistance] = useState(null as number);
   const [waypoints, setWaypoints] = useState(
     [] as google.maps.DirectionsWaypoint[]
   );
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState(
+    null as google.maps.DirectionsResult
+  );
+
   const getDirections = (event: any) => {
     event.preventDefault();
     setOrigin(markerPositions[0]);
@@ -36,25 +47,29 @@ const home = () => {
     });
     setWaypoints([...tempWaypoints]);
   };
-  const directionsCallback = (response) => {
-    if (response?.status === "OK") {
-      console.log(response.routes[0].legs);
+
+  const directionsCallback = (
+    result: google.maps.DirectionsResult,
+    status: google.maps.DirectionsStatus
+  ) => {
+    if (status === "OK") {
       let sumDistance = 0;
-      response.routes[0].legs.forEach((leg) => {
+      result.routes[0].legs.forEach((leg) => {
         sumDistance += leg.distance.value;
       });
       setDistance(sumDistance);
-      setResponse(response);
+      setResponse(result);
     }
   };
 
   //マーカー関係
-  const [markerPositions, setMakerPositions] = useState([]);
+  const [markerPositions, setMakerPositions] = useState([]); //TODO: ここの型問題を解消する
   const [mapRef, setMapRef] = useState(null);
   const handleOnLoad = (map: google.maps.Map) => {
     setMapRef(map);
   };
   const getPosition = (position: google.maps.MapMouseEvent) => {
+    setCenter(mapRef.getCenter());
     let text = position.latLng.toString();
     text = text.replace("(", "");
     text = text.replace(")", "");
@@ -63,7 +78,6 @@ const home = () => {
       ...markerPositions,
       { lat: parseFloat(split[0]), lng: parseFloat(split[1]) },
     ]);
-    console.log(markerPositions);
   };
 
   return (
@@ -78,15 +92,12 @@ const home = () => {
                   width: "900px",
                   height: "600px",
                 }}
-                center={{
-                  lat: 35.69575,
-                  lng: 139.77521,
-                }}
+                center={center}
                 zoom={8}
                 onLoad={handleOnLoad}
                 onClick={getPosition}
               >
-                {origin !== "" && destination !== "" && (
+                {origin !== null && destination !== null && (
                   <DirectionsService
                     options={{
                       origin: origin,
@@ -125,7 +136,7 @@ const home = () => {
             <Divider
               icon={faBurn}
               primary="消費カロリー"
-              secondary={10 * 65 * (distance / 1000 / 25) * 1.05}
+              secondary={10 * 65 * (distance / 1000 / 25) * 1.05 + "kcal"}
             />
           </div>
         </Card>

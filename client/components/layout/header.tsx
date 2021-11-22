@@ -1,10 +1,11 @@
 import styles from "./header.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import {
   faBiking,
   faSearch,
   faBell,
-  faUserCircle,
+  faSignInAlt,
 } from "@fortawesome/free-solid-svg-icons";
 const Header = () => {
   return (
@@ -16,7 +17,9 @@ const Header = () => {
           </li>
         </div>
         <div className={styles.center}>
-          <li>FEED</li>
+          <li>
+            <Link href="home">Home</Link>
+          </li>
           <li>AUTHORS</li>
           <li>EXPLORE</li>
           <li>BLOG</li>
@@ -24,13 +27,10 @@ const Header = () => {
         </div>
         <div className={styles.right}>
           <li>
-            <FontAwesomeIcon icon={faSearch} />
+            <Link href="signup">SignUp</Link>
           </li>
           <li>
-            <FontAwesomeIcon icon={faBell} />
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faUserCircle} />
+            <Link href="login">LogIn</Link>
           </li>
         </div>
       </ul>

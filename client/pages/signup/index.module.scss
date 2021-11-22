@@ -1,0 +1,26 @@
+.signIn {
+  display: flex;
+  height: 100vh;
+  text-align: center;
+}
+.leftSide {
+  background-color: #4525f2;
+  width: 50%;
+  .formWrapper {
+    width: 80%;
+    margin-left: 5rem;
+    * {
+      margin-bottom: 20px;
+    }
+    display: flex;
+    flex-direction: column;
+  }
+}
+.rightSide {
+  background-color: #ffffff;
+  width: 50%;
+
+  .imageWrapper {
+    margin-top: 230px;
+  }
+}

@@ -1,0 +1,21 @@
+.wrapper {
+  text-align: center;
+}
+
+.card {
+  width: 80%;
+  margin: 0 auto;
+
+  .forms {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: 100px auto 30px auto;
+    * {
+      margin-bottom: 10px;
+    }
+  }
+  .sendButton {
+    margin-bottom: 20px;
+  }
+}
