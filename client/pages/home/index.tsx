@@ -10,8 +10,6 @@ import {
 import Card from "@mui/material/Card";
 import { Container } from "@mui/material";
 import Divider from "../../components/design/Divider";
-import { MarkerPosition } from "./marker";
-import { MouseEventHandler } from "react-transition-group/node_modules/@types/react";
 // iconのインポート
 import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
 
@@ -47,7 +45,6 @@ const home = () => {
     });
     setWaypoints([...tempWaypoints]);
   };
-
   const directionsCallback = (
     result: google.maps.DirectionsResult,
     status: google.maps.DirectionsStatus

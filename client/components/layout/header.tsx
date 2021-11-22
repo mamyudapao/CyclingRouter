@@ -1,13 +1,8 @@
 import styles from "./header.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import {
-  faBiking,
-  faSearch,
-  faBell,
-  faSignInAlt,
-} from "@fortawesome/free-solid-svg-icons";
-const Header = () => {
+import { faBiking, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+const Header = (props) => {
   return (
     <>
       <ul className={styles.header}>
@@ -18,7 +13,9 @@ const Header = () => {
         </div>
         <div className={styles.center}>
           <li>
-            <Link href="home">Home</Link>
+            <Link href="/home">
+              <a>Home</a>
+            </Link>
           </li>
           <li>AUTHORS</li>
           <li>EXPLORE</li>
@@ -26,12 +23,27 @@ const Header = () => {
           <li>CONTACT</li>
         </div>
         <div className={styles.right}>
-          <li>
-            <Link href="signup">SignUp</Link>
-          </li>
-          <li>
-            <Link href="login">LogIn</Link>
-          </li>
+          {props.auth !== undefined && (
+            <>
+              <li>
+                <Link href="/profile">
+                  <a>
+                    <FontAwesomeIcon icon={faUserCircle} />
+                  </a>
+                </Link>
+              </li>
+            </>
+          )}
+          {props.auth === undefined && (
+            <>
+              <li>
+                <Link href="signup">SignUp</Link>
+              </li>
+              <li>
+                <Link href="login">LogIn</Link>
+              </li>
+            </>
+          )}
         </div>
       </ul>
     </>

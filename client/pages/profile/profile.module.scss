@@ -1,0 +1,44 @@
+.card {
+  text-align: center;
+  margin: auto;
+  position: relative;
+  top: 10vh;
+  width: 80%;
+  .profile {
+    display: flex;
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-top: 1px solid #ccc;
+    .imageBlock {
+      display: block;
+      margin-top: 1em;
+      .profileImage {
+        border-image: 3px solid;
+      }
+    }
+    .centerBlock {
+      display: block;
+      border-bottom: 1px solid #ccc;
+      max-width: 80%;
+      .icon {
+        display: inline;
+      }
+      p {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.routerCard {
+  display: flex;
+  background-color: #e7e7e7;
+  width: 70%;
+  margin-left: 18vw;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+
+  .routeDiscription {
+  }
+}
