@@ -21,9 +21,6 @@
       display: block;
       border-bottom: 1px solid #ccc;
       max-width: 80%;
-      .icon {
-        display: inline;
-      }
       p {
         text-align: center;
       }
@@ -34,11 +31,8 @@
 .routerCard {
   display: flex;
   background-color: #e7e7e7;
-  width: 70%;
-  margin-left: 18vw;
+  width: 60%;
+  margin-left: 25%;
   margin-bottom: 1rem;
   padding: 1.5rem;
-
-  .routeDiscription {
-  }
 }

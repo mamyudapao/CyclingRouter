@@ -16,20 +16,11 @@ const Profile = () => {
               className={Style.profileImage}
             ></Image>
             <p>Following: 210 Followers: 111</p>
-            <p>Vehcle: Bianchi</p>
+            <p>Location: 千葉</p>
             <p>Birthday: 1998/10/15</p>
           </div>
           <div className={Style.centerBlock}>
-            <h1>
-              Alex Casandra
-              <FontAwesomeIcon
-                icon={faCompass}
-                className={Style.icon}
-              ></FontAwesomeIcon>
-            </h1>
-            <div className={Style.location}>
-              <p>千葉県</p>
-            </div>
+            <h1>Alex Casandra</h1>
             <p>
               lorem ipsum dolor sit amet, consectetur, sed do eiusmod tempor
               incididunt ut labore et, consectetur adipiscing elit., sed do e

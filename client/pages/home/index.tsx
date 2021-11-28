@@ -23,7 +23,7 @@ const home = () => {
   const [center, setCenter] = useState({
     lat: 35.69575,
     lng: 139.77521,
-  } as google.maps.LatLngLiteral); //
+  } as google.maps.LatLngLiteral);
   const [origin, setOrigin] = useState(null as google.maps.LatLngLiteral);
   const [distance, setDistance] = useState(null as number);
   const [waypoints, setWaypoints] = useState(
@@ -43,7 +43,7 @@ const home = () => {
     const tempWaypoints = markerPositions.map((position) => {
       return { location: position };
     });
-    setWaypoints([...tempWaypoints]);
+    setWaypoints([...tempWaypoints] as Array<google.maps.DirectionsWaypoint>);
   };
   const directionsCallback = (
     result: google.maps.DirectionsResult,
@@ -60,21 +60,19 @@ const home = () => {
   };
 
   //マーカー関係
-  const [markerPositions, setMakerPositions] = useState([]); //TODO: ここの型問題を解消する
+  const [markerPositions, setMakerPositions] = useState(
+    [] as Array<google.maps.LatLngLiteral>
+  ); //TODO: ここの型問題を解消する
   const [mapRef, setMapRef] = useState(null);
   const handleOnLoad = (map: google.maps.Map) => {
     setMapRef(map);
   };
   const getPosition = (position: google.maps.MapMouseEvent) => {
     setCenter(mapRef.getCenter());
-    let text = position.latLng.toString();
-    text = text.replace("(", "");
-    text = text.replace(")", "");
-    let split = text.split(" ");
-    setMakerPositions([
-      ...markerPositions,
-      { lat: parseFloat(split[0]), lng: parseFloat(split[1]) },
-    ]);
+    console.log(position.latLng);
+    let json = position.latLng.toJSON();
+    console.log(json);
+    setMakerPositions([...markerPositions, { lat: json.lat, lng: json.lng }]);
   };
 
   return (
