@@ -1,8 +1,16 @@
 .card {
-  margin-top: 5rem;
   display: flex;
+  margin: 0 auto;
+  width: 80%;
 }
 
 .map {
   margin: 1rem;
+}
+
+.dataDisplay {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
 }
