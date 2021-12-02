@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserModel struct {
+type User struct {
 	Username     string `gorm:"column:username;unique"`
 	Email        string `gorm:"column:email;unique"`
 	PasswordHash []byte `gorm:"column:password;not null"`
@@ -15,5 +15,5 @@ type UserModel struct {
 func AutoMigrate() {
 	db := common.GetDB()
 
-	db.AutoMigrate(&UserModel{})
+	db.AutoMigrate(&User{})
 }

@@ -12,7 +12,7 @@ import (
 )
 
 func UsersRegistration(c *gin.Context) {
-	var userValidation User
+	var userValidation UserValidator
 	err := c.ShouldBindJSON(&userValidation)
 	if err != nil {
 		fmt.Println(err)
@@ -21,8 +21,8 @@ func UsersRegistration(c *gin.Context) {
 	// psswordをハッシュ化する
 	password := []byte(userValidation.Password)
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-	//gormを使ってDBに保存する
-	user := UserModel{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
+	// gormを使ってDBに保存する
+	user := User{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
 	db := common.GetDB()
 
 	db.Create(&user)
@@ -49,7 +49,7 @@ type RefreshResponse struct {
 
 func UsersLogin(c *gin.Context) {
 	var payload LoginPayload
-	var user UserModel
+	var user User
 
 	err := c.ShouldBindJSON(&payload)
 	if err != nil {

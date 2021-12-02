@@ -12,6 +12,8 @@ import { TextField, Card } from "@mui/material";
 import Divider from "../../components/design/Divider";
 // iconのインポート
 import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import DnD from "./dnd";
 // TODO: 経路計測時のQueryLIMITについて調査
 
 const home = () => {
@@ -106,8 +108,8 @@ const home = () => {
             <GoogleMap
               options={{ mapId: "cb45e1d3ef965ca5", disableDefaultUI: true }}
               mapContainerStyle={{
-                width: "125vh",
-                height: "90vh",
+                width: "55vw",
+                height: "80vh",
               }}
               center={center}
               zoom={15}
@@ -139,6 +141,7 @@ const home = () => {
           </LoadScript>
           <button onClick={getDirections}>経路を求める</button>
         </div>
+        <DnD></DnD>
         <div className={Styles.dataDisplay}>
           <Divider
             icon={faBiking}

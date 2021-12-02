@@ -20,7 +20,7 @@ type JwtClaim struct {
 }
 
 /*
-	access_tokenとrefesh_tokenを生成する
+	access_tokenとrefresh_tokenを生成する
 */
 func (j *JwtWrapper) GenerateToken(email string) (signedToken string, refreshSignedToken string) {
 	claims := &JwtClaim{
@@ -47,7 +47,7 @@ func (j *JwtWrapper) GenerateToken(email string) (signedToken string, refreshSig
 	return
 }
 
-//access_tokenとrefesh_tokenどちらもこちらでValidationする
+//access_tokenとrefresh_tokenどちらもこちらでValidationする
 func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
@@ -63,7 +63,7 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 
 	claims, ok := token.Claims.(*JwtClaim)
 	if !ok {
-		err = errors.New("Couldn't parse claims")
+		err = errors.New("couldn't parse claims")
 		return
 	}
 	fmt.Println(claims.Email)
@@ -78,7 +78,7 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 }
 
 // accessTokenを生成する
-func (j *JwtWrapper) GenerateAccessToken(email string) (signedToken string){
+func (j *JwtWrapper) GenerateAccessToken(email string) (signedToken string) {
 	claims := &JwtClaim{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
@@ -88,7 +88,6 @@ func (j *JwtWrapper) GenerateAccessToken(email string) (signedToken string){
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, _ = token.SignedString([]byte(j.SecretKey))
-
 	return signedToken
 }
 

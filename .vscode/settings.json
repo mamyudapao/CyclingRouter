@@ -1,6 +1,10 @@
 {
   "git.ignoreLimitWarning": true,
   "cSpell.words": [
-    "fortawesome"
+    "bcrypt",
+    "fortawesome",
+    "gonic",
+    "gorm",
+    "mamyudapao"
   ]
 }
