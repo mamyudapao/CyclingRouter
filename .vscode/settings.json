@@ -2,6 +2,8 @@
   "git.ignoreLimitWarning": true,
   "cSpell.words": [
     "bcrypt",
+    "bgcolor",
+    "fontawesome",
     "fortawesome",
     "gonic",
     "gorm",

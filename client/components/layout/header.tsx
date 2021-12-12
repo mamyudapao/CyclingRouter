@@ -2,7 +2,7 @@ import styles from "./header.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { faBiking, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-const Header = (props) => {
+const Header = (props: any) => {
   return (
     <>
       <ul className={styles.header}>
