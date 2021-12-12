@@ -7,6 +7,7 @@ import {
   DirectionsService,
   DirectionsRenderer,
   Autocomplete,
+  MarkerProps,
 } from "@react-google-maps/api";
 import { TextField, Card, Button } from "@mui/material";
 import Divider from "../../components/design/Divider";
@@ -15,6 +16,14 @@ import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
 import DnD from "./dnd";
 // TODO: 経路計測時のQueryLIMITについて調査
 // TODO: ハードコーディングしたAPIKeyを修正する
+
+//少数第一位で四捨五入
+const formatNumber = (num: number, decimalNumber: number): number => {
+  //少数第一位で四捨五入
+  return (
+    Math.floor(num * Math.pow(10, decimalNumber)) / Math.pow(10, decimalNumber)
+  );
+};
 
 const home = () => {
   // 経路のリクエスト用
@@ -26,9 +35,8 @@ const home = () => {
   } as google.maps.LatLngLiteral | google.maps.LatLng);
   const [origin, setOrigin] = useState<google.maps.LatLngLiteral | null>(null);
   const [distance, setDistance] = useState(0);
-  const [waypoints, setWaypoints] = useState(
-    [] as google.maps.DirectionsWaypoint[]
-  );
+  const [waypoints, setWaypoints] =
+    useState<google.maps.DirectionsWaypoint[]>();
   const [response, setResponse] = useState<google.maps.DirectionsResult | null>(
     null
   );
@@ -70,6 +78,9 @@ const home = () => {
             sumDistance += leg.distance.value;
           }
         });
+        //小数点以下を切り捨てる
+        sumDistance = Math.round(sumDistance);
+        setMakerPositions(Array<google.maps.LatLngLiteral>());
         setDistance(sumDistance);
         setResponse(result);
       }
@@ -120,27 +131,30 @@ const home = () => {
                 }}
                 onPlaceChanged={onPlaceChanged}
               >
-                <TextField variant="outlined" id={Styles.searchBox} />
+                <TextField id={Styles.searchBox} margin="normal" />
               </Autocomplete>
               <Divider
                 icon={faBiking}
                 bgColor="#ff3d00"
                 primary="走行距離"
-                secondary={distance / 1000 + "km"}
+                secondary={formatNumber(distance / 1000, 1) + "km"}
                 width="40%"
               />
               <Divider
                 icon={faClock}
                 bgColor="#ff3d00"
                 primary="時間"
-                secondary={(distance / 1000 / 25) * 60 + "分"}
+                secondary={formatNumber((distance / 1000 / 25) * 60, 1) + "分"}
                 width="40%"
               />
               <Divider
                 icon={faBurn}
                 bgColor="#ff3d00"
                 primary="消費カロリー"
-                secondary={10 * 65 * (distance / 1000 / 25) * 1.05 + "kcal"}
+                secondary={
+                  formatNumber(10 * 65 * (distance / 1000 / 25) * 1.05, 1) +
+                  "kcal"
+                }
                 width="40%"
               />
             </div>
@@ -175,7 +189,13 @@ const home = () => {
                 />
               )}
               {markerPositions.map((position, index) => {
-                return <Marker position={position} key={index} />;
+                return (
+                  <Marker
+                    position={position}
+                    key={index}
+                    label={String(index + 1)}
+                  />
+                );
               })}
             </GoogleMap>
           </LoadScript>
