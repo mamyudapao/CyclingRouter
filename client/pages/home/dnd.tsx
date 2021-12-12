@@ -7,13 +7,23 @@ import {
 } from "react-beautiful-dnd";
 import Styles from "./index.module.scss";
 import Divider from "../../components/design/Divider";
-import { faCompass } from "@fortawesome/free-solid-svg-icons";
+import { faCompass, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { positions } from "@mui/system";
 type PropsType = {
   positions: google.maps.LatLngLiteral[];
   setPositions: (newPositions: google.maps.LatLngLiteral[]) => void;
 };
 
 const DnD = (props: PropsType) => {
+  const deleteFunc = (event: any, targetIndex: number) => {
+    console.log(targetIndex);
+    props.positions.splice(targetIndex, 1);
+    props.setPositions(props.positions);
+  };
+  const buttonDefinition = {
+    icon: faTrash,
+    buttonFunction: deleteFunc,
+  };
   useEffect(() => {
     console.log(props.positions);
   });
@@ -68,6 +78,8 @@ const DnD = (props: PropsType) => {
                         primary="経路"
                         secondary={item.lat}
                         width="80%"
+                        info={index}
+                        button={buttonDefinition}
                       ></Divider>
                     </div>
                   )}
