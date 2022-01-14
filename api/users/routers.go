@@ -5,7 +5,12 @@ import (
 )
 
 func UsersRegister(router *gin.RouterGroup) {
-	router.POST("/", UsersRegistration)
+	router.POST("/register", UsersRegistration)
 	router.POST("/login", UsersLogin)
 	router.POST("/refresh", RefreshTokens)
+	router.GET("/:id", GetUserInformation)
+}
+
+func UsersInformation(router *gin.RouterGroup) {
+	router.GET("/:id", GetUserInformation)
 }

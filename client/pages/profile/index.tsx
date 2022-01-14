@@ -1,8 +1,23 @@
 import { Card } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCompass } from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect } from "react";
 import Style from "./profile.module.scss";
 import Image from "next/image";
+import axios from "../../axisoApi";
+
+type UserInfo = {
+  userName: string;
+  UserImage: string | null;
+  ID: number;
+  createAt: string;
+  biography: string | null;
+  email: string;
+};
+//todo list
+//TODO: S3を準備する
+//TODO: follow機能をつける
+//TODO: 誕生日機能をつける
 const Profile = () => {
   return (
     <>

@@ -3,18 +3,18 @@ import styles from "./index.module.scss";
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 
-import axios from "../../axisoApi";
+import axios from "../../axisoApi"; //TODO: スペル修正
 
-const Login = () => {
-  const [email, setEmail] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [password2, setPassword2] = useState(null);
+const SignUp = () => {
+  const [email, setEmail] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [password2, setPassword2] = useState<string | null>(null);
 
   const sendAccountInfo = async () => {
     if (password === password2) {
       await axios
-        .post("/users/", {
+        .post("/users/register", {
           email: email,
           username: username,
           password: password,
@@ -83,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

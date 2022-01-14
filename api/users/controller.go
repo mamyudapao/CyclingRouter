@@ -3,6 +3,7 @@ package users
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/auth"
@@ -10,6 +11,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+// AccountRegister Actions
 
 func UsersRegistration(c *gin.Context) {
 	var userValidation UserValidator
@@ -23,9 +26,46 @@ func UsersRegistration(c *gin.Context) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	// gormを使ってDBに保存する
 	user := User{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
-	db := common.GetDB()
+	common.DB.Create(&user)
 
-	db.Create(&user)
+	// Emailを基にJWTレスポンスを発行
+	jwtWrapper := auth.JwtWrapper{
+		SecretKey:       "verysecretkey",
+		Issuer:          "CyclingRouter",
+		ExpirationHours: 24,
+	}
+
+	signedToken, refreshToken := jwtWrapper.GenerateToken(userValidation.Email)
+	if err != nil {
+		log.Println(err)
+		c.JSON(500, gin.H{
+			"msg": "error signing token",
+		})
+		c.Abort()
+		return
+	}
+
+	//TODO: データベースを検索してレスポンスを受け取る, それからレスポンスに加える.
+	response := SignUpResponse{
+		Username:     userValidation.Username,
+		Email:        userValidation.Email,
+		Biography:    "",
+		Token:        signedToken,
+		RefreshToken: refreshToken,
+	}
+
+	defer c.JSON(200, response)
+
+}
+
+type SignUpResponse struct {
+	Username     string
+	Email        string
+	Biography    string
+	UserImage    string
+	CreatedAt    time.Time
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type LoginPayload struct {
@@ -107,8 +147,6 @@ func UsersLogin(c *gin.Context) {
 
 	c.JSON(200, tokenResponse)
 
-	return
-
 }
 
 func RefreshTokens(c *gin.Context) {
@@ -138,6 +176,30 @@ func RefreshTokens(c *gin.Context) {
 
 	c.JSON(200, tokenResponse)
 
-	return
+}
 
+// UserInformation Actions
+
+type UserInformationType struct {
+	Username  string
+	Email     string
+	Biography string
+	UserImage string
+	ID        uint
+	CreatedAt time.Time
+}
+
+func GetUserInformation(c *gin.Context) {
+	db := common.GetDB()
+	var userInfo *User
+	db.Find(&User{}, 1).First(&userInfo)
+	responseObject := &UserInformationType{
+		Username:  userInfo.Username,
+		Email:     userInfo.Email,
+		Biography: userInfo.Biography,
+		UserImage: userInfo.UserImage,
+		ID:        userInfo.ID,
+		CreatedAt: userInfo.CreatedAt,
+	}
+	c.JSON(200, responseObject)
 }

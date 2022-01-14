@@ -3,7 +3,7 @@ import Header from "../components/layout/header";
 import Footer from "../components/layout/footer";
 import { useState } from "react";
 import Cookie from "js-cookie";
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: any) => {
   const [auth, setAuth] = useState(Cookie.get("token"));
   pageProps.auth = auth;
   pageProps.setAuth = setAuth;

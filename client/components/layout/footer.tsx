@@ -4,6 +4,7 @@ const Footer = () => {
     <div className={Style.footer}>
       <ul>
         <li>Footer</li>
+        <li>Footer Contents</li>
       </ul>
     </div>
   );
