@@ -3,7 +3,12 @@ import styles from "./index.module.scss";
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 
+import { useDispatch, useSelector } from "react-redux";
+import { signInAction, UserState } from "../../reducks/user/userSlice";
+
 import axios from "../../axisoApi"; //TODO: スペル修正
+import store from "../../reducks/store/store";
+import router from "next/router";
 
 const SignUp = () => {
   const [email, setEmail] = useState<string | null>(null);
@@ -11,17 +16,21 @@ const SignUp = () => {
   const [password, setPassword] = useState<string | null>(null);
   const [password2, setPassword2] = useState<string | null>(null);
 
-  const sendAccountInfo = async () => {
-    if (password === password2) {
-      await axios
-        .post("/users/register", {
-          email: email,
-          username: username,
-          password: password,
+  const dispatch = useDispatch();
+  const store = useSelector((state: UserState) => state);
+
+  const sendAccountInfo = () => {
+    if (email !== null && username !== null && password !== null) {
+      dispatch(
+        signInAction({
+          email: email!,
+          username: username!,
+          password: password!,
         })
-        .then((response) => {
-          console.log(response);
-        });
+      );
+      if (store.accessToken !== null) {
+        router.push("/home");
+      }
     }
   };
   return (
@@ -79,6 +88,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
+      <h1>Username {}</h1>
     </>
   );
 };

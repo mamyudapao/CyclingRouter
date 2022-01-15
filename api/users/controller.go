@@ -52,6 +52,7 @@ func UsersRegistration(c *gin.Context) {
 		Biography:    "",
 		Token:        signedToken,
 		RefreshToken: refreshToken,
+		Location:     "",
 	}
 
 	defer c.JSON(200, response)
@@ -63,6 +64,8 @@ type SignUpResponse struct {
 	Email        string
 	Biography    string
 	UserImage    string
+	Birthday     time.Time
+	Location     string
 	CreatedAt    time.Time
 	Token        string `json:"token"`
 	RefreshToken string `json:"refresh_token"`

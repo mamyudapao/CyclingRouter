@@ -2,7 +2,10 @@ import styles from "./header.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { faBiking, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { usersState } from "../../reducks/user/userSlice";
 const Header = (props: any) => {
+  const store = useSelector((state: usersState) => state);
   return (
     <>
       <ul className={styles.header}>
@@ -23,7 +26,7 @@ const Header = (props: any) => {
           <li>CONTACT</li>
         </div>
         <div className={styles.right}>
-          {props.auth !== undefined && (
+          {store.accessToken !== null && (
             <>
               <li>
                 <Link href="/profile">
@@ -34,7 +37,7 @@ const Header = (props: any) => {
               </li>
             </>
           )}
-          {props.auth === undefined && (
+          {store.accessToken === null && (
             <>
               <li>
                 <Link href="signup">SignUp</Link>
