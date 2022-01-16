@@ -5,7 +5,7 @@ import (
 )
 
 func UsersRegister(router *gin.RouterGroup) {
-	router.POST("/register", UsersRegistration)
+	router.POST("/registration", UsersRegistration)
 	router.POST("/login", UsersLogin)
 	router.POST("/refresh", RefreshTokens)
 	router.GET("/:id", GetUserInformation)

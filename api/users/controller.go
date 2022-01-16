@@ -26,7 +26,10 @@ func UsersRegistration(c *gin.Context) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	// gormを使ってDBに保存する
 	user := User{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
-	common.DB.Create(&user)
+	result := common.DB.Create(&user)
+	fmt.Println("ちんちん")
+	fmt.Println(result)
+	fmt.Println(user.ID)
 
 	// Emailを基にJWTレスポンスを発行
 	jwtWrapper := auth.JwtWrapper{
@@ -47,12 +50,14 @@ func UsersRegistration(c *gin.Context) {
 
 	//TODO: データベースを検索してレスポンスを受け取る, それからレスポンスに加える.
 	response := SignUpResponse{
-		Username:     userValidation.Username,
-		Email:        userValidation.Email,
-		Biography:    "",
+		Username:     user.Username,
+		Email:        user.Email,
+		Biography:    user.Biography,
 		Token:        signedToken,
 		RefreshToken: refreshToken,
-		Location:     "",
+		Location:     user.Location,
+		Birthday:     user.Birthday,
+		ID:           user.ID,
 	}
 
 	defer c.JSON(200, response)
@@ -60,11 +65,12 @@ func UsersRegistration(c *gin.Context) {
 }
 
 type SignUpResponse struct {
+	ID           uint
 	Username     string
 	Email        string
 	Biography    string
 	UserImage    string
-	Birthday     time.Time
+	Birthday     string
 	Location     string
 	CreatedAt    time.Time
 	Token        string `json:"token"`
@@ -193,9 +199,9 @@ type UserInformationType struct {
 }
 
 func GetUserInformation(c *gin.Context) {
-	db := common.GetDB()
+	// common.DB.Where()
 	var userInfo *User
-	db.Find(&User{}, 1).First(&userInfo)
+	// db.Find(&User{}, 1).First(&userInfo)
 	responseObject := &UserInformationType{
 		Username:  userInfo.Username,
 		Email:     userInfo.Email,
@@ -205,4 +211,8 @@ func GetUserInformation(c *gin.Context) {
 		CreatedAt: userInfo.CreatedAt,
 	}
 	c.JSON(200, responseObject)
+}
+
+func updateUserInfo(c *gin.Context) {
+
 }
