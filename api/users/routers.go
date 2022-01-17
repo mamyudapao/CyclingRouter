@@ -8,9 +8,10 @@ func UsersRegister(router *gin.RouterGroup) {
 	router.POST("/registration", UsersRegistration)
 	router.POST("/login", UsersLogin)
 	router.POST("/refresh", RefreshTokens)
-	router.GET("/:id", GetUserInformation)
+	router.GET("/:id", RetriveUser)
+	router.PUT("/:id", UpdateUser)
 }
 
-func UsersInformation(router *gin.RouterGroup) {
-	router.GET("/:id", GetUserInformation)
-}
+// func UsersInformation(router *gin.RouterGroup) {
+// 	router.GET("/:id", GetUserInformation)
+// }

@@ -8,13 +8,13 @@ import (
 )
 
 type User struct {
-	Username     string `gorm:"column:username;unique; not null"`
+	Username     string `gorm:"column:username; not null"`
 	Email        string `gorm:"column:email;unique; not null"`
 	PasswordHash []byte `gorm:"column:password;not null"`
 	Biography    string `gorm:"column:biography;"`
 	UserImage    string `gorm:"column:user_image;"`
-	Birthday     string `gorm:"column:birthday"`
 	Location     string `gorm:"column:location"`
+	Birthday     string `gorm:"column:birthday"`
 	gorm.Model
 }
 
