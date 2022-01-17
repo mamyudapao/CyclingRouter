@@ -10,6 +10,7 @@ func UsersRegister(router *gin.RouterGroup) {
 	router.POST("/refresh", RefreshTokens)
 	router.GET("/:id", RetriveUser)
 	router.PUT("/:id", UpdateUser)
+	router.DELETE("/:id", DeleteUser)
 }
 
 // func UsersInformation(router *gin.RouterGroup) {

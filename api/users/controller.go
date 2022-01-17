@@ -213,4 +213,17 @@ func UpdateUser(c *gin.Context) {
 	})
 }
 
+func DeleteUser(c *gin.Context) {
+	result := common.DB.Delete(&User{}, c.Param("id"))
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": result.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "done delete user",
+	})
+}
+
 //TODO: Userのデータを返すようなfunctionを作る
