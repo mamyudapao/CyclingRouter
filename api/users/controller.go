@@ -1,10 +1,14 @@
 package users
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
+	amazon "github.com/mamyudapao/CyclingRouter/aws"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/auth"
 	"github.com/mamyudapao/CyclingRouter/common"
@@ -226,4 +230,53 @@ func DeleteUser(c *gin.Context) {
 	})
 }
 
-//TODO: Userのデータを返すようなfunctionを作る
+func UploadUserImage(c *gin.Context) {
+	bucketName := "cycling-router-bucket"
+
+	form, _ := c.MultipartForm()
+	files := form.File["image"]
+	open, err := files[0].Open()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	awsInstance, err := amazon.InitAWS()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	client := s3.NewFromConfig(awsInstance)
+	key := files[0].Filename
+	input := &s3.PutObjectInput{
+		Bucket: &bucketName,
+		Key:    &key,
+		Body:   open,
+	}
+	_, err = amazon.PutFile(context.TODO(), client, input)
+	if err != nil {
+		fmt.Println("Got error uploading file:")
+		fmt.Println(err)
+		return
+	}
+
+	// ここから画像のファイル名をDBに保存する
+	var user User
+	err = common.DB.Where("id = ?", c.Param("id")).First(&user).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "User not found",
+		})
+		return
+	}
+	user.UserImage = key
+	err = common.DB.Save(&user).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"userImage": key,
+	})
+}

@@ -19,7 +19,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const store = useSelector((state: UserState) => state);
 
-  const sendAccountInfo = () => {
+  const sendAccountInfo = async () => {
     if (email !== null && username !== null && password !== null) {
       dispatch(
         signInAction({
@@ -28,9 +28,6 @@ const SignUp = () => {
           password: password!,
         })
       );
-      if (store.accessToken !== null) {
-        router.push("/home");
-      }
     }
   };
   return (

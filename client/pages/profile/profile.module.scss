@@ -1,11 +1,14 @@
 .card {
-  text-align: center;
   margin: auto;
   width: 80%;
+  .changeButton {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+  }
   .profile {
     display: flex;
-    margin-top: 1em;
-    margin-bottom: 1em;
+
     border-top: 1px solid #ccc;
     .imageBlock {
       margin-top: 1.5em;
@@ -13,6 +16,7 @@
     .centerBlock {
       text-align: center;
       width: 80%;
+      // height: 100%;
       max-width: 80%;
       display: block;
       border-bottom: 1px solid #ccc;
@@ -20,15 +24,24 @@
       p {
         text-align: center;
       }
+      .profileBlock {
+        border-bottom: 1px solid #ccc;
+        width: 75%;
+        margin-left: 10%;
+        margin-bottom: 3em;
+      }
+      .routerCard {
+        text-align: center;
+        display: flex;
+        width: 60%;
+        margin-left: 15%;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+      }
     }
   }
 }
 
-.routerCard {
-  display: flex;
-  background-color: #e7e7e7;
-  width: 60%;
-  margin-left: 25%;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
+#uploadProfile {
+  display: none;
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/common"
@@ -16,7 +18,7 @@ func Migrate(db *gorm.DB) {
 
 func GetSomething(c *gin.Context) {
 	c.JSON(
-		200, gin.H{
+		http.StatusOK, gin.H{
 			"msg": "auth!!",
 		},
 	)
@@ -34,7 +36,7 @@ func main() {
 			"http://localhost:3000",
 		},
 		AllowMethods: []string{
-			"GET", "POST", "PUT", "OPTIONS",
+			"GET", "POST", "PUT", "OPTIONS", "DELETE",
 		},
 		AllowHeaders: []string{
 			"Access-Control-Allow-Credentials",
@@ -50,7 +52,8 @@ func main() {
 	}))
 
 	v1 := r.Group("/api")
-	users.UsersRegister(v1.Group("users/"))
+	users.AuthRouter(v1.Group("auth/"))
+	users.UsersRouter(v1.Group("users/"))
 	v2 := r.Group("/authTest").Use(middleware.Authz())
 
 	v2.GET("/", GetSomething)

@@ -4,15 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UsersRegister(router *gin.RouterGroup) {
+func AuthRouter(router *gin.RouterGroup) {
 	router.POST("/registration", UsersRegistration)
 	router.POST("/login", UsersLogin)
 	router.POST("/refresh", RefreshTokens)
-	router.GET("/:id", RetriveUser)
-	router.PUT("/:id", UpdateUser)
-	router.DELETE("/:id", DeleteUser)
 }
 
-// func UsersInformation(router *gin.RouterGroup) {
-// 	router.GET("/:id", GetUserInformation)
-// }
+func UsersRouter(router *gin.RouterGroup) {
+	router.GET("/:id", RetriveUser)
+	router.PUT("/:id", UpdateUser)
+	router.POST("/:id/image", UploadUserImage)
+	router.DELETE("/:id", DeleteUser)
+}

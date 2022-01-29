@@ -1,33 +1,36 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../axisoApi";
-import { Router } from "next/router";
+import router from "next/router";
 
-type UserObject = {
+type SignupUserObject = {
   email: string;
   username: string;
   password: string;
 };
 
-type UserResponse = {
-  Biography: string;
-  CreatedAt: string;
-  Email: string;
-  UserImage: string;
-  Username: string;
-  Location: string;
-  Birthday: Date | null;
-  refresh_token: string;
-  token: string;
+type UpdateProfileObject = {
+  id: number;
+  biography: string | null;
+  birthday: Date | null;
+  location: string | null;
+  username: string | null;
 };
 
-const persistConfig = {
-  key: "root",
-  storage,
+type UserResponse = {
+  id: number;
+  biography: string;
+  createdAt: string;
+  email: string;
+  userImage: string;
+  username: string;
+  location: string;
+  birthday: Date | null;
+  refreshToken: string;
+  accessToken: string;
 };
 
 export type UserState = {
+  id: number | null;
   username: string | null;
   email: string | null;
   accessToken: string | null;
@@ -39,6 +42,7 @@ export type UserState = {
 };
 
 const initialState: UserState = {
+  id: null,
   username: null,
   email: null,
   accessToken: null,
@@ -49,10 +53,10 @@ const initialState: UserState = {
   userImage: null,
 };
 
-export const signInAction = createAsyncThunk<UserResponse, UserObject>(
+export const signInAction = createAsyncThunk<UserResponse, SignupUserObject>(
   "users/signInAction",
   async (userObj) => {
-    const response = await axios.post<UserResponse>("/users/register", {
+    const response = await axios.post<UserResponse>("auth/registration", {
       email: userObj.email,
       username: userObj.username,
       password: userObj.password,
@@ -60,6 +64,35 @@ export const signInAction = createAsyncThunk<UserResponse, UserObject>(
     return response.data;
   }
 );
+
+export const updateProfileAction = createAsyncThunk<
+  UserResponse,
+  UpdateProfileObject
+>("users/updateProfileAction", async (updateObj) => {
+  const response = await axios.put<UserResponse>(`users/${updateObj.id}`, {
+    biography: updateObj.biography,
+    birthday: updateObj.birthday,
+    location: updateObj.location,
+    username: updateObj.username,
+  });
+  return response.data;
+});
+
+export const updateProfileIconsAction = createAsyncThunk<
+  UserResponse,
+  { image: FormData; id: number }
+>("users/updateProfileIconsAction", async (updateObj) => {
+  const response = await axios.post<UserResponse>(
+    `users/${updateObj.id}/image`,
+    updateObj.image,
+    {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+});
 
 export const usersSlice = createSlice({
   name: "users",
@@ -73,10 +106,22 @@ export const usersSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(signInAction.fulfilled, (state, action) => {
       console.log(action.payload);
-      state.email = action.payload.Email;
-      state.username = action.payload.Username;
-      state.accessToken = action.payload.token;
-      state.refreshToken = action.payload.refresh_token;
+      state.id = action.payload.id;
+      state.email = action.payload.email;
+      state.username = action.payload.username;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      router.push("/home");
+    });
+    builder.addCase(updateProfileAction.fulfilled, (state, action) => {
+      state.biography = action.payload.biography;
+      state.birthday = action.payload.birthday;
+      state.location = action.payload.location;
+      state.username = action.payload.username;
+    });
+    builder.addCase(updateProfileIconsAction.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.userImage = action.payload.userImage;
     });
   },
 });
