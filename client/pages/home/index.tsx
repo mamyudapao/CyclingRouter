@@ -116,6 +116,14 @@ const home = () => {
     }
   };
 
+  const createData = () => {
+    console.log(markerPositions);
+    console.log(JSON.stringify(markerPositions));
+    const stringJson = JSON.stringify(markerPositions);
+    const json = JSON.parse(stringJson);
+    console.log(json);
+  };
+
   return (
     <>
       <Card className={Styles.card}>
@@ -201,6 +209,9 @@ const home = () => {
           </LoadScript>
           <Button variant="contained" onClick={getDirections}>
             経路を求める
+          </Button>
+          <Button variant="contained" onClick={createData}>
+            テスト
           </Button>
         </div>
         <div className={Styles.rightSide}>

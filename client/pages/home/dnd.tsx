@@ -24,9 +24,6 @@ const DnD = (props: PropsType) => {
     icon: faTrash,
     buttonFunction: deleteFunc,
   };
-  useEffect(() => {
-    console.log(props.positions);
-  });
   const reorder = (
     list: Array<google.maps.LatLngLiteral>,
     startIndex: number,
