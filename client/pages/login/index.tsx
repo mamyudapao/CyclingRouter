@@ -11,7 +11,7 @@ const Login = (props) => {
 
   const sendInfo = async () => {
     await axios
-      .post("/users/login", {
+      .post("auth/login", {
         email: email,
         password: password,
       })

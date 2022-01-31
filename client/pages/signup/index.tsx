@@ -3,25 +3,31 @@ import styles from "./index.module.scss";
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 
-import axios from "../../axisoApi";
+import { useDispatch, useSelector } from "react-redux";
+import { signInAction, UserState } from "../../reducks/user/userSlice";
 
-const Login = () => {
-  const [email, setEmail] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [password2, setPassword2] = useState(null);
+import axios from "../../axisoApi"; //TODO: スペル修正
+import store from "../../reducks/store/store";
+import router from "next/router";
+
+const SignUp = () => {
+  const [email, setEmail] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [password2, setPassword2] = useState<string | null>(null);
+
+  const dispatch = useDispatch();
+  const store = useSelector((state: UserState) => state);
 
   const sendAccountInfo = async () => {
-    if (password === password2) {
-      await axios
-        .post("/users/", {
-          email: email,
-          username: username,
-          password: password,
+    if (email !== null && username !== null && password !== null) {
+      dispatch(
+        signInAction({
+          email: email!,
+          username: username!,
+          password: password!,
         })
-        .then((response) => {
-          console.log(response);
-        });
+      );
     }
   };
   return (
@@ -79,8 +85,9 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <h1>Username {}</h1>
     </>
   );
 };
 
-export default Login;
+export default SignUp;

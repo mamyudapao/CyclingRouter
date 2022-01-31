@@ -1,0 +1,47 @@
+.card {
+  margin: auto;
+  width: 80%;
+  .changeButton {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+  }
+  .profile {
+    display: flex;
+
+    border-top: 1px solid #ccc;
+    .imageBlock {
+      margin-top: 1.5em;
+    }
+    .centerBlock {
+      text-align: center;
+      width: 80%;
+      // height: 100%;
+      max-width: 80%;
+      display: block;
+      border-bottom: 1px solid #ccc;
+
+      p {
+        text-align: center;
+      }
+      .profileBlock {
+        border-bottom: 1px solid #ccc;
+        width: 75%;
+        margin-left: 10%;
+        margin-bottom: 3em;
+      }
+      .routerCard {
+        text-align: center;
+        display: flex;
+        width: 60%;
+        margin-left: 15%;
+        margin-bottom: 1rem;
+        padding: 1.5rem;
+      }
+    }
+  }
+}
+
+#uploadProfile {
+  display: none;
+}
