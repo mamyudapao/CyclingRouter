@@ -25,8 +25,11 @@ const formatNumber = (num: number, decimalNumber: number): number => {
   return returnValue;
 };
 
+const libraries = ["places"];
+
 const home = () => {
   // 経路のリクエスト用
+  const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
   const [destination, setDestination] =
     useState<google.maps.LatLngLiteral | null>(null);
   const [center, setCenter] = useState({
@@ -57,13 +60,13 @@ const home = () => {
     if (event !== undefined) {
       setOrigin(markerPositions[0]);
       setDestination(markerPositions[markerPositions.length - 1]);
-      //setWaypoints用
-      markerPositions.pop();
-      markerPositions.shift();
-      const tempWaypoints = markerPositions.map((position) => {
-        return { location: position };
-      });
+      const tempWaypoints = markerPositions
+        .filter((_, index) => index !== 0 && markerPositions.length - 1)
+        .map((position: google.maps.LatLngLiteral, index: number) => {
+          return { location: position };
+        });
       setWaypoints([...tempWaypoints] as Array<google.maps.DirectionsWaypoint>);
+      setDirectionLoaded(false);
     }
   };
   const directionsCallback = (
@@ -80,11 +83,11 @@ const home = () => {
         });
         //小数点以下を切り捨てる
         sumDistance = Math.round(sumDistance);
-        setMakerPositions(Array<google.maps.LatLngLiteral>());
         setDistance(sumDistance);
         setResponse(result);
       }
     }
+    setDirectionLoaded(true);
   };
 
   //マーカー関係
@@ -129,8 +132,8 @@ const home = () => {
       <Card className={Styles.card}>
         <div className={Styles.map}>
           <LoadScript
-            googleMapsApiKey="AIzaSyBqEkWJHZ0y1BAAKZMxu1gFT3FojQkaG-o"
-            libraries={["places"]}
+            googleMapsApiKey={process.env.NEXT_PUBLIC_googleMapsApiKey!}
+            libraries={libraries as any}
           >
             <div className={Styles.topBar}>
               <Autocomplete
@@ -178,7 +181,7 @@ const home = () => {
               onLoad={handleOnLoad}
               onClick={getPosition}
             >
-              {origin !== null && destination !== null && (
+              {origin !== null && destination !== null && !directionLoaded && (
                 <DirectionsService
                   options={{
                     origin: origin,
@@ -211,7 +214,7 @@ const home = () => {
             経路を求める
           </Button>
           <Button variant="contained" onClick={createData}>
-            テスト
+            経路を保存する
           </Button>
         </div>
         <div className={Styles.rightSide}>
