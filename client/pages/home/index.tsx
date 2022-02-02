@@ -7,13 +7,18 @@ import {
   DirectionsService,
   DirectionsRenderer,
   Autocomplete,
-  MarkerProps,
 } from "@react-google-maps/api";
 import { TextField, Card, Button } from "@mui/material";
 import Divider from "../../components/design/Divider";
 // iconのインポート
 import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
 import DnD from "./dnd";
+import Dialog from "./Dialog";
+import axios from "../../axisoApi";
+import { useSelector } from "react-redux";
+import { UserState } from "../../reducks/user/userSlice";
+import { useRouter } from "next/router";
+
 // TODO: 経路計測時のQueryLIMITについて調査
 // TODO: ハードコーディングしたAPIKeyを修正する
 
@@ -28,6 +33,8 @@ const formatNumber = (num: number, decimalNumber: number): number => {
 const libraries = ["places"];
 
 const home = () => {
+  const store = useSelector((state: UserState) => state);
+  const router = useRouter();
   // 経路のリクエスト用
   const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
   const [destination, setDestination] =
@@ -101,6 +108,7 @@ const home = () => {
   };
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
   const handleOnLoad = (map: google.maps.Map) => {
+    console.log("aa");
     setMapRef(map);
   };
   const getPosition = (position: google.maps.MapMouseEvent) => {
@@ -119,12 +127,19 @@ const home = () => {
     }
   };
 
-  const createData = () => {
-    console.log(markerPositions);
-    console.log(JSON.stringify(markerPositions));
-    const stringJson = JSON.stringify(markerPositions);
-    const json = JSON.parse(stringJson);
-    console.log(json);
+  const createData = (title: string, description: string) => {
+    const direction = JSON.stringify(markerPositions);
+    axios
+      .post("/routes/", {
+        title,
+        description,
+        direction,
+        user_id: store.id,
+      })
+      .then((response) => {
+        console.log(response);
+        router.push("/profile");
+      });
   };
 
   return (
@@ -213,9 +228,7 @@ const home = () => {
           <Button variant="contained" onClick={getDirections}>
             経路を求める
           </Button>
-          <Button variant="contained" onClick={createData}>
-            経路を保存する
-          </Button>
+          <Dialog sendData={createData}></Dialog>
         </div>
         <div className={Styles.rightSide}>
           <DnD
