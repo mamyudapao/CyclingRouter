@@ -99,7 +99,18 @@ func DeleteRoute(c *gin.Context) {
 }
 
 func GetRoutes(c *gin.Context) {
-
+	var routes *[]Route
+	err := common.DB.Where("user_id = ?", c.Param("id")).Find(&routes).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Route not found",
+		})
+		return
+	}
+	fmt.Println(routes)
+	c.JSON(http.StatusOK, gin.H{
+		"routes": routes,
+	})
 }
 
 func testFunc(c *gin.Context) {

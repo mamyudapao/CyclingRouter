@@ -9,7 +9,7 @@ func RoutersRouter(router *gin.RouterGroup) {
 	router.PUT("/:id", UpdateRoute)
 	router.DELETE("/:id", DeleteRoute)
 	//複数コース
-	router.GET("/", GetRoutes)
+	router.GET("/user/:id", GetRoutes)
 
 	//テスト
 	router.POST("/test", testFunc)
