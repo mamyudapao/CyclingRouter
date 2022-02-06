@@ -6,7 +6,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Props } from "@fortawesome/react-fontawesome";
 
 type PropsType = {
   sendData: (title: string, description: string) => void;

@@ -5,7 +5,7 @@ import Cookie from "js-cookie";
 
 import axios from "../../axisoApi";
 
-const Login = (props) => {
+const Login = (props: any) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
 
