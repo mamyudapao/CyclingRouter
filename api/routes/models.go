@@ -4,15 +4,14 @@ import (
 	"log"
 
 	"github.com/mamyudapao/CyclingRouter/common"
-	"gorm.io/gorm"
 )
 
 type Route struct {
-	UserId      int    `gorm:"column:user_id; not null"`
-	Direction   string `gorm:"column:direction; not null"`
-	Title       string `gorm:"column:title; not null"`
-	Description string `gorm:"column:description;"`
-	gorm.Model
+	UserId      int    `json:"userId" gorm:"column:user_id; not null"`
+	Direction   string `json:"direction" gorm:"column:direction; not null"`
+	Title       string `json:"title" gorm:"column:title; not null"`
+	Description string `json:"description" gorm:"column:description;"`
+	common.GormModel
 }
 
 func AutoMigrate() {

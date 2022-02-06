@@ -116,3 +116,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 api/tmp/
+
+# playground
+./api/playground

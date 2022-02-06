@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -9,6 +10,13 @@ import (
 
 type Database struct {
 	*gorm.DB
+}
+
+type GormModel struct {
+	ID        uint `json:"id" gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 var DB *gorm.DB

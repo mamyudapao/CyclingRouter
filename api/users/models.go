@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/mamyudapao/CyclingRouter/common"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -15,7 +14,7 @@ type User struct {
 	UserImage    string `gorm:"column:user_image;"`
 	Location     string `gorm:"column:location"`
 	Birthday     string `gorm:"column:birthday"`
-	gorm.Model
+	common.GormModel
 }
 
 func AutoMigrate() {

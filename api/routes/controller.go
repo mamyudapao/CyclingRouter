@@ -57,6 +57,8 @@ func RetriveRoute(c *gin.Context) {
 		Description: route.Description,
 		Title:       route.Title,
 		Direction:   route.Direction,
+		CreatedAt:   route.CreatedAt.String(),
+		UpdatedAt:   route.UpdatedAt.String(),
 	}
 	c.JSON(http.StatusOK, response)
 }
@@ -82,6 +84,8 @@ func UpdateRoute(c *gin.Context) {
 		Description: routeValidation.Description,
 		Title:       routeValidation.Title,
 		Direction:   routeValidation.Direction,
+		CreatedAt:   route.CreatedAt.String(),
+		UpdatedAt:   route.UpdatedAt.String(),
 	})
 }
 
@@ -107,7 +111,6 @@ func GetRoutes(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(routes)
 	c.JSON(http.StatusOK, gin.H{
 		"routes": routes,
 	})
