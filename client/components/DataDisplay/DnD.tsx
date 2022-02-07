@@ -1,14 +1,12 @@
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import Divider from "../design/Divider";
 import Styles from "./index.module.scss";
-import Divider from "../../components/design/Divider";
 import { faCompass, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { positions } from "@mui/system";
 type PropsType = {
   positions: google.maps.LatLngLiteral[];
   setPositions: (newPositions: google.maps.LatLngLiteral[]) => void;
