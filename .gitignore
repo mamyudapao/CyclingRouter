@@ -119,3 +119,4 @@ api/tmp/
 
 # playground
 ./api/playground
+.vscode/*

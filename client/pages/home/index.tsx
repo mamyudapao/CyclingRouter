@@ -1,26 +1,21 @@
 import Styles from "./index.module.scss";
 import { useState, MouseEventHandler } from "react";
-import {
-  GoogleMap,
-  LoadScript,
-  Marker,
-  DirectionsService,
-  DirectionsRenderer,
-  Autocomplete,
-} from "@react-google-maps/api";
 import { TextField, Card, Button } from "@mui/material";
 import Divider from "../../components/design/Divider";
 // iconのインポート
 import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
 import DnD from "./dnd";
 import Dialog from "./Dialog";
+import GoogleMap from "../../components/GoogleMap/GoogleMap";
+import {
+  GoogleMapOptions,
+  AutoCompleteOptions,
+  DirectionsServiceOptions,
+} from "../../components/GoogleMap/types";
 import axios from "../../axisoApi";
 import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import { useRouter } from "next/router";
-
-// TODO: 経路計測時のQueryLIMITについて調査
-// TODO: ハードコーディングしたAPIKeyを修正する
 
 //少数第一位で四捨五入
 const formatNumber = (num: number, decimalNumber: number): number => {
@@ -31,25 +26,32 @@ const formatNumber = (num: number, decimalNumber: number): number => {
 };
 
 const libraries = ["places"];
+const mapContainerStyle = {
+  width: "55vw",
+  height: "80vh",
+};
 
 const home = () => {
   const store = useSelector((state: UserState) => state);
   const router = useRouter();
   // 経路のリクエスト用
   const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
-  const [destination, setDestination] =
-    useState<google.maps.LatLngLiteral | null>(null);
-  const [center, setCenter] = useState({
+  const [destination, setDestination] = useState<
+    google.maps.LatLngLiteral | undefined
+  >(undefined);
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>({
     lat: 35.69575,
     lng: 139.77521,
-  } as google.maps.LatLngLiteral | google.maps.LatLng);
-  const [origin, setOrigin] = useState<google.maps.LatLngLiteral | null>(null);
+  });
+  const [origin, setOrigin] = useState<google.maps.LatLngLiteral | undefined>(
+    undefined
+  );
   const [distance, setDistance] = useState(0);
   const [waypoints, setWaypoints] =
     useState<google.maps.DirectionsWaypoint[]>();
-  const [response, setResponse] = useState<google.maps.DirectionsResult | null>(
-    null
-  );
+  const [response, setResponse] = useState<
+    google.maps.DirectionsResult | undefined
+  >(undefined);
 
   // autocomplete用
   const [autocomplete, setAutocomplete] =
@@ -65,6 +67,7 @@ const home = () => {
     event: any //TODO: any解消
   ) => {
     if (event !== undefined) {
+      console.log(event);
       setOrigin(markerPositions[0]);
       setDestination(markerPositions[markerPositions.length - 1]);
       const tempWaypoints = markerPositions
@@ -98,9 +101,9 @@ const home = () => {
   };
 
   //マーカー関係
-  const [markerPositions, setMakerPositions] = useState(
-    [] as Array<google.maps.LatLngLiteral>
-  );
+  const [markerPositions, setMakerPositions] = useState<
+    google.maps.LatLngLiteral[]
+  >([]);
   const emitSetMakerPositions = (
     newMarkerPositionsArray: google.maps.LatLngLiteral[]
   ) => {
@@ -114,7 +117,7 @@ const home = () => {
   const getPosition = (position: google.maps.MapMouseEvent) => {
     if (markerPositions.length < 6) {
       if (mapRef?.getCenter() !== undefined) {
-        setCenter(mapRef.getCenter()!);
+        setCenter(mapRef.getCenter()!.toJSON());
       }
       let json = position.latLng?.toJSON();
       if (json !== undefined) {
@@ -134,7 +137,7 @@ const home = () => {
         title,
         description,
         direction,
-        user_id: store.id,
+        userId: store.id,
       })
       .then((response) => {
         console.log(response);
@@ -142,23 +145,37 @@ const home = () => {
       });
   };
 
+  const googleMapOptionsObject: GoogleMapOptions = {
+    center: center,
+    disableDefaultUI: true,
+    mapContainerStyle: mapContainerStyle,
+    zoom: 15,
+    onLoad: handleOnLoad,
+    onClick: getPosition,
+  };
+
+  const autoCompleteOptionsObject: AutoCompleteOptions = {
+    onLoad: (autoComplete) => {
+      setAutocomplete(autoComplete);
+    },
+    onPlaceChanged: onPlaceChanged,
+    color: "white",
+  };
+
+  const DirectionsServiceOptionsObject: DirectionsServiceOptions = {
+    origin: origin,
+    destination: destination,
+    directionLoaded: directionLoaded,
+    waypoints: waypoints,
+    directionsCallback: directionsCallback,
+  };
+
   return (
     <>
       <Card className={Styles.card}>
-        <div className={Styles.map}>
-          <LoadScript
-            googleMapsApiKey={process.env.NEXT_PUBLIC_googleMapsApiKey!}
-            libraries={libraries as any}
-          >
-            <div className={Styles.topBar}>
-              <Autocomplete
-                onLoad={(autocomplete) => {
-                  setAutocomplete(autocomplete);
-                }}
-                onPlaceChanged={onPlaceChanged}
-              >
-                <TextField id={Styles.searchBox} margin="normal" />
-              </Autocomplete>
+        <div className={Styles.wrapper}>
+          <div>
+            <div className={Styles.data}>
               <Divider
                 icon={faBiking}
                 bgColor="#ff3d00"
@@ -184,57 +201,29 @@ const home = () => {
                 width="40%"
               />
             </div>
-
-            <GoogleMap
-              options={{ mapId: "cb45e1d3ef965ca5", disableDefaultUI: true }}
-              mapContainerStyle={{
-                width: "55vw",
-                height: "80vh",
-              }}
-              center={center}
-              zoom={15}
-              onLoad={handleOnLoad}
-              onClick={getPosition}
-            >
-              {origin !== null && destination !== null && !directionLoaded && (
-                <DirectionsService
-                  options={{
-                    origin: origin,
-                    destination: destination,
-                    travelMode: "WALKING" as google.maps.TravelMode,
-                    waypoints: waypoints,
-                  }}
-                  callback={directionsCallback}
-                />
-              )}
-              {response !== null && (
-                <DirectionsRenderer
-                  options={{
-                    directions: response,
-                  }}
-                />
-              )}
-              {markerPositions.map((position, index) => {
-                return (
-                  <Marker
-                    position={position}
-                    key={index}
-                    label={String(index + 1)}
-                  />
-                );
-              })}
-            </GoogleMap>
-          </LoadScript>
+            <div className={Styles.map}>
+              <GoogleMap
+                libraries={libraries as any}
+                googleMap={googleMapOptionsObject}
+                autoComplete={autoCompleteOptionsObject}
+                directionService={DirectionsServiceOptionsObject}
+                response={response}
+                markers={markerPositions}
+              />
+            </div>
+          </div>
+          <div className={Styles.rightSide}>
+            <DnD
+              positions={[...markerPositions]}
+              setPositions={emitSetMakerPositions}
+            />
+          </div>
+        </div>
+        <div id={Styles.buttons}>
           <Button variant="contained" onClick={getDirections}>
             経路を求める
           </Button>
           <Dialog sendData={createData}></Dialog>
-        </div>
-        <div className={Styles.rightSide}>
-          <DnD
-            positions={[...markerPositions]}
-            setPositions={emitSetMakerPositions}
-          />
         </div>
       </Card>
     </>
