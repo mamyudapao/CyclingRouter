@@ -11,7 +11,7 @@ type PropsType = {
   sendData: (title: string, description: string) => void;
 };
 
-export default function FormDialog(props: PropsType) {
+export default function FormDialog(props: PropsType): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");

@@ -1,5 +1,5 @@
 export type GoogleMapOptions = {
-  center: google.maps.LatLngLiteral;
+  center: google.maps.LatLngLiteral | undefined;
   disableDefaultUI: boolean;
   mapContainerStyle: { width: string; height: string };
   zoom: number;
@@ -16,7 +16,7 @@ export type AutoCompleteOptions = {
 export type DirectionsServiceOptions = {
   origin: google.maps.LatLngLiteral | undefined;
   destination: google.maps.LatLngLiteral | undefined;
-  directionLoaded: boolean | undefined;
+  directionLoaded: boolean;
   waypoints: google.maps.DirectionsWaypoint[] | undefined;
   directionsCallback?: (
     result: google.maps.DirectionsResult | null,

@@ -9,7 +9,7 @@ type PropsType = {
   routes: Route[];
 };
 
-const RoutersCards = (props: PropsType) => {
+const RoutersCards = (props: PropsType): JSX.Element => {
   const cards = props.routes.map((route: Route) => {
     return (
       <Card className={Styles.routerCard}>

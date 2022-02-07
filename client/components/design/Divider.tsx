@@ -24,7 +24,7 @@ type DividerProps = {
   width: string;
 };
 
-const InsetDivider = (props: DividerProps) => {
+const InsetDivider = (props: DividerProps): JSX.Element => {
   return (
     <>
       <List

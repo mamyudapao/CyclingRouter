@@ -10,7 +10,7 @@ import axios from "../../axisoApi"; //TODO: スペル修正
 import store from "../../reducks/store/store";
 import router from "next/router";
 
-const SignUp = () => {
+const SignUp = (): JSX.Element => {
   const [email, setEmail] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);

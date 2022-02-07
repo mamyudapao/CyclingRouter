@@ -7,7 +7,7 @@ type PropsType = {
   calories: number;
 };
 
-const DataView = (props: PropsType) => {
+const DataView = (props: PropsType): JSX.Element => {
   return (
     <>
       <Divider

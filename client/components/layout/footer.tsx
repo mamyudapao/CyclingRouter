@@ -1,5 +1,5 @@
 import Style from "./footer.module.scss";
-const Footer = () => {
+const Footer = (): JSX.Element => {
   return (
     <div className={Style.footer}>
       <ul>

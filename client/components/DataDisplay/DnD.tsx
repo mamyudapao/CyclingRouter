@@ -12,7 +12,7 @@ type PropsType = {
   setPositions: (newPositions: google.maps.LatLngLiteral[]) => void;
 };
 
-const DnD = (props: PropsType) => {
+const DnD = (props: PropsType): JSX.Element => {
   const deleteFunc = (event: any, targetIndex: number) => {
     console.log(targetIndex);
     props.positions.splice(targetIndex, 1);

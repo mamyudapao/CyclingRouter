@@ -4,7 +4,7 @@ import Link from "next/link";
 import { faBiking, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { usersState } from "../../reducks/user/userSlice";
-const Header = (props: any) => {
+const Header = (props: any): JSX.Element => {
   const store = useSelector((state: usersState) => state);
   return (
     <>

@@ -35,7 +35,7 @@ type PropsType = {
   markers?: google.maps.LatLngLiteral[] | undefined;
 };
 
-const GoogleMapComponent = (props: PropsType) => {
+const GoogleMapComponent = (props: PropsType): JSX.Element => {
   useEffect(() => {
     console.log(props);
   });

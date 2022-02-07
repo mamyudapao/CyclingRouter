@@ -1,11 +1,10 @@
 import Styles from "./index.module.scss";
-import { useState, MouseEventHandler } from "react";
-import { TextField, Card, Button } from "@mui/material";
-import Divider from "../../components/design/Divider";
+import { useState } from "react";
+import { Card, Button } from "@mui/material";
 // iconのインポート
-import { faBurn, faBiking, faClock } from "@fortawesome/free-solid-svg-icons";
-import DnD from "./dnd";
+import DnD from "../../components/DataDisplay/DnD";
 import Dialog from "./Dialog";
+import DataView from "../../components/DataDisplay/DataView";
 import GoogleMap from "../../components/GoogleMap/GoogleMap";
 import {
   GoogleMapOptions,
@@ -16,14 +15,9 @@ import axios from "../../axisoApi";
 import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import { useRouter } from "next/router";
+import { formatNumber } from "../../utils/numConverter";
 
 //少数第一位で四捨五入
-const formatNumber = (num: number, decimalNumber: number): number => {
-  //少数第一位で四捨五入
-  const returnValue =
-    Math.floor(num * Math.pow(10, decimalNumber)) / Math.pow(10, decimalNumber);
-  return returnValue;
-};
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -31,7 +25,7 @@ const mapContainerStyle = {
   height: "80vh",
 };
 
-const home = () => {
+const home = (): JSX.Element => {
   const store = useSelector((state: UserState) => state);
   const router = useRouter();
   // 経路のリクエスト用
@@ -111,7 +105,6 @@ const home = () => {
   };
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
   const handleOnLoad = (map: google.maps.Map) => {
-    console.log("aa");
     setMapRef(map);
   };
   const getPosition = (position: google.maps.MapMouseEvent) => {
@@ -176,30 +169,14 @@ const home = () => {
         <div className={Styles.wrapper}>
           <div>
             <div className={Styles.data}>
-              <Divider
-                icon={faBiking}
-                bgColor="#ff3d00"
-                primary="走行距離"
-                secondary={formatNumber(distance / 1000, 1) + "km"}
-                width="40%"
-              />
-              <Divider
-                icon={faClock}
-                bgColor="#ff3d00"
-                primary="時間"
-                secondary={formatNumber((distance / 1000 / 25) * 60, 1) + "分"}
-                width="40%"
-              />
-              <Divider
-                icon={faBurn}
-                bgColor="#ff3d00"
-                primary="消費カロリー"
-                secondary={
-                  formatNumber(10 * 65 * (distance / 1000 / 25) * 1.05, 1) +
-                  "kcal"
-                }
-                width="40%"
-              />
+              <DataView
+                distance={formatNumber(distance / 1000, 1)}
+                time={formatNumber((distance / 1000 / 25) * 60, 1)}
+                calories={formatNumber(
+                  10 * 65 * (distance / 1000 / 25) * 1.05,
+                  1
+                )}
+              ></DataView>
             </div>
             <div className={Styles.map}>
               <GoogleMap

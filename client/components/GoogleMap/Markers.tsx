@@ -4,7 +4,7 @@ type PropsType = {
   markers: Array<google.maps.LatLngLiteral>;
 };
 
-const Markers = (props: PropsType) => {
+const Markers = (props: PropsType): JSX.Element => {
   const markerPositions = props.markers.map((position, index) => {
     return <Marker position={position} key={index} label={String(index + 1)} />;
   });

@@ -4,8 +4,9 @@ import { useState } from "react";
 import Cookie from "js-cookie";
 
 import axios from "../../axisoApi";
+//TODO: このコンポーネントを治す
 
-const Login = (props: any) => {
+const Login = (props: any): JSX.Element => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
 
