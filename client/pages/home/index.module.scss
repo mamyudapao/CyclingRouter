@@ -1,7 +1,10 @@
 .card {
-  display: flex;
   margin: 0 auto;
   width: 80%;
+}
+
+.wrapper {
+  display: flex;
 }
 
 .map {
@@ -30,4 +33,13 @@
 
 #searchBox {
   padding: 1em;
+  background-color: #fff;
+}
+
+.data {
+  display: flex;
+}
+
+#buttons {
+  display: flex;
 }

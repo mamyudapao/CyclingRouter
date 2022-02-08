@@ -1,5 +1,6 @@
+import RoutersCards from "./RouterCards";
 import { Card } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Style from "./profile.module.scss";
 import Image from "next/image";
 import axios from "../../axisoApi";
@@ -10,11 +11,13 @@ import {
 } from "../../reducks/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import AlertDialog from "./Dialog";
+import Link from "next/link";
+import { Route } from "../../types/routes";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
 
-const Profile = () => {
+const Profile = (): JSX.Element => {
   const store = useSelector((state: UserState) => state);
   const dispatch = useDispatch();
   const [name, setName] = useState<string>(store.username!);
@@ -22,7 +25,18 @@ const Profile = () => {
   const [location, setLocation] = useState<string | null>(store.location);
   const [birthday, setBirthday] = useState<Date | null>(store.birthday);
   const [image, setImage] = useState<File>();
+  const [routes, setRoutes] = useState<Route[] | null>(null);
 
+  const getRoute = async () => {
+    await axios.get(`/routes/user/${store.id}`).then((response) => {
+      console.log(response);
+      setRoutes(response.data.routes);
+    });
+  };
+
+  useEffect(() => {
+    getRoute();
+  }, []);
   const updateUserProfile = (
     newName?: string,
     newBiography?: string | null,
@@ -112,30 +126,7 @@ const Profile = () => {
               <h1>{store.username}</h1>
               <p>{store.biography}</p>
             </div>
-            <div>
-              <Card className={Style.routerCard}>
-                <Image
-                  src="/../public/new-google-map.jpg"
-                  width="300"
-                  height="200"
-                ></Image>
-                <div className={Style.routeDiscription}>
-                  <h3>Titlestar</h3>
-                  <p>kyoto ➙ Tokyo ➙ Yokohama</p>
-                </div>
-              </Card>
-              <Card className={Style.routerCard}>
-                <Image
-                  src="/../public/new-google-map.jpg"
-                  width="300"
-                  height="200"
-                ></Image>
-                <div className={Style.routeDiscription}>
-                  <h3>Titlestar</h3>
-                  <p>kyoto ➙ Tokyo ➙ Yokohama</p>
-                </div>
-              </Card>
-            </div>
+            <div>{routes !== null && <RoutersCards routes={routes} />}</div>
           </div>
         </div>
       </Card>

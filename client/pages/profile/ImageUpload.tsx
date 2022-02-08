@@ -9,7 +9,7 @@ type propsType = {
   updateFunction: (image: File | undefined) => void;
 };
 
-const UploadButton = (props: propsType) => {
+const UploadButton = (props: propsType): JSX.Element => {
   const inputEl = useRef<HTMLInputElement>(null!);
 
   return (

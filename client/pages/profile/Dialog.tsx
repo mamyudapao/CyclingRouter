@@ -28,7 +28,7 @@ type PropsType = {
   update: () => void;
 };
 
-const AlertDialog = (props: PropsType) => {
+const AlertDialog = (props: PropsType): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [birthday, setBirthday] = useState<Date | null>(props.birthday);
 

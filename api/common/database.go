@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,9 +12,16 @@ type Database struct {
 	*gorm.DB
 }
 
+type GormModel struct {
+	ID        uint `json:"id" gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
 var DB *gorm.DB
 
-func InitDB() *gorm.DB {
+func InitDB() {
 	dsn := "docker:51015101Ab!@tcp(mysql-container:3306)/cycling_router?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -22,7 +30,6 @@ func InitDB() *gorm.DB {
 	}
 	fmt.Println("Success init")
 	DB = db
-	return DB
 }
 
 func GetDB() *gorm.DB {

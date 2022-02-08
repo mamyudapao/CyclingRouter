@@ -9,7 +9,7 @@ type UserRegistrationValidator struct {
 type UserUpdateValidator struct {
 	Username  string `form:"username" json:"username" binding:"required,alphanum,min=4,max=50"`
 	Biography string `form:"biography" json:"biography"`
-	UserImage string `form:"user_image" json:"user_image"`
+	UserImage string `form:"user_mage" json:"userImage"`
 	Birthday  string `form:"birthday" json:"birthday"`
 	Location  string `form:"location" json:"location"`
 }

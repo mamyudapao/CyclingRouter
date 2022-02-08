@@ -1,20 +1,18 @@
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import Divider from "../design/Divider";
 import Styles from "./index.module.scss";
-import Divider from "../../components/design/Divider";
 import { faCompass, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { positions } from "@mui/system";
 type PropsType = {
   positions: google.maps.LatLngLiteral[];
   setPositions: (newPositions: google.maps.LatLngLiteral[]) => void;
 };
 
-const DnD = (props: PropsType) => {
+const DnD = (props: PropsType): JSX.Element => {
   const deleteFunc = (event: any, targetIndex: number) => {
     console.log(targetIndex);
     props.positions.splice(targetIndex, 1);
@@ -24,9 +22,6 @@ const DnD = (props: PropsType) => {
     icon: faTrash,
     buttonFunction: deleteFunc,
   };
-  useEffect(() => {
-    console.log(props.positions);
-  });
   const reorder = (
     list: Array<google.maps.LatLngLiteral>,
     startIndex: number,
@@ -73,7 +68,7 @@ const DnD = (props: PropsType) => {
                       {...provided.dragHandleProps}
                     >
                       <Divider
-                        icon={faCompass}
+                        index={index + 1}
                         bgColor="#ffbf00"
                         primary="経路"
                         secondary={item.lat}

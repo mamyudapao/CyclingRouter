@@ -11,7 +11,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 const persistor = persistStore(store);
 
-const App = ({ Component, pageProps }: any) => {
+const App = ({ Component, pageProps }: any): JSX.Element => {
   const [auth, setAuth] = useState(Cookie.get("token"));
   pageProps.auth = auth;
   pageProps.setAuth = setAuth;

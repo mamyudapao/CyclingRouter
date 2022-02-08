@@ -33,7 +33,10 @@ func UsersRegistration(c *gin.Context) {
 	password := []byte(userValidation.Password)
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	// gormを使ってDBに保存する
-	user := User{Username: userValidation.Username, Email: userValidation.Email, PasswordHash: hashedPassword}
+	user := User{
+		Username:     userValidation.Username,
+		Email:        userValidation.Email,
+		PasswordHash: hashedPassword}
 	err = common.DB.Create(&user).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

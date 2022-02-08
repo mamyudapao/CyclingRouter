@@ -7,13 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/common"
 	"github.com/mamyudapao/CyclingRouter/middleware"
+	"github.com/mamyudapao/CyclingRouter/routes"
 	"github.com/mamyudapao/CyclingRouter/users"
-	"gorm.io/gorm"
 )
 
 // モデルをマイグレートする
-func Migrate(db *gorm.DB) {
+func Migrate() {
 	users.AutoMigrate()
+	routes.AutoMigrate()
 }
 
 func GetSomething(c *gin.Context) {
@@ -27,8 +28,8 @@ func GetSomething(c *gin.Context) {
 
 func main() {
 
-	db := common.InitDB() //DBに接続
-	Migrate(db)
+	common.InitDB() //DBに接続
+	Migrate()
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -54,6 +55,7 @@ func main() {
 	v1 := r.Group("/api")
 	users.AuthRouter(v1.Group("auth/"))
 	users.UsersRouter(v1.Group("users/"))
+	routes.RoutersRouter(v1.Group("/routes"))
 	v2 := r.Group("/authTest").Use(middleware.Authz())
 
 	v2.GET("/", GetSomething)
