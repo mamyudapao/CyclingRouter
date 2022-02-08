@@ -68,7 +68,7 @@ const DnD = (props: PropsType): JSX.Element => {
                       {...provided.dragHandleProps}
                     >
                       <Divider
-                        icon={faCompass}
+                        index={index + 1}
                         bgColor="#ffbf00"
                         primary="経路"
                         secondary={item.lat}

@@ -3,15 +3,18 @@ import { useRouter } from "next/router";
 import axios from "../../axisoApi";
 import { Route } from "../../types/routes";
 import GoogleMapComponent from "../../components/GoogleMap/GoogleMap";
+import RouteFormDialog from "../../components/GoogleMap/RouteFormDialog";
 import {
   DirectionsServiceOptions,
   GoogleMapOptions,
 } from "../../components/GoogleMap/types";
-import { Card } from "@mui/material";
+import { Button, Card, Dialog } from "@mui/material";
 import Styles from "./index.module.scss";
 import DataView from "../../components/DataDisplay/DataView";
 import { formatNumber } from "../../utils/numConverter";
 import DnD from "../../components/DataDisplay/DnD";
+import { useSelector } from "react-redux";
+import { UserState } from "../../reducks/user/userSlice";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -19,13 +22,23 @@ const mapContainerStyle = {
   height: "80vh",
 };
 
+const initialRoute: Route = {
+  id: "",
+  direction: "",
+  title: "",
+  description: "",
+  userId: "",
+};
+
 const RouteComponent = (): JSX.Element => {
   const router = useRouter();
   const { id } = router.query;
+  const store = useSelector((state: UserState) => state);
   const [mapRef, setMapRef] = useState<google.maps.Map | undefined>(undefined);
   const [center, setCenter] = useState<google.maps.LatLngLiteral | undefined>(
     undefined
   );
+  const [route, setRoute] = useState<Route>(initialRoute);
   const [markers, setMarkers] = useState<
     google.maps.LatLngLiteral[] | undefined
   >(undefined);
@@ -65,6 +78,39 @@ const RouteComponent = (): JSX.Element => {
     setDirectionLoaded(true);
   };
 
+  const getDirections = (
+    event: any //TODO: any解消
+  ) => {
+    if (event !== undefined && markers !== undefined) {
+      console.log(event);
+      setOrigin(markers[0]);
+      setDestination(markers[markers.length - 1]);
+      const tempWaypoints = markers
+        .filter((_, index) => index !== 0 && markers.length - 1)
+        .map((position: google.maps.LatLngLiteral, index: number) => {
+          return { location: position };
+        });
+      setWaypoints([...tempWaypoints] as Array<google.maps.DirectionsWaypoint>);
+      setDirectionLoaded(false);
+    }
+  };
+
+  const getPosition = (position: google.maps.MapMouseEvent) => {
+    if (markers === undefined || markers.length < 6) {
+      if (mapRef?.getCenter() !== undefined) {
+        setCenter(mapRef.getCenter()!.toJSON());
+      }
+      let json = position.latLng?.toJSON();
+      if (json !== undefined && markers !== undefined) {
+        const newMarkerPositionsArray = [
+          ...markers,
+          { lat: json.lat, lng: json.lng },
+        ] as Array<google.maps.LatLngLiteral>;
+        setMarkers(newMarkerPositionsArray);
+      }
+    }
+  };
+
   const emitSetMakerPositions = (
     newMarkerPositionsArray: google.maps.LatLngLiteral[]
   ) => {
@@ -78,7 +124,9 @@ const RouteComponent = (): JSX.Element => {
         setMarkers(
           JSON.parse(response.data.direction) as google.maps.LatLngLiteral[]
         );
+        setRoute(response.data);
         console.log(markers);
+        console.log(route);
       });
     }
     if (markers !== undefined && origin === undefined) {
@@ -94,6 +142,21 @@ const RouteComponent = (): JSX.Element => {
     }
   });
 
+  const createData = (title: string, description: string) => {
+    const direction = JSON.stringify(markers);
+    axios
+      .put(`/routes/${route.id}`, {
+        title,
+        description,
+        direction,
+        userId: store.id,
+      })
+      .then((response) => {
+        console.log(response);
+        router.push("/profile");
+      });
+  };
+
   const googleMapsOptionsObject: GoogleMapOptions = {
     center: center,
     disableDefaultUI: true,
@@ -102,6 +165,7 @@ const RouteComponent = (): JSX.Element => {
     onLoad: (map: google.maps.Map) => {
       setMapRef(map);
     },
+    onClick: getPosition,
   };
 
   const directionsServiceOptionsObject: DirectionsServiceOptions = {
@@ -114,25 +178,49 @@ const RouteComponent = (): JSX.Element => {
 
   return (
     <Card className={Styles.card}>
-      <div>
-        <div className={Styles.dataView}>
-          <DataView
-            distance={formatNumber(distance / 1000, 1)}
-            time={formatNumber((distance / 1000 / 25) * 60, 1)}
-            calories={formatNumber(10 * 65 * (distance / 1000 / 25) * 1.05, 1)}
+      <div className={Styles.cardContainer}>
+        <div>
+          <div className={Styles.dataView}>
+            <DataView
+              distance={formatNumber(distance / 1000, 1)}
+              time={formatNumber((distance / 1000 / 25) * 60, 1)}
+              calories={formatNumber(
+                10 * 65 * (distance / 1000 / 25) * 1.05,
+                1
+              )}
+            />
+          </div>
+          <GoogleMapComponent
+            libraries={libraries as any}
+            googleMap={googleMapsOptionsObject}
+            directionService={directionsServiceOptionsObject}
+            response={response}
+            markers={markers}
           />
         </div>
-        <GoogleMapComponent
-          libraries={libraries as any}
-          googleMap={googleMapsOptionsObject}
-          directionService={directionsServiceOptionsObject}
-          response={response}
-          markers={markers}
+        <div>
+          {markers != undefined && (
+            <DnD
+              positions={[...markers]}
+              setPositions={emitSetMakerPositions}
+            />
+          )}
+        </div>
+      </div>
+      <div>
+        <Button variant="contained" onClick={getDirections}>
+          経路を求める
+        </Button>
+        <RouteFormDialog
+          buttonText="コースを更新する！"
+          title="コースを更新"
+          titleValue={route.title}
+          descriptionValue={route.description}
+          contentText="更新する内容を入力してください。"
+          sendData={createData}
+          onClickText="コースを更新する"
         />
       </div>
-      {markers != undefined && (
-        <DnD positions={[...markers]} setPositions={emitSetMakerPositions} />
-      )}
     </Card>
   );
 };

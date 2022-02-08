@@ -19,9 +19,6 @@ export default function FormDialog(props: PropsType): JSX.Element {
   const handleClick = () => {
     setOpen(!open);
   };
-  const sendData = () => {
-    console.log("send!");
-  };
 
   return (
     <div>

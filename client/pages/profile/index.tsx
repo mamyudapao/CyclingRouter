@@ -17,7 +17,7 @@ import { Route } from "../../types/routes";
 //TODO: S3を準備する
 //TODO: follow機能をつける
 
-const Profile = () => {
+const Profile = (): JSX.Element => {
   const store = useSelector((state: UserState) => state);
   const dispatch = useDispatch();
   const [name, setName] = useState<string>(store.username!);

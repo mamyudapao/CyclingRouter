@@ -15,7 +15,7 @@ type ButtonDefinition = {
 };
 
 type DividerProps = {
-  icon: IconDefinition;
+  index: number;
   button?: ButtonDefinition;
   info?: any;
   bgColor: string;
@@ -36,9 +36,7 @@ const InsetDivider = (props: DividerProps): JSX.Element => {
       >
         <ListItem>
           <ListItemAvatar>
-            <Avatar sx={{ bgcolor: props.bgColor }}>
-              <FontAwesomeIcon icon={props.icon}></FontAwesomeIcon>
-            </Avatar>
+            <Avatar sx={{ bgcolor: props.bgColor }}>{props.index}</Avatar>
           </ListItemAvatar>
           <ListItemText primary={props.primary} secondary={props.secondary} />
           {props.button && (

@@ -50,6 +50,7 @@ const home = (): JSX.Element => {
   // autocomplete用
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
+
   const onPlaceChanged = () => {
     const positionJson = autocomplete!.getPlace().geometry?.location?.toJSON();
     if (positionJson !== undefined) {
@@ -73,6 +74,7 @@ const home = (): JSX.Element => {
       setDirectionLoaded(false);
     }
   };
+
   const directionsCallback = (
     result: google.maps.DirectionsResult | null,
     status: google.maps.DirectionsStatus
@@ -98,15 +100,19 @@ const home = (): JSX.Element => {
   const [markerPositions, setMakerPositions] = useState<
     google.maps.LatLngLiteral[]
   >([]);
+
   const emitSetMakerPositions = (
     newMarkerPositionsArray: google.maps.LatLngLiteral[]
   ) => {
     setMakerPositions(newMarkerPositionsArray);
   };
+
   const [mapRef, setMapRef] = useState<google.maps.Map | null>(null);
+
   const handleOnLoad = (map: google.maps.Map) => {
     setMapRef(map);
   };
+
   const getPosition = (position: google.maps.MapMouseEvent) => {
     if (markerPositions.length < 6) {
       if (mapRef?.getCenter() !== undefined) {
