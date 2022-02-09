@@ -32,14 +32,7 @@ func CreateRoute(c *gin.Context) {
 		})
 		return
 	}
-	response := ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: route.Description,
-		Title:       route.Title,
-		Direction:   route.Direction,
-	}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, route)
 }
 
 func RetriveRoute(c *gin.Context) {
@@ -51,16 +44,7 @@ func RetriveRoute(c *gin.Context) {
 		})
 		return
 	}
-	response := ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: route.Description,
-		Title:       route.Title,
-		Direction:   route.Direction,
-		CreatedAt:   route.CreatedAt.String(),
-		UpdatedAt:   route.UpdatedAt.String(),
-	}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, route)
 }
 
 func UpdateRoute(c *gin.Context) {
@@ -70,23 +54,14 @@ func UpdateRoute(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(routeValidation)
-	result := common.DB.Model(route).Where("id = ?", c.Param("id")).First(&route).Updates(routeValidation)
+	result := common.DB.Model(route).Where("id = ?", c.Param("id")).First(&route).Updates(routeValidation).First(&route)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": "failed to update",
 		})
 		return
 	}
-	c.JSON(http.StatusOK, ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: routeValidation.Description,
-		Title:       routeValidation.Title,
-		Direction:   routeValidation.Direction,
-		CreatedAt:   route.CreatedAt.String(),
-		UpdatedAt:   route.UpdatedAt.String(),
-	})
+	c.JSON(http.StatusOK, route)
 }
 
 func DeleteRoute(c *gin.Context) {
