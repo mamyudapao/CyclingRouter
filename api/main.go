@@ -8,6 +8,7 @@ import (
 	"github.com/mamyudapao/CyclingRouter/common"
 	"github.com/mamyudapao/CyclingRouter/middleware"
 	"github.com/mamyudapao/CyclingRouter/routes"
+	"github.com/mamyudapao/CyclingRouter/timelines"
 	"github.com/mamyudapao/CyclingRouter/users"
 )
 
@@ -15,6 +16,7 @@ import (
 func Migrate() {
 	users.AutoMigrate()
 	routes.AutoMigrate()
+	timelines.AutoMigrate()
 }
 
 func GetSomething(c *gin.Context) {
@@ -56,6 +58,7 @@ func main() {
 	users.AuthRouter(v1.Group("auth/"))
 	users.UsersRouter(v1.Group("users/"))
 	routes.RoutersRouter(v1.Group("/routes"))
+	timelines.TimelineRouter(v1.Group("/timelines"))
 	v2 := r.Group("/authTest").Use(middleware.Authz())
 
 	v2.GET("/", GetSomething)
