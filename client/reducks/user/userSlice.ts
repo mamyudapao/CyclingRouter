@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../axisoApi";
 import router from "next/router";
+import { User } from "../../types/users";
 
 type SignupUserObject = {
   email: string;
@@ -10,79 +11,71 @@ type SignupUserObject = {
 
 type UpdateProfileObject = {
   id: number;
-  biography: string | null;
-  birthday: Date | null;
-  location: string | null;
-  username: string | null;
+  biography: string;
+  birthday: Date | string;
+  location: string;
+  username: string;
 };
 
-type UserResponse = {
-  id: number;
-  biography: string;
-  createdAt: string;
-  email: string;
-  userImage: string;
-  username: string;
-  location: string;
-  birthday: Date | null;
+type UserSignupResponse = {
+  // TODO: あくまでサインインのときのやつ
   refreshToken: string;
   accessToken: string;
+  user: User;
 };
 
 export type UserState = {
-  id: number | null;
-  username: string | null;
-  email: string | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  birthday: Date | null;
-  location: string | null;
-  biography: string | null;
-  userImage: string | null;
+  accessToken: string;
+  refreshToken: string;
+  user: User;
 };
 
 const initialState: UserState = {
-  id: null,
-  username: null,
-  email: null,
-  accessToken: null,
-  refreshToken: null,
-  birthday: null,
-  location: null,
-  biography: null,
-  userImage: null,
+  accessToken: "",
+  refreshToken: "",
+  user: {
+    id: 0,
+    username: "",
+    email: "",
+    biography: "",
+    userImage: "",
+    location: "",
+    birthday: "",
+    createdAt: "",
+    updatedAt: "",
+  },
 };
 
-export const signInAction = createAsyncThunk<UserResponse, SignupUserObject>(
-  "users/signInAction",
-  async (userObj) => {
-    const response = await axios.post<UserResponse>("auth/registration", {
-      email: userObj.email,
-      username: userObj.username,
-      password: userObj.password,
+export const signInAction = createAsyncThunk<
+  UserSignupResponse,
+  SignupUserObject
+>("users/signInAction", async (userObj) => {
+  const response = await axios.post<UserSignupResponse>("auth/registration", {
+    email: userObj.email,
+    username: userObj.username,
+    password: userObj.password,
+  });
+  return response.data;
+});
+
+export const updateProfileAction = createAsyncThunk<User, UpdateProfileObject>(
+  "users/updateProfileAction",
+  async (updateObj) => {
+    const response = await axios.put<User>(`users/${updateObj.id}`, {
+      biography: updateObj.biography,
+      birthday: updateObj.birthday,
+      location: updateObj.location,
+      username: updateObj.username,
     });
     return response.data;
   }
 );
 
-export const updateProfileAction = createAsyncThunk<
-  UserResponse,
-  UpdateProfileObject
->("users/updateProfileAction", async (updateObj) => {
-  const response = await axios.put<UserResponse>(`users/${updateObj.id}`, {
-    biography: updateObj.biography,
-    birthday: updateObj.birthday,
-    location: updateObj.location,
-    username: updateObj.username,
-  });
-  return response.data;
-});
-
 export const updateProfileIconsAction = createAsyncThunk<
-  UserResponse,
+  { userImage: string },
   { image: FormData; id: number }
 >("users/updateProfileIconsAction", async (updateObj) => {
-  const response = await axios.post<UserResponse>(
+  const response = await axios.post<{ userImage: string }>(
     `users/${updateObj.id}/image`,
     updateObj.image,
     {
@@ -99,29 +92,30 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     login: (state) => {
-      state.username = "nosiken";
-      state.email = "nosiken@gmail.com";
+      state.user.username = "nosiken";
+      state.user.email = "nosiken@gmail.com";
     },
   },
   extraReducers: (builder) => {
     builder.addCase(signInAction.fulfilled, (state, action) => {
       console.log(action.payload);
-      state.id = action.payload.id;
-      state.email = action.payload.email;
-      state.username = action.payload.username;
+      state.user.id = action.payload.user.id;
+      state.user.email = action.payload.user.email;
+      state.user.username = action.payload.user.username;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       router.push("/home");
     });
     builder.addCase(updateProfileAction.fulfilled, (state, action) => {
-      state.biography = action.payload.biography;
-      state.birthday = action.payload.birthday;
-      state.location = action.payload.location;
-      state.username = action.payload.username;
+      console.log(action.payload);
+      state.user.biography = action.payload.biography;
+      state.user.birthday = action.payload.birthday;
+      state.user.location = action.payload.location;
+      state.user.username = action.payload.username;
     });
     builder.addCase(updateProfileIconsAction.fulfilled, (state, action) => {
       console.log(action.payload);
-      state.userImage = action.payload.userImage;
+      state.user.userImage = action.payload.userImage;
     });
   },
 });

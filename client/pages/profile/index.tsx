@@ -20,15 +20,15 @@ import { Route } from "../../types/routes";
 const Profile = (): JSX.Element => {
   const store = useSelector((state: UserState) => state);
   const dispatch = useDispatch();
-  const [name, setName] = useState<string>(store.username!);
-  const [biography, setBiography] = useState<string | null>(store.biography);
-  const [location, setLocation] = useState<string | null>(store.location);
-  const [birthday, setBirthday] = useState<Date | null>(store.birthday);
+  const [name, setName] = useState<string>(store.user.username!);
+  const [biography, setBiography] = useState<string>(store.user.biography);
+  const [location, setLocation] = useState<string>(store.user.location);
+  const [birthday, setBirthday] = useState<string | Date>(store.user.birthday);
   const [image, setImage] = useState<File>();
   const [routes, setRoutes] = useState<Route[] | null>(null);
 
   const getRoute = async () => {
-    await axios.get(`/routes/user/${store.id}`).then((response) => {
+    await axios.get(`/routes/user/${store.user.id}`).then((response) => {
       console.log(response);
       setRoutes(response.data.routes);
     });
@@ -39,9 +39,9 @@ const Profile = (): JSX.Element => {
   }, []);
   const updateUserProfile = (
     newName?: string,
-    newBiography?: string | null,
-    newLocation?: string | null,
-    newBirthday?: Date | null
+    newBiography?: string,
+    newLocation?: string,
+    newBirthday?: Date | string
   ) => {
     if (newName !== undefined) {
       console.log(newName);
@@ -72,7 +72,7 @@ const Profile = (): JSX.Element => {
     formData.append("image", blob, image?.name);
     dispatch(
       updateProfileIconsAction({
-        id: store.id!,
+        id: store.user.id!,
         image: formData,
       })
     );
@@ -81,7 +81,7 @@ const Profile = (): JSX.Element => {
   const sendNewInfoToAPIServer = () => {
     dispatch(
       updateProfileAction({
-        id: store.id!,
+        id: store.user.id!,
         biography: biography,
         birthday: birthday,
         location: location,
@@ -112,19 +112,19 @@ const Profile = (): JSX.Element => {
         <div className={Style.profile}>
           <div className={Style.imageBlock}>
             <Image
-              src={`https://ddx5fuyp1f5xu.cloudfront.net/${store.userImage}`}
+              src={`https://ddx5fuyp1f5xu.cloudfront.net/${store.user.userImage}`} //TODO: デフォルト　のURLを設定する
               width="200"
               height="200"
               className={Style.profileImage}
             ></Image>
             <p>Following: 210 Followers: 111</p>
-            <p>Location: {store.location}</p>
-            <p>Birthday: {store.birthday}</p>
+            <p>Location: {store.user.location}</p>
+            <p>Birthday: {store.user.birthday}</p>
           </div>
           <div className={Style.centerBlock}>
             <div className={Style.profileBlock}>
-              <h1>{store.username}</h1>
-              <p>{store.biography}</p>
+              <h1>{store.user.username}</h1>
+              <p>{store.user.biography}</p>
             </div>
             <div>{routes !== null && <RoutersCards routes={routes} />}</div>
           </div>

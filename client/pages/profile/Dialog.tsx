@@ -20,9 +20,9 @@ type PropsType = {
   image: File | undefined;
   updateProps: (
     newName?: string,
-    newBiography?: string | null,
-    newLocation?: string | null,
-    newBirthday?: Date | null
+    newBiography?: string,
+    newLocation?: string,
+    newBirthday?: Date | string
   ) => void;
   updateImageProps: (newImage: File | undefined) => void;
   update: () => void;
@@ -96,7 +96,7 @@ const AlertDialog = (props: PropsType): JSX.Element => {
               value={props.birthday}
               onChange={(newValue) => {
                 setBirthday(newValue);
-                props.updateProps(undefined, undefined, undefined, newValue);
+                props.updateProps(undefined, undefined, undefined, newValue!);
               }}
               renderInput={(params) => <TextField {...params} />}
             />

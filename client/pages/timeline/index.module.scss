@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  .profile {
+    width: 20%;
+    background-color: red;
+  }
+  .timeline {
+    width: 60%;
+    background-color: white;
+  }
+  .info {
+    width: 20%;
+    background-color: yellow;
+  }
+}
