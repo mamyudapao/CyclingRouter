@@ -34,9 +34,9 @@ func UsersRegistration(c *gin.Context) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	// gormを使ってDBに保存する
 	user := User{
-		Username:     userValidation.Username,
-		Email:        userValidation.Email,
-		PasswordHash: hashedPassword}
+		Username: userValidation.Username,
+		Email:    userValidation.Email,
+		Password: hashedPassword}
 	err = common.DB.Create(&user).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -61,19 +61,11 @@ func UsersRegistration(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
-	response := UserResponse{
-		Username:     user.Username,
-		Email:        user.Email,
-		Biography:    user.Biography,
-		AccessToken:  signedToken,
-		RefreshToken: refreshToken,
-		Location:     user.Location,
-		Birthday:     user.Birthday,
-		ID:           user.ID,
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{
+		"user":         user,
+		"accessToken":  signedToken,
+		"refreshToken": refreshToken,
+	})
 
 }
 
@@ -101,7 +93,7 @@ func UsersLogin(c *gin.Context) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(payload.Password))
+	err = bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password))
 
 	if err != nil {
 		log.Println(err)
@@ -128,18 +120,11 @@ func UsersLogin(c *gin.Context) {
 		return
 	}
 
-	tokenResponse := UserResponse{
-		Username:     user.Username,
-		Email:        user.Email,
-		Biography:    user.Biography,
-		AccessToken:  signedToken,
-		RefreshToken: refreshSignedToken,
-		Location:     user.Location,
-		Birthday:     user.Birthday,
-		ID:           user.ID,
-	}
-
-	c.JSON(http.StatusOK, tokenResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"user":         user,
+		"accessToken":  signedToken,
+		"refreshToken": refreshSignedToken,
+	})
 }
 
 func RefreshTokens(c *gin.Context) {
@@ -181,15 +166,8 @@ func RetriveUser(c *gin.Context) {
 		})
 		return
 	}
-	responseObject := &UserInformation{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		Biography: user.Biography,
-		UserImage: user.UserImage,
-		Location:  user.Location,
-	}
-	c.JSON(200, responseObject)
+
+	c.JSON(http.StatusOK, user)
 
 }
 
@@ -201,7 +179,7 @@ func UpdateUser(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	result := common.DB.Model(user).Where("id = ?", c.Param("id")).First(&user).Updates(userValidation)
+	result := common.DB.Model(user).Where("id = ?", c.Param("id")).First(&user).Updates(userValidation).First(&user)
 	fmt.Println(user)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -209,15 +187,7 @@ func UpdateUser(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, UserInformation{
-		ID:        user.ID,
-		Username:  userValidation.Username,
-		Email:     user.Email,
-		Biography: userValidation.Biography,
-		UserImage: userValidation.UserImage,
-		Birthday:  userValidation.Birthday,
-		Location:  userValidation.Location,
-	})
+	c.JSON(http.StatusOK, user)
 }
 
 func DeleteUser(c *gin.Context) {

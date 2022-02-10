@@ -7,13 +7,13 @@ import (
 )
 
 type User struct {
-	Username     string `gorm:"column:username; not null"`
-	Email        string `gorm:"column:email;unique; not null"`
-	PasswordHash []byte `gorm:"column:password;not null"`
-	Biography    string `gorm:"column:biography;"`
-	UserImage    string `gorm:"column:user_image;"`
-	Location     string `gorm:"column:location"`
-	Birthday     string `gorm:"column:birthday"`
+	Username  string `gorm:"column:username; not null" json:"username"`
+	Email     string `gorm:"column:email;unique; not null" json:"email"`
+	Password  []byte `gorm:"column:password;not null;" json:"-"`
+	Biography string `gorm:"column:biography;" json:"biography"`
+	UserImage string `gorm:"column:user_image;" json:"userImage"`
+	Location  string `gorm:"column:location" json:"location"`
+	Birthday  string `gorm:"column:birthday" json:"birthday"`
 	common.GormModel
 }
 

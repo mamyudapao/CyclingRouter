@@ -13,10 +13,10 @@ type Database struct {
 }
 
 type GormModel struct {
-	ID        uint `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	ID        uint           `json:"id" gorm:"primaryKey"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 var DB *gorm.DB

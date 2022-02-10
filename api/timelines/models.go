@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/mamyudapao/CyclingRouter/common"
+	"github.com/mamyudapao/CyclingRouter/users"
 )
 
 type Tweet struct {
-	UserId  uint         `gorm:"column:user_id" json:"userId"`
+	UserId  uint         `json:"userId"`
+	User    users.User   `gorm:"foreignKey:UserId" json:"user"`
 	Content string       `gorm:"column:content" json:"content"`
 	Replies []TweetReply `gorm:"foreignKey:ID" json:"replies"`
 	Likes   []TweetLike  `gorm:"foreignKey:ID" json:"likes"`
@@ -29,7 +31,7 @@ type TweetReply struct {
 
 func AutoMigrate() {
 	db := common.GetDB()
-	err := db.AutoMigrate(&Tweet{}, &TweetLike{}, &TweetReply{})
+	err := db.AutoMigrate(&Tweet{})
 	if err != nil {
 		fmt.Println(err)
 	}

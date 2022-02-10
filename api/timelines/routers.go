@@ -7,4 +7,5 @@ func TimelineRouter(router *gin.RouterGroup) {
 	router.GET("/:id", RetriveTweet)
 	router.DELETE("/:id", DeleteTweet)
 	router.GET("/user/:id", GetTweets)
+	router.GET("/all", GetAllTweets)
 }
