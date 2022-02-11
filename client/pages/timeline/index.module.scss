@@ -2,14 +2,34 @@
   display: flex;
   .profile {
     width: 20%;
-    background-color: red;
+    .avatar {
+      width: 200px;
+      height: 200px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 20px;
+      position: relative;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .postForm {
+      width: 100%;
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .postButton {
+      margin-top: 10px;
+      margin-left: 51%;
+    }
   }
   .timeline {
     width: 60%;
-    background-color: white;
+    .tweetCard {
+      font-size: 1.3em;
+    }
   }
   .info {
     width: 20%;
-    background-color: yellow;
   }
 }
