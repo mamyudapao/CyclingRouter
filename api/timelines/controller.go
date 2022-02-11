@@ -82,7 +82,7 @@ func GetTweets(c *gin.Context) {
 func GetAllTweets(c *gin.Context) {
 	var tweets []Tweet
 
-	err := common.DB.Find(&tweets).Error
+	err := common.DB.Order("created_at desc").Find(&tweets).Error
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{
