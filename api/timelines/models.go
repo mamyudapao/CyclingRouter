@@ -11,8 +11,8 @@ type Tweet struct {
 	UserId  uint         `json:"userId"`
 	User    users.User   `gorm:"foreignKey:UserId" json:"user"`
 	Content string       `gorm:"column:content" json:"content"`
+	Likes   []TweetLike  `gorm:"foreignKey:TweetId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"likes"`
 	Replies []TweetReply `gorm:"foreignKey:ID" json:"replies"`
-	Likes   []TweetLike  `gorm:"foreignKey:TweetId" json:"likes"`
 	common.GormModel
 }
 

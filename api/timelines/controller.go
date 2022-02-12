@@ -37,6 +37,7 @@ func CreateTweet(c *gin.Context) {
 func RetriveTweet(c *gin.Context) {
 	var tweet Tweet
 	var user users.User
+	var likes []TweetLike
 	err := common.DB.Where("id = ?", c.Param("id")).First(&tweet).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -44,8 +45,10 @@ func RetriveTweet(c *gin.Context) {
 		})
 		return
 	}
-	common.DB.Model(&tweet).Association("User").Find(&user)
+	common.DB.Model(&tweet).Association("User").Find(&user)   //TODO: Likesを追加する
+	common.DB.Model(&tweet).Association("Likes").Find(&likes) //TODO: Likesを追加する
 	tweet.User = user
+	tweet.Likes = likes
 	c.JSON(http.StatusOK, tweet)
 }
 
@@ -64,6 +67,7 @@ func DeleteTweet(c *gin.Context) {
 
 func GetTweets(c *gin.Context) {
 	var tweets []Tweet
+	var likes []TweetLike
 	var user users.User
 	err := common.DB.Where("user_id = ?", c.Param("id")).Find(&tweets).Error
 	if err != nil {
@@ -74,13 +78,17 @@ func GetTweets(c *gin.Context) {
 	}
 	for i := range tweets {
 		common.DB.Model(&tweets[i]).Association("User").Find(&user)
+		common.DB.Model(&tweets[i]).Association("Likes").Find(&likes)
 		tweets[i].User = user
+		tweets[i].Likes = likes
 	}
 	c.JSON(http.StatusOK, tweets)
 }
 
 func GetAllTweets(c *gin.Context) {
 	var tweets []Tweet
+	var user users.User
+	var likes []TweetLike
 
 	err := common.DB.Order("created_at desc").Find(&tweets).Error
 	if err != nil {
@@ -91,10 +99,12 @@ func GetAllTweets(c *gin.Context) {
 		return
 	}
 	for i := range tweets {
-		var user users.User
-		common.DB.Where("id = ?", tweets[i].UserId).Find(&user)
+		common.DB.Model(&tweets[i]).Association("User").Find(&user)
+		common.DB.Model(&tweets[i]).Association("Likes").Find(&likes)
 		tweets[i].User = user
+		tweets[i].Likes = likes
 	}
+
 	c.JSON(http.StatusOK, tweets)
 }
 
