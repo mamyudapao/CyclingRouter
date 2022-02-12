@@ -2,7 +2,7 @@ import Styles from "./index.module.scss";
 import TweetComponent from "../../components/Timeline/TweetComponent";
 import { useEffect, useState } from "react";
 import axios from "../../axisoApi";
-import { Tweet } from "../../types/timelines";
+import { Like, Tweet } from "../../types/timelines";
 import { Avatar, Button, TextField } from "@mui/material";
 import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
@@ -13,25 +13,59 @@ const TimeLine = () => {
   const [tweets, setTweets] = useState<Tweet[] | undefined>(undefined);
   const [content, setContent] = useState<string>("");
 
+  const getTweets = async () => {
+    axios.get<Tweet[]>("/tweets/all").then((response) => {
+      console.log(response);
+      setTweets(response.data);
+    });
+  };
+
   const postTweet = async () => {
     await axios
-      .post<Tweet>("/timelines/", {
+      .post<Tweet>("/tweets/", {
         content: content,
         userId: store.user.id,
       })
       .then((response) => {
         console.log(response.data);
-        const tempTweets = [response.data, ...tweets!];
-        setTweets(tempTweets);
+        getTweets();
         setContent("");
       });
   };
 
+  const likeFunction = async (
+    tweetId: number,
+    userId: number,
+    likedIndex: number | null
+  ) => {
+    const index = tweets!.findIndex((element) => element.id === tweetId);
+    console.log(likedIndex);
+    if (likedIndex !== null) {
+      await axios
+        .delete(`likes/${tweets![index].likes[likedIndex].id}`)
+        .then((response) => {
+          console.log(response.data);
+          tweets![index].likes.splice(index, 1);
+          setTweets([...tweets!]);
+        });
+    } else {
+      await axios
+        .post<Like>("/likes/", {
+          userId: userId,
+          tweetId: tweetId,
+        })
+        .then((response) => {
+          console.log(response);
+          const index = tweets!.findIndex((element) => element.id === tweetId);
+          tweets![index].likes.push(response.data);
+          setTweets([...tweets!]);
+          console.log(tweets);
+        });
+    }
+  };
+
   useEffect(() => {
-    axios.get<Tweet[]>("/timelines/all").then((response) => {
-      console.log(response);
-      setTweets(response.data);
-    });
+    getTweets();
   }, []);
 
   return (
@@ -68,7 +102,11 @@ const TimeLine = () => {
             tweets.map((tweet) => {
               return (
                 <div className={Styles.tweetCard}>
-                  <TweetComponent {...tweet}></TweetComponent>
+                  <TweetComponent
+                    tweet={tweet}
+                    userId={store.user.id}
+                    likeFunction={likeFunction}
+                  ></TweetComponent>
                 </div>
               );
             })}

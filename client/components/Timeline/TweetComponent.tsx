@@ -9,13 +9,49 @@ import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import Image from "next/Image";
-import { Tweet } from "../../types/timelines";
+import { Like, Tweet } from "../../types/timelines";
 import { parseJSON, getDate, getYear, getMonth } from "date-fns";
+import { useEffect, useState } from "react";
+import Styles from "./index.module.scss";
 
-const TweetComponent = (props: Tweet) => {
-  const [expanded, setExpanded] = React.useState(false);
-  const date = parseJSON(props.createdAt);
+type PropsType = {
+  tweet: Tweet;
+  userId: number;
+  likeFunction: (
+    tweetId: number,
+    userId: number,
+    likeIndex: number | null
+  ) => void;
+};
+
+const TweetComponent = (props: PropsType) => {
+  const date = parseJSON(props.tweet.createdAt);
   const timeString = `${getYear(date)}年${getMonth(date)}月${getDate(date)}日`;
+
+  //TODO: 主がlikeしてあった場合は、likesのどれを主がしたやつかを計算する。
+
+  const [likeOrNot, setLikeOrNot] = useState<boolean>(false);
+  const [likedIndex, setLikedIndex] = useState<number | null>(null);
+
+  const checkLikeOrNot = (likes: Like[], userId: number) => {
+    let check = false;
+    let likeIndex: number | null = null;
+    likes.forEach((like, index) => {
+      if (like.userId === userId) {
+        check = true;
+        likeIndex = index;
+      } else {
+        check = false;
+      }
+    });
+    setLikedIndex(likeIndex);
+    return check;
+  };
+
+  useEffect(() => {
+    setLikeOrNot(checkLikeOrNot(props.tweet.likes, props.userId));
+    console.log(likedIndex);
+  }, [props]);
 
   return (
     <Card>
@@ -23,12 +59,12 @@ const TweetComponent = (props: Tweet) => {
         avatar={
           <Avatar>
             <Image
-              src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.user.userImage}`}
+              src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.user.userImage}`}
               layout="fill"
             />
           </Avatar>
         }
-        title={props.user.username}
+        title={props.tweet.user.username}
         subheader={timeString}
       />
       {/* <CardMedia
@@ -38,11 +74,20 @@ const TweetComponent = (props: Tweet) => {
         alt="Paella dish"
       /> */}
       <CardContent>
-        <Typography variant="inherit">{props.content}</Typography>
+        <Typography variant="inherit">{props.tweet.content}</Typography>
       </CardContent>
       <CardActions>
-        <IconButton aria-label="add to favorites">
+        <IconButton
+          aria-label="add to favorites"
+          className={likeOrNot ? Styles.liked : Styles.notLiked}
+          sx={{ color: likeOrNot ? "pink" : "" }}
+          onClick={() => {
+            props.likeFunction(props.tweet.id, props.userId, likedIndex);
+          }}
+        >
           <FavoriteIcon />
+
+          {props.tweet.likes !== null && props.tweet.likes.length}
         </IconButton>
         <IconButton aria-label="share">
           <ChatBubbleOutlineIcon />
