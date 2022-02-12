@@ -34,7 +34,7 @@ func CreateTweet(c *gin.Context) {
 	c.JSON(http.StatusOK, tweet)
 }
 
-func RetriveTweet(c *gin.Context) {
+func RetriveTweetById(c *gin.Context) {
 	var tweet Tweet
 	var user users.User
 	var likes []TweetLike
@@ -52,7 +52,7 @@ func RetriveTweet(c *gin.Context) {
 	c.JSON(http.StatusOK, tweet)
 }
 
-func DeleteTweet(c *gin.Context) {
+func DeleteTweetById(c *gin.Context) {
 	result := common.DB.Delete(&Tweet{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -65,7 +65,7 @@ func DeleteTweet(c *gin.Context) {
 	})
 }
 
-func GetTweets(c *gin.Context) {
+func GetTweetsByUserId(c *gin.Context) {
 	var tweets []Tweet
 	var likes []TweetLike
 	var user users.User
@@ -136,7 +136,7 @@ func CreateLike(c *gin.Context) {
 	c.JSON(http.StatusOK, like)
 }
 
-func DeleteLike(c *gin.Context) {
+func DeleteLikeById(c *gin.Context) {
 	result := common.DB.Unscoped().Delete(&TweetLike{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

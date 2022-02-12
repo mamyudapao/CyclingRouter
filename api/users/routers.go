@@ -11,8 +11,8 @@ func AuthRouter(router *gin.RouterGroup) {
 }
 
 func UsersRouter(router *gin.RouterGroup) {
-	router.GET("/:id", RetriveUser)
-	router.PUT("/:id", UpdateUser)
-	router.POST("/:id/image", UploadUserImage)
-	router.DELETE("/:id", DeleteUser)
+	router.GET("/:id", RetriveUserById)
+	router.PUT("/:id", UpdateUserById)
+	router.POST("/:id/image", UploadUserImageById)
+	router.DELETE("/:id", DeleteUserById)
 }

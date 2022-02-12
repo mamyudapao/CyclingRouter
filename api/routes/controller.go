@@ -35,7 +35,7 @@ func CreateRoute(c *gin.Context) {
 	c.JSON(http.StatusOK, route)
 }
 
-func RetriveRoute(c *gin.Context) {
+func RetriveRouteById(c *gin.Context) {
 	var route *Route
 	err := common.DB.Where("id = ?", c.Param("id")).First(&route).Error
 	if err != nil {
@@ -47,7 +47,7 @@ func RetriveRoute(c *gin.Context) {
 	c.JSON(http.StatusOK, route)
 }
 
-func UpdateRoute(c *gin.Context) {
+func UpdateRouteById(c *gin.Context) {
 	var route Route
 	var routeValidation RouteUpdateValidator
 	err := c.ShouldBindJSON(&routeValidation)
@@ -64,7 +64,7 @@ func UpdateRoute(c *gin.Context) {
 	c.JSON(http.StatusOK, route)
 }
 
-func DeleteRoute(c *gin.Context) {
+func DeleteRouteById(c *gin.Context) {
 	result := common.DB.Delete(&Route{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -77,7 +77,7 @@ func DeleteRoute(c *gin.Context) {
 	})
 }
 
-func GetRoutes(c *gin.Context) {
+func GetRoutesByUserId(c *gin.Context) {
 	var routes *[]Route
 	err := common.DB.Where("user_id = ?", c.Param("id")).Find(&routes).Error
 	if err != nil {

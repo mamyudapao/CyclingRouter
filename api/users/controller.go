@@ -155,7 +155,7 @@ func RefreshTokens(c *gin.Context) {
 
 // UserInformation Actions
 
-func RetriveUser(c *gin.Context) {
+func RetriveUserById(c *gin.Context) {
 	var user *User
 	err := common.DB.Where("id = ?", c.Param("id")).First(&user).Error
 	if err != nil {
@@ -169,7 +169,7 @@ func RetriveUser(c *gin.Context) {
 
 }
 
-func UpdateUser(c *gin.Context) {
+func UpdateUserById(c *gin.Context) {
 	var user User
 	var userValidation UserUpdateValidator
 	err := c.ShouldBindJSON(&userValidation)
@@ -188,7 +188,7 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func DeleteUser(c *gin.Context) {
+func DeleteUserById(c *gin.Context) {
 	result := common.DB.Delete(&User{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -201,7 +201,7 @@ func DeleteUser(c *gin.Context) {
 	})
 }
 
-func UploadUserImage(c *gin.Context) {
+func UploadUserImageById(c *gin.Context) {
 	bucketName := "cycling-router-bucket"
 
 	form, _ := c.MultipartForm()
