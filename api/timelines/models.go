@@ -12,13 +12,13 @@ type Tweet struct {
 	User    users.User   `gorm:"foreignKey:UserId" json:"user"`
 	Content string       `gorm:"column:content" json:"content"`
 	Replies []TweetReply `gorm:"foreignKey:ID" json:"replies"`
-	Likes   []TweetLike  `gorm:"foreignKey:ID" json:"likes"`
+	Likes   []TweetLike  `gorm:"foreignKey:TweetId" json:"likes"`
 	common.GormModel
 }
 
 type TweetLike struct {
-	TweetId uint `gorm:"column:tweet_id" json:"tweetId"`
-	UserId  uint `gorm:"column:user_id" json:"userId"`
+	UserId  uint `gorm:"column:user_id;uniqueIndex:unique_a" json:"userId"`
+	TweetId uint `gorm:"column:tweet_id;uniqueIndex:unique_a" json:"tweetId"`
 	common.GormModel
 }
 
@@ -31,7 +31,7 @@ type TweetReply struct {
 
 func AutoMigrate() {
 	db := common.GetDB()
-	err := db.AutoMigrate(&Tweet{})
+	err := db.AutoMigrate(&Tweet{}, TweetLike{})
 	if err != nil {
 		fmt.Println(err)
 	}

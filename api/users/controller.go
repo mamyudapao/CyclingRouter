@@ -29,14 +29,12 @@ func UsersRegistration(c *gin.Context) {
 		})
 		return
 	}
-	// psswordをハッシュ化する
-	password := []byte(userValidation.Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-	// gormを使ってDBに保存する
 	user := User{
 		Username: userValidation.Username,
-		Email:    userValidation.Email,
-		Password: hashedPassword}
+		Email:    userValidation.Email}
+	password := userValidation.Password
+	user.setPassword(password)
+	// gormを使ってDBに保存する
 	err = common.DB.Create(&user).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -93,7 +91,7 @@ func UsersLogin(c *gin.Context) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword(user.Password, []byte(payload.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
 
 	if err != nil {
 		log.Println(err)

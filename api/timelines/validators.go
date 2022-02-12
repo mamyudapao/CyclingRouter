@@ -5,3 +5,8 @@ type TweetCreationValidator struct {
 	UserId  uint   `form:"user_id" json:"userId" binding:"required,number"`
 	Content string `form:"content" json:"content" binding:"required"`
 }
+
+type LikeCreationsValidator struct {
+	TweetId uint `form:"tweet_id" json:"tweetId"`
+	UserId  uint `form:"user_id" json:"userId"`
+}

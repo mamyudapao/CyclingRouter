@@ -97,3 +97,44 @@ func GetAllTweets(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, tweets)
 }
+
+func CreateLike(c *gin.Context) {
+	var likeValidation LikeCreationsValidator
+
+	err := c.ShouldBindJSON(&likeValidation)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":    "Validation Error",
+			"detail": err.Error(),
+		})
+		return
+	}
+	like := TweetLike{
+		TweetId: likeValidation.TweetId,
+		UserId:  likeValidation.UserId,
+	}
+	err = common.DB.Create(&like).Error
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":    "can not create",
+			"detail": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, like)
+}
+
+func DeleteLike(c *gin.Context) {
+	result := common.DB.Unscoped().Delete(&TweetLike{}, c.Param("id"))
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": result.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "done delete tweet like",
+	})
+}
