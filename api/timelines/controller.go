@@ -137,6 +137,10 @@ func CreateLike(c *gin.Context) {
 }
 
 func DeleteLikeById(c *gin.Context) {
+	var like TweetLike
+	var likes []TweetLike
+	var tweet Tweet
+	common.DB.Where("id = ?", c.Param("id")).First(&like)
 	result := common.DB.Unscoped().Delete(&TweetLike{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -144,7 +148,11 @@ func DeleteLikeById(c *gin.Context) {
 		})
 		return
 	}
+	common.DB.Where("id = ?", like.TweetId).First(&tweet)
+	common.DB.Model(&tweet).Association("Likes").Find(&likes)
+	tweet.Likes = likes
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "done delete tweet like",
+		"msg":   "done delete tweet like",
+		"tweet": tweet,
 	})
 }

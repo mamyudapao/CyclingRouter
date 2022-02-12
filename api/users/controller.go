@@ -225,7 +225,7 @@ func UploadUserImageById(c *gin.Context) {
 	}
 	_, err = amazon.PutFile(context.TODO(), client, input)
 	if err != nil {
-		fmt.Println("Got error uploading file:")
+		fmt.Print("Got error uploading file:")
 		fmt.Println(err)
 		return
 	}
