@@ -60,6 +60,7 @@ func main() {
 	routes.RoutersRouter(v1.Group("/routes"))
 	timelines.TweetRouter(v1.Group("/tweets"))
 	timelines.TweetLikeRouter(v1.Group("/likes"))
+	timelines.TweetReplyRouter(v1.Group("/reply"))
 	v2 := r.Group("/authTest").Use(middleware.Authz())
 
 	v2.GET("/", GetSomething)
