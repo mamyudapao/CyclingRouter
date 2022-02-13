@@ -14,3 +14,9 @@ func TweetLikeRouter(router *gin.RouterGroup) {
 	router.POST("/", CreateLike)
 	router.DELETE("/:id", DeleteLikeById)
 }
+
+func TweetReplyRouter(router *gin.RouterGroup) {
+	router.POST("/", CreateTweetReply)
+	router.DELETE("/:id", DeleteReplyById)
+	router.GET("/tweet/:tweetId", GetRepliesByTweetId)
+}
