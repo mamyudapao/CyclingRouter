@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/common"
-	"github.com/mamyudapao/CyclingRouter/users"
 )
 
 func CreateTweet(c *gin.Context) {
@@ -37,8 +36,6 @@ func CreateTweet(c *gin.Context) {
 
 func RetriveTweetById(c *gin.Context) {
 	var tweet Tweet
-	var user users.User
-	var likes []TweetLike
 	err := common.DB.Where("id = ?", c.Param("id")).First(&tweet).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -49,8 +46,6 @@ func RetriveTweetById(c *gin.Context) {
 	common.DB.Model(&tweet).Association("User").Find(&tweet.User)
 	common.DB.Model(&tweet).Association("Likes").Find(&tweet.Likes)
 	common.DB.Model(&tweet).Association("Replies").Find(&tweet.Replies)
-	tweet.User = user
-	tweet.Likes = likes
 	c.JSON(http.StatusOK, tweet)
 }
 
