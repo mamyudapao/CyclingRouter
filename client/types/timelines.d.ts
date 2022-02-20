@@ -5,11 +5,18 @@ export interface Tweet extends GormModel {
   userId: number;
   user: User;
   content: string;
-  replies: null;
+  replies: Reply[];
   likes: Like[];
 }
 
 export interface Like extends GormModel {
   userId: number;
   tweetId: number;
+}
+
+export interface Reply extends GormModel {
+  tweetId: number;
+  userId: number;
+  user: User;
+  content: string;
 }

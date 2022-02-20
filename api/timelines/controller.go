@@ -46,6 +46,9 @@ func RetriveTweetById(c *gin.Context) {
 	common.DB.Model(&tweet).Association("User").Find(&tweet.User)
 	common.DB.Model(&tweet).Association("Likes").Find(&tweet.Likes)
 	common.DB.Model(&tweet).Association("Replies").Find(&tweet.Replies)
+	for i := range tweet.Replies {
+		common.DB.Model(&tweet.Replies[i]).Association("User").Find(&tweet.Replies[i].User)
+	}
 	c.JSON(http.StatusOK, tweet)
 }
 

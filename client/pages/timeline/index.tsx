@@ -111,7 +111,7 @@ const TimeLine = () => {
               );
             })}
         </div>
-        <div className={Styles.info}>あ</div>
+        <div className={Styles.info}></div>
       </div>
     </>
   );

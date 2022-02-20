@@ -13,6 +13,8 @@ import { Like, Tweet } from "../../types/timelines";
 import { parseJSON, getDate, getYear, getMonth } from "date-fns";
 import { useEffect, useState } from "react";
 import Styles from "./index.module.scss";
+import { CardMedia } from "@mui/material";
+import Link from "next/link";
 
 type PropsType = {
   tweet: Tweet;
@@ -73,9 +75,13 @@ const TweetComponent = (props: PropsType) => {
         image="/static/images/cards/paella.jpg"
         alt="Paella dish"
       /> */}
-      <CardContent>
-        <Typography variant="inherit">{props.tweet.content}</Typography>
-      </CardContent>
+      <div className={Styles.link}>
+        <Link href={`/timeline/${props.tweet.id}`}>
+          <CardContent>
+            <Typography variant="inherit">{props.tweet.content}</Typography>
+          </CardContent>
+        </Link>
+      </div>
       <CardActions>
         <IconButton
           aria-label="add to favorites"
@@ -87,10 +93,15 @@ const TweetComponent = (props: PropsType) => {
         >
           <FavoriteIcon />
 
-          {props.tweet.likes !== null && props.tweet.likes.length}
+          {props.tweet.likes !== null &&
+            props.tweet.likes.length !== 0 &&
+            props.tweet.likes.length}
         </IconButton>
         <IconButton aria-label="share">
           <ChatBubbleOutlineIcon />
+          {props.tweet.replies !== null &&
+            props.tweet.replies.length !== 0 &&
+            props.tweet.replies.length}
         </IconButton>
       </CardActions>
     </Card>
