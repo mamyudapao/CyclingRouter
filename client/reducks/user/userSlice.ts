@@ -20,6 +20,8 @@ type UpdateProfileObject = {
   birthday: Date | string;
   location: string;
   username: string;
+  weight: number;
+  height: number;
 };
 
 type UserSignupResponse = {
@@ -84,6 +86,8 @@ export const updateProfileAction = createAsyncThunk<User, UpdateProfileObject>(
       birthday: updateObj.birthday,
       location: updateObj.location,
       username: updateObj.username,
+      weight: updateObj.weight,
+      height: updateObj.height,
     });
     return response.data;
   }
@@ -108,12 +112,7 @@ export const updateProfileIconsAction = createAsyncThunk<
 export const usersSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {
-    login: (state) => {
-      state.user.username = "nosiken";
-      state.user.email = "nosiken@gmail.com";
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(signInAction.fulfilled, (state, action) => {
       console.log(action.payload);
@@ -152,8 +151,6 @@ export const usersSlice = createSlice({
     });
   },
 });
-
-export const { login } = usersSlice.actions;
 
 export type usersState = ReturnType<typeof usersSlice.reducer>;
 

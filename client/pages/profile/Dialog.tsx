@@ -17,11 +17,15 @@ type PropsType = {
   biography: string | null;
   location: string | null;
   birthday: Date | null;
+  weight: number;
+  height: number;
   image: File | undefined;
   updateProps: (
     newName?: string,
     newBiography?: string,
     newLocation?: string,
+    newWeight?: number,
+    newHeight?: number,
     newBirthday?: Date | string
   ) => void;
   updateImageProps: (newImage: File | undefined) => void;
@@ -73,6 +77,8 @@ const AlertDialog = (props: PropsType): JSX.Element => {
                 undefined,
                 event.target.value,
                 undefined,
+                undefined,
+                undefined,
                 undefined
               );
             }}
@@ -86,6 +92,38 @@ const AlertDialog = (props: PropsType): JSX.Element => {
                 undefined,
                 undefined,
                 event.target.value,
+                undefined,
+                undefined,
+                undefined
+              );
+            }}
+          ></TextField>
+          <TextField
+            label="体重"
+            value={props.weight}
+            type="number"
+            onChange={(event) => {
+              props.updateProps(
+                undefined,
+                undefined,
+                undefined,
+                Number.parseInt(event.target.value),
+                undefined,
+                undefined
+              );
+            }}
+          ></TextField>
+          <TextField
+            label="身長"
+            value={props.height}
+            type="number"
+            onChange={(event) => {
+              props.updateProps(
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                Number.parseInt(event.target.value),
                 undefined
               );
             }}
@@ -96,7 +134,14 @@ const AlertDialog = (props: PropsType): JSX.Element => {
               value={props.birthday}
               onChange={(newValue) => {
                 setBirthday(newValue);
-                props.updateProps(undefined, undefined, undefined, newValue!);
+                props.updateProps(
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  newValue!
+                );
               }}
               renderInput={(params) => <TextField {...params} />}
             />

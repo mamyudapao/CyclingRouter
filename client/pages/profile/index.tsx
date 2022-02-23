@@ -24,6 +24,8 @@ const Profile = (): JSX.Element => {
   const [biography, setBiography] = useState<string>(store.user.biography);
   const [location, setLocation] = useState<string>(store.user.location);
   const [birthday, setBirthday] = useState<string | Date>(store.user.birthday);
+  const [weight, setWeight] = useState<number>(store.user.weight);
+  const [height, setHeight] = useState<number>(store.user.height);
   const [image, setImage] = useState<File>();
   const [routes, setRoutes] = useState<Route[] | null>(null);
 
@@ -41,6 +43,8 @@ const Profile = (): JSX.Element => {
     newName?: string,
     newBiography?: string,
     newLocation?: string,
+    newWeight?: number,
+    newHeight?: number,
     newBirthday?: Date | string
   ) => {
     if (newName !== undefined) {
@@ -57,7 +61,13 @@ const Profile = (): JSX.Element => {
     if (newBirthday !== undefined) {
       setBirthday(newBirthday);
     }
-    console.log(name, biography, location, birthday, image);
+    if (newWeight !== undefined) {
+      setWeight(newWeight);
+    }
+    if (newHeight !== undefined) {
+      setHeight(newHeight);
+    }
+    console.log(name, biography, location, birthday, image, weight, height);
   };
 
   const updateImage = (image: File | undefined) => {
@@ -82,10 +92,12 @@ const Profile = (): JSX.Element => {
     dispatch(
       updateProfileAction({
         id: store.user.id!,
-        biography: biography,
-        birthday: birthday,
-        location: location,
+        biography,
+        birthday,
+        location,
         username: name,
+        weight,
+        height: height,
       })
     );
     if (image != undefined) {
@@ -103,6 +115,8 @@ const Profile = (): JSX.Element => {
               location,
               birthday,
               image,
+              weight,
+              height,
             }}
             updateProps={updateUserProfile}
             updateImageProps={updateImage}
