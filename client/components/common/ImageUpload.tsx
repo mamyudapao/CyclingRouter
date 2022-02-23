@@ -1,13 +1,14 @@
 import { Button } from "@mui/material";
-import Styles from "./profile.module.scss";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
+import Styles from "./index.module.scss";
 
-type propsType = {
-  image: File | undefined;
-  updateFunction: (image: File | undefined) => void;
+type PropsType = {
+  setImage: Dispatch<SetStateAction<File | undefined>>;
+  imageFunction?: (image: File | undefined) => void;
+  message: string;
 };
 
-const UploadButton = (props: propsType): JSX.Element => {
+const UploadButton = (props: PropsType): JSX.Element => {
   const inputEl = useRef<HTMLInputElement>(null!);
 
   return (
@@ -19,15 +20,16 @@ const UploadButton = (props: propsType): JSX.Element => {
           inputEl.current.click();
         }}
       >
-        プロフィール画像を投稿する
+        {props.message}
         <input
           type="file"
           ref={inputEl}
+          id={Styles.uploadButton}
           accept="image/*"
-          id={Styles.uploadProfile}
           onChange={(e) => {
             if (e.target.files) {
-              props.updateFunction(e.target.files[0]);
+              console.log("aaa");
+              props.setImage(e.target.files[0]);
             }
           }}
         />

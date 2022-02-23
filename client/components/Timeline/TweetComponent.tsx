@@ -106,6 +106,14 @@ const TweetComponent = (props: PropsType) => {
         }
         subheader={timeString}
       />
+      {props.tweet.image !== "" && (
+        <CardMedia
+          component="img"
+          id={Styles.cardMedia}
+          image={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.image}`}
+          alt="Paella dish"
+        />
+      )}
       <div className={Styles.link}>
         <Link href={`/timeline/${props.tweet.id}`}>
           <CardContent>

@@ -4,6 +4,7 @@ import "github.com/gin-gonic/gin"
 
 func TweetRouter(router *gin.RouterGroup) {
 	router.POST("/", CreateTweet)
+	router.POST("/:id/imageUpload", UploadTweetImage)
 	router.GET("/:id", RetriveTweetById)
 	router.DELETE("/:id", DeleteTweetById)
 	router.GET("/user/:id", GetTweetsByUserId)

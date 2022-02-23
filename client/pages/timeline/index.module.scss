@@ -19,8 +19,12 @@
       margin-top: 10px;
     }
     .postButton {
+      display: flex;
       margin-top: 10px;
-      margin-left: 51%;
+      margin-left: 2.5em;
+      button {
+        font-size: 12px;
+      }
     }
   }
   .timeline {

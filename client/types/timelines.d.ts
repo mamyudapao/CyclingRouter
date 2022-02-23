@@ -5,6 +5,7 @@ export interface Tweet extends GormModel {
   userId: number;
   user: User;
   content: string;
+  image: string;
   replies: Reply[];
   likes: Like[];
 }

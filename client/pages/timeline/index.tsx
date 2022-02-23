@@ -7,11 +7,13 @@ import { Avatar, Button, TextField } from "@mui/material";
 import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import Image from "next/image";
+import UploadButton from "../../components/common/ImageUpload";
 
 const TimeLine = () => {
   const store = useSelector((state: UserState) => state);
   const [tweets, setTweets] = useState<Tweet[] | undefined>(undefined);
   const [content, setContent] = useState<string>("");
+  const [image, setImage] = useState<File>();
 
   const getTweets = async () => {
     axios.get<Tweet[]>("/tweets/all").then((response) => {
@@ -21,16 +23,35 @@ const TimeLine = () => {
   };
 
   const postTweet = async () => {
-    await axios
-      .post<Tweet>("/tweets/", {
-        content: content,
-        userId: store.user.id,
-      })
-      .then((response) => {
-        console.log(response.data);
-        getTweets();
-        setContent("");
-      });
+    let id: number | undefined = undefined;
+    if (content.length !== 0) {
+      await axios
+        .post<Tweet>("/tweets/", {
+          content: content,
+          userId: store.user.id,
+          image: image?.name,
+        })
+        .then((response) => {
+          console.log(response.data);
+          id = response.data.id;
+          setContent("");
+        });
+      if (image !== undefined) {
+        const formData = new FormData();
+        const blob = new Blob([image!], { type: "image" });
+        formData.append("image", blob, image?.name);
+        await axios
+          .post(`/tweets/${id}/imageUpload`, formData, {
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+          .then(() => {
+            setImage(undefined);
+          });
+      }
+      getTweets();
+    }
   };
 
   const likeFunction = async (
@@ -96,13 +117,16 @@ const TimeLine = () => {
             }}
             className={Styles.postForm}
           />
-          <Button
-            variant="contained"
-            className={Styles.postButton}
-            onClick={() => postTweet()}
-          >
-            投稿する!
-          </Button>
+          <div className={Styles.postButton}>
+            <UploadButton
+              message="画像を追加する"
+              setImage={setImage}
+              imageFunction={() => {}}
+            />
+            <Button variant="contained" onClick={() => postTweet()}>
+              投稿する!
+            </Button>
+          </div>
         </div>
         <div className={Styles.timeline}>
           {tweets !== undefined &&
