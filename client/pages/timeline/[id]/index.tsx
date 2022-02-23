@@ -10,6 +10,7 @@ import axios from "../../../axisoApi";
 import TweetCommentComponent from "../../../components/Timeline/TweetCommentComponent";
 import Image from "next/image";
 import { Button, TextField } from "@mui/material";
+import { RemoveCircleOutlineRounded } from "@mui/icons-material";
 
 const IndividualTweet = () => {
   const store = useSelector((state: UserState) => state);
@@ -36,6 +37,13 @@ const IndividualTweet = () => {
         getTweet();
         setComment("");
       });
+  };
+
+  const deleteTweet = (tweetId: number) => {
+    axios.delete(`tweets/${tweetId}`).then((response) => {
+      console.log(response.data);
+      router.push("/timeline");
+    });
   };
 
   useEffect(() => {
@@ -77,6 +85,7 @@ const IndividualTweet = () => {
             <TweetDetailComponent
               tweet={tweet as Tweet}
               // likeFunction={}
+              deleteTweet={deleteTweet}
               userId={store.user.id}
             />
           </div>

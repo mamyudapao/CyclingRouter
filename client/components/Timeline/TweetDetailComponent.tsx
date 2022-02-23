@@ -1,10 +1,14 @@
 import {
   Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
+  Fade,
   IconButton,
+  Paper,
+  Popper,
   Typography,
 } from "@mui/material";
 import { getDate, getMonth, getYear, parseJSON } from "date-fns";
@@ -13,6 +17,8 @@ import { useState } from "react";
 import { Like, Tweet } from "../../types/timelines";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import Styles from "./index.module.scss";
+import PopupState, { bindPopper, bindToggle } from "material-ui-popup-state";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type PropsType = {
   tweet: Tweet;
@@ -22,11 +28,13 @@ type PropsType = {
     likeIndex: number | null
   ) => void;
   userId: number;
+  deleteTweet: (tweedId: number) => void;
 };
 
 const TweetDetailComponent = (props: PropsType) => {
   const date = parseJSON(props.tweet.createdAt);
   const timeString = `${getYear(date)}年${getMonth(date)}月${getDate(date)}日`;
+  let authorOrNot = props.userId === props.tweet.userId;
 
   const [likeOrNot, setLikeOrNot] = useState<boolean>(false);
   const [likedIndex, setLikedIndex] = useState<number | null>(null);
@@ -58,6 +66,39 @@ const TweetDetailComponent = (props: PropsType) => {
           </Avatar>
         }
         title={props.tweet.user.username}
+        action={
+          authorOrNot && (
+            <>
+              <PopupState variant="popper" popupId="demo-popup-popper">
+                {(popupState) => (
+                  <div>
+                    <IconButton
+                      aria-label="settings"
+                      {...bindToggle(popupState)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <Popper {...bindPopper(popupState)} transition>
+                      {({ TransitionProps }) => (
+                        <Fade {...TransitionProps} timeout={350}>
+                          <Paper>
+                            <Button
+                              onClick={() => {
+                                props.deleteTweet(props.tweet.id);
+                              }}
+                            >
+                              本当に削除しますか？
+                            </Button>
+                          </Paper>
+                        </Fade>
+                      )}
+                    </Popper>
+                  </div>
+                )}
+              </PopupState>
+            </>
+          )
+        }
         subheader={timeString}
       ></CardHeader>
       <CardContent>

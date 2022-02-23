@@ -64,6 +64,13 @@ const TimeLine = () => {
     }
   };
 
+  const deleteTweet = (tweetId: number) => {
+    axios.delete(`tweets/${tweetId}`).then((response) => {
+      console.log(response.data);
+      getTweets();
+    });
+  };
+
   useEffect(() => {
     getTweets();
   }, []);
@@ -106,6 +113,7 @@ const TimeLine = () => {
                     tweet={tweet}
                     userId={store.user.id}
                     likeFunction={likeFunction}
+                    deleteTweet={deleteTweet}
                   ></TweetComponent>
                 </div>
               );

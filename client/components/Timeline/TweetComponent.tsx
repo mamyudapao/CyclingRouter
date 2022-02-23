@@ -13,8 +13,10 @@ import { Like, Tweet } from "../../types/timelines";
 import { parseJSON, getDate, getYear, getMonth } from "date-fns";
 import { useEffect, useState } from "react";
 import Styles from "./index.module.scss";
-import { CardMedia } from "@mui/material";
+import { Button, CardMedia, Fade, Paper, Popover, Popper } from "@mui/material";
 import Link from "next/link";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PopupState, { bindPopper, bindToggle } from "material-ui-popup-state";
 
 type PropsType = {
   tweet: Tweet;
@@ -24,6 +26,7 @@ type PropsType = {
     userId: number,
     likeIndex: number | null
   ) => void;
+  deleteTweet: (tweedId: number) => void;
 };
 
 const TweetComponent = (props: PropsType) => {
@@ -34,6 +37,7 @@ const TweetComponent = (props: PropsType) => {
 
   const [likeOrNot, setLikeOrNot] = useState<boolean>(false);
   const [likedIndex, setLikedIndex] = useState<number | null>(null);
+  let authorOrNot = props.userId === props.tweet.userId;
 
   const checkLikeOrNot = (likes: Like[], userId: number) => {
     let check = false;
@@ -52,7 +56,7 @@ const TweetComponent = (props: PropsType) => {
 
   useEffect(() => {
     setLikeOrNot(checkLikeOrNot(props.tweet.likes, props.userId));
-    console.log(likedIndex);
+    console.log(typeof authorOrNot);
   }, [props]);
 
   return (
@@ -67,14 +71,41 @@ const TweetComponent = (props: PropsType) => {
           </Avatar>
         }
         title={props.tweet.user.username}
+        action={
+          authorOrNot && (
+            <>
+              <PopupState variant="popper" popupId="demo-popup-popper">
+                {(popupState) => (
+                  <div>
+                    <IconButton
+                      aria-label="settings"
+                      {...bindToggle(popupState)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <Popper {...bindPopper(popupState)} transition>
+                      {({ TransitionProps }) => (
+                        <Fade {...TransitionProps} timeout={350}>
+                          <Paper>
+                            <Button
+                              onClick={() => {
+                                props.deleteTweet(props.tweet.id);
+                              }}
+                            >
+                              本当に削除しますか？
+                            </Button>
+                          </Paper>
+                        </Fade>
+                      )}
+                    </Popper>
+                  </div>
+                )}
+              </PopupState>
+            </>
+          )
+        }
         subheader={timeString}
       />
-      {/* <CardMedia
-        component="img"
-        height="194"
-        image="/static/images/cards/paella.jpg"
-        alt="Paella dish"
-      /> */}
       <div className={Styles.link}>
         <Link href={`/timeline/${props.tweet.id}`}>
           <CardContent>
