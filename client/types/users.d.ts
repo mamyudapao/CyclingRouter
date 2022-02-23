@@ -6,4 +6,6 @@ export interface User extends GormModel {
   userImage: string;
   location: string;
   birthday: string;
+  weight: number;
+  height: number;
 }

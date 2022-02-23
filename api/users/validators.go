@@ -12,4 +12,6 @@ type UserUpdateValidator struct {
 	UserImage string `form:"user_mage" json:"userImage"`
 	Birthday  string `form:"birthday" json:"birthday"`
 	Location  string `form:"location" json:"location"`
+	Height    uint   `form:"height" json:"height"`
+	Weight    uint   `form:"weight" json:"weight"`
 }

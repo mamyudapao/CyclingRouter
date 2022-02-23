@@ -1,27 +1,21 @@
-import { Container, TextField, Button, Card } from "@mui/material";
+import { TextField, Button, Card } from "@mui/material";
 import Styles from "./index.module.scss";
 import { useState } from "react";
-import Cookie from "js-cookie";
 
 import axios from "../../axisoApi";
-//TODO: このコンポーネントを治す
+import { useDispatch, useSelector } from "react-redux";
+import { loginAction } from "../../reducks/user/userSlice";
 
 const Login = (props: any): JSX.Element => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
 
+  const dispatch = useDispatch();
+
   const sendInfo = async () => {
-    await axios
-      .post("auth/login", {
-        email: email,
-        password: password,
-      })
-      .then((response) => {
-        console.log(response);
-        Cookie.set("token", response.data.token);
-        Cookie.set("refresh_token", response.data.refresh_token);
-        props.setAuth(response.data.token);
-      });
+    if (email !== null && password !== null) {
+      dispatch(loginAction({ email, password }));
+    }
   };
 
   return (

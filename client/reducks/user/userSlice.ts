@@ -9,6 +9,11 @@ type SignupUserObject = {
   password: string;
 };
 
+type LoginUserObject = {
+  email: string;
+  password: string;
+};
+
 type UpdateProfileObject = {
   id: number;
   biography: string;
@@ -43,6 +48,8 @@ const initialState: UserState = {
     birthday: "",
     createdAt: "",
     updatedAt: "",
+    weight: 0,
+    height: 0,
   },
 };
 
@@ -57,6 +64,17 @@ export const signInAction = createAsyncThunk<
   });
   return response.data;
 });
+
+export const loginAction = createAsyncThunk<usersState, LoginUserObject>(
+  "users/loginAction",
+  async (userObj) => {
+    const response = await axios.post<UserSignupResponse>("auth/login", {
+      email: userObj.email,
+      password: userObj.password,
+    });
+    return response.data;
+  }
+);
 
 export const updateProfileAction = createAsyncThunk<User, UpdateProfileObject>(
   "users/updateProfileAction",
@@ -106,12 +124,27 @@ export const usersSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       router.push("/home");
     });
+    builder.addCase(loginAction.fulfilled, (state, action) => {
+      state.user.id = action.payload.user.id;
+      state.user.biography = action.payload.user.biography;
+      state.user.birthday = action.payload.user.birthday;
+      state.user.location = action.payload.user.location;
+      state.user.username = action.payload.user.username;
+      state.user.userImage = action.payload.user.userImage;
+      state.user.weight = action.payload.user.weight;
+      state.user.height = action.payload.user.height;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      router.push("/home");
+    });
     builder.addCase(updateProfileAction.fulfilled, (state, action) => {
       console.log(action.payload);
       state.user.biography = action.payload.biography;
       state.user.birthday = action.payload.birthday;
       state.user.location = action.payload.location;
       state.user.username = action.payload.username;
+      state.user.weight = action.payload.weight;
+      state.user.height = action.payload.height;
     });
     builder.addCase(updateProfileIconsAction.fulfilled, (state, action) => {
       console.log(action.payload);

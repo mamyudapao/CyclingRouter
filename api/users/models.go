@@ -16,6 +16,8 @@ type User struct {
 	UserImage string `gorm:"column:user_image;" json:"userImage"`
 	Location  string `gorm:"column:location" json:"location"`
 	Birthday  string `gorm:"column:birthday" json:"birthday"`
+	Height    uint8  `gorm:"column:height" json:"height"`
+	Weight    uint8  `gorm:"column:weight" json:"weight"`
 	common.GormModel
 }
 
