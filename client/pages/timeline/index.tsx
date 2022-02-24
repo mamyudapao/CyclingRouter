@@ -130,10 +130,11 @@ const TimeLine = () => {
         </div>
         <div className={Styles.timeline}>
           {tweets !== undefined &&
-            tweets.map((tweet) => {
+            tweets.map((tweet, index) => {
               return (
                 <div className={Styles.tweetCard}>
                   <TweetComponent
+                    key={index}
                     tweet={tweet}
                     userId={store.user.id}
                     likeFunction={likeFunction}

@@ -28,21 +28,43 @@
         border-bottom: 1px solid #ccc;
         width: 75%;
         margin-left: 10%;
-        margin-bottom: 3em;
+        margin-bottom: 1em;
       }
       .routerCard {
         text-align: center;
         display: flex;
         width: 60%;
-        margin-left: 15%;
+        margin-left: 16%;
         margin-bottom: 1rem;
         padding: 1.5rem;
         a {
           font-size: 1.5em;
         }
+        .routeDescription {
+          text-align: center;
+          margin: 0 auto;
+        }
+      }
+      .tweets {
+        text-align: left;
+        margin-left: 16%;
+        width: 60%;
+        p {
+          text-align: left;
+        }
       }
     }
   }
+}
+
+#buttonActive {
+  background-color: #0087ff;
+  color: white;
+}
+
+#buttonInactive {
+  background-color: gray;
+  color: white;
 }
 
 #uploadProfile {

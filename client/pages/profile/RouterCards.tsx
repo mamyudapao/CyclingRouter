@@ -10,19 +10,23 @@ type PropsType = {
 };
 
 const RoutersCards = (props: PropsType): JSX.Element => {
-  const cards = props.routes.map((route: Route) => {
+  const cards = props.routes.map((route: Route, index) => {
     return (
-      <Card className={Styles.routerCard}>
-        <Image
-          src="/../public/new-google-map.jpg"
-          width="300"
-          height="200"
-        ></Image>
-        <Link href={`/route/${route.id}`}>
-          <a>{route.title}</a>
-        </Link>
-        <p>{route.description}</p>
-      </Card>
+      <div key={index.toString()}>
+        <Card className={Styles.routerCard}>
+          <Image
+            src="/../public/new-google-map.jpg"
+            width="200"
+            height="150"
+          ></Image>
+          <div className={Styles.routeDescription}>
+            <Link href={`/route/${route.id}`}>
+              <a>{route.title}</a>
+            </Link>
+            <p>{route.description}</p>
+          </div>
+        </Card>
+      </div>
     );
   });
   return <>{cards}</>;

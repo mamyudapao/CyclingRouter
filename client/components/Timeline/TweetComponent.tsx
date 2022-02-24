@@ -21,7 +21,7 @@ import PopupState, { bindPopper, bindToggle } from "material-ui-popup-state";
 type PropsType = {
   tweet: Tweet;
   userId: number;
-  likeFunction: (
+  likeFunction?: (
     tweetId: number,
     userId: number,
     likeIndex: number | null
@@ -106,6 +106,13 @@ const TweetComponent = (props: PropsType) => {
         }
         subheader={timeString}
       />
+      <div className={Styles.link}>
+        <Link href={`/timeline/${props.tweet.id}`}>
+          <CardContent>
+            <Typography variant="inherit">{props.tweet.content}</Typography>
+          </CardContent>
+        </Link>
+      </div>
       {props.tweet.image !== "" && (
         <CardMedia
           component="img"
@@ -114,20 +121,15 @@ const TweetComponent = (props: PropsType) => {
           alt="Paella dish"
         />
       )}
-      <div className={Styles.link}>
-        <Link href={`/timeline/${props.tweet.id}`}>
-          <CardContent>
-            <Typography variant="inherit">{props.tweet.content}</Typography>
-          </CardContent>
-        </Link>
-      </div>
       <CardActions>
         <IconButton
           aria-label="add to favorites"
           className={likeOrNot ? Styles.liked : Styles.notLiked}
           sx={{ color: likeOrNot ? "pink" : "" }}
           onClick={() => {
-            props.likeFunction(props.tweet.id, props.userId, likedIndex);
+            if (props.likeFunction) {
+              props.likeFunction(props.tweet.id, props.userId, likedIndex);
+            }
           }}
         >
           <FavoriteIcon />

@@ -16,7 +16,7 @@ type PropsType = {
   name: string;
   biography: string | null;
   location: string | null;
-  birthday: Date | null;
+  birthday: Date | string;
   weight: number;
   height: number;
   image: File | undefined;
@@ -34,7 +34,7 @@ type PropsType = {
 
 const AlertDialog = (props: PropsType): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [birthday, setBirthday] = useState<Date | null>(props.birthday);
+  const [birthday, setBirthday] = useState<Date | string>(props.birthday);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -133,7 +133,7 @@ const AlertDialog = (props: PropsType): JSX.Element => {
               label="誕生日"
               value={props.birthday}
               onChange={(newValue) => {
-                setBirthday(newValue);
+                setBirthday(newValue!);
                 props.updateProps(
                   undefined,
                   undefined,

@@ -1,7 +1,7 @@
 import RoutersCards from "./RouterCards";
-import { Card } from "@mui/material";
+import { Button, Card } from "@mui/material";
 import { useEffect, useState } from "react";
-import Style from "./profile.module.scss";
+import Styles from "./profile.module.scss";
 import Image from "next/image";
 import axios from "../../axisoApi";
 import {
@@ -13,6 +13,8 @@ import { useSelector, useDispatch } from "react-redux";
 import AlertDialog from "./Dialog";
 import Link from "next/link";
 import { Route } from "../../types/routes";
+import { Tweet } from "../../types/timelines";
+import TweetComponent from "../../components/Timeline/TweetComponent";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
@@ -28,6 +30,8 @@ const Profile = (): JSX.Element => {
   const [height, setHeight] = useState<number>(store.user.height);
   const [image, setImage] = useState<File>();
   const [routes, setRoutes] = useState<Route[] | null>(null);
+  const [tweets, setTweets] = useState<Tweet[] | null>(null);
+  const [displayRoutes, setDisplayRoutes] = useState(true); //falseの時びツイートを表示
 
   const getRoute = async () => {
     await axios.get(`/routes/user/${store.user.id}`).then((response) => {
@@ -36,8 +40,25 @@ const Profile = (): JSX.Element => {
     });
   };
 
+  const getMyOwnTweets = async () => {
+    await axios
+      .get<Tweet[]>(`/tweets/user/${store.user.id}`)
+      .then((response) => {
+        console.log(response.data);
+        setTweets(response.data);
+      });
+  };
+
+  const deleteTweet = (tweetId: number) => {
+    axios.delete(`tweets/${tweetId}`).then((response) => {
+      console.log(response.data);
+      getMyOwnTweets();
+    });
+  };
+
   useEffect(() => {
     getRoute();
+    getMyOwnTweets();
   }, []);
   const updateUserProfile = (
     newName?: string,
@@ -106,8 +127,8 @@ const Profile = (): JSX.Element => {
   };
   return (
     <>
-      <Card className={Style.card} variant="outlined">
-        <div className={Style.changeButton}>
+      <Card className={Styles.card} variant="outlined">
+        <div className={Styles.changeButton}>
           <AlertDialog
             {...{
               name,
@@ -123,24 +144,58 @@ const Profile = (): JSX.Element => {
             update={sendNewInfoToAPIServer}
           />
         </div>
-        <div className={Style.profile}>
-          <div className={Style.imageBlock}>
+        <div className={Styles.profile}>
+          <div className={Styles.imageBlock}>
             <Image
               src={`https://ddx5fuyp1f5xu.cloudfront.net/${store.user.userImage}`} //TODO: デフォルト　のURLを設定する
               width="200"
               height="200"
-              className={Style.profileImage}
+              className={Styles.profileImage}
             ></Image>
             <p>Following: 210 Followers: 111</p>
             <p>Location: {store.user.location}</p>
             <p>Birthday: {store.user.birthday}</p>
           </div>
-          <div className={Style.centerBlock}>
-            <div className={Style.profileBlock}>
+          <div className={Styles.centerBlock}>
+            <div className={Styles.profileBlock}>
               <h1>{store.user.username}</h1>
               <p>{store.user.biography}</p>
             </div>
-            <div>{routes !== null && <RoutersCards routes={routes} />}</div>
+            <Button
+              id={displayRoutes ? Styles.buttonActive : Styles.buttonInactive}
+              onClick={() => {
+                setDisplayRoutes(true);
+              }}
+            >
+              ルート
+            </Button>
+            <Button
+              id={displayRoutes ? Styles.buttonInactive : Styles.buttonActive}
+              onClick={() => {
+                setDisplayRoutes(false);
+              }}
+            >
+              ツイート
+            </Button>
+            <div>
+              {routes !== null && displayRoutes && (
+                <RoutersCards routes={routes} />
+              )}
+              <div className={Styles.tweets}>
+                {tweets !== null &&
+                  !displayRoutes &&
+                  tweets.map((tweet, index) => {
+                    return (
+                      <TweetComponent
+                        key={index}
+                        tweet={tweet}
+                        userId={store.user.id}
+                        deleteTweet={deleteTweet}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
           </div>
         </div>
       </Card>
