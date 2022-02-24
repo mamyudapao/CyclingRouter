@@ -29,14 +29,12 @@ func UsersRegistration(c *gin.Context) {
 		})
 		return
 	}
-	// psswordをハッシュ化する
-	password := []byte(userValidation.Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-	// gormを使ってDBに保存する
 	user := User{
-		Username:     userValidation.Username,
-		Email:        userValidation.Email,
-		PasswordHash: hashedPassword}
+		Username: userValidation.Username,
+		Email:    userValidation.Email}
+	password := userValidation.Password
+	user.setPassword(password)
+	// gormを使ってDBに保存する
 	err = common.DB.Create(&user).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -61,19 +59,11 @@ func UsersRegistration(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
-	response := UserResponse{
-		Username:     user.Username,
-		Email:        user.Email,
-		Biography:    user.Biography,
-		AccessToken:  signedToken,
-		RefreshToken: refreshToken,
-		Location:     user.Location,
-		Birthday:     user.Birthday,
-		ID:           user.ID,
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{
+		"user":         user,
+		"accessToken":  signedToken,
+		"refreshToken": refreshToken,
+	})
 
 }
 
@@ -101,7 +91,7 @@ func UsersLogin(c *gin.Context) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(payload.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
 
 	if err != nil {
 		log.Println(err)
@@ -128,18 +118,11 @@ func UsersLogin(c *gin.Context) {
 		return
 	}
 
-	tokenResponse := UserResponse{
-		Username:     user.Username,
-		Email:        user.Email,
-		Biography:    user.Biography,
-		AccessToken:  signedToken,
-		RefreshToken: refreshSignedToken,
-		Location:     user.Location,
-		Birthday:     user.Birthday,
-		ID:           user.ID,
-	}
-
-	c.JSON(http.StatusOK, tokenResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"user":         user,
+		"accessToken":  signedToken,
+		"refreshToken": refreshSignedToken,
+	})
 }
 
 func RefreshTokens(c *gin.Context) {
@@ -172,7 +155,7 @@ func RefreshTokens(c *gin.Context) {
 
 // UserInformation Actions
 
-func RetriveUser(c *gin.Context) {
+func RetriveUserById(c *gin.Context) {
 	var user *User
 	err := common.DB.Where("id = ?", c.Param("id")).First(&user).Error
 	if err != nil {
@@ -181,19 +164,12 @@ func RetriveUser(c *gin.Context) {
 		})
 		return
 	}
-	responseObject := &UserInformation{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		Biography: user.Biography,
-		UserImage: user.UserImage,
-		Location:  user.Location,
-	}
-	c.JSON(200, responseObject)
+
+	c.JSON(http.StatusOK, user)
 
 }
 
-func UpdateUser(c *gin.Context) {
+func UpdateUserById(c *gin.Context) {
 	var user User
 	var userValidation UserUpdateValidator
 	err := c.ShouldBindJSON(&userValidation)
@@ -201,7 +177,7 @@ func UpdateUser(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	result := common.DB.Model(user).Where("id = ?", c.Param("id")).First(&user).Updates(userValidation)
+	result := common.DB.Model(user).Where("id = ?", c.Param("id")).First(&user).Updates(userValidation).First(&user)
 	fmt.Println(user)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -209,18 +185,10 @@ func UpdateUser(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, UserInformation{
-		ID:        user.ID,
-		Username:  userValidation.Username,
-		Email:     user.Email,
-		Biography: userValidation.Biography,
-		UserImage: userValidation.UserImage,
-		Birthday:  userValidation.Birthday,
-		Location:  userValidation.Location,
-	})
+	c.JSON(http.StatusOK, user)
 }
 
-func DeleteUser(c *gin.Context) {
+func DeleteUserById(c *gin.Context) {
 	result := common.DB.Delete(&User{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -233,7 +201,7 @@ func DeleteUser(c *gin.Context) {
 	})
 }
 
-func UploadUserImage(c *gin.Context) {
+func UploadUserImageById(c *gin.Context) {
 	bucketName := "cycling-router-bucket"
 
 	form, _ := c.MultipartForm()
@@ -257,7 +225,7 @@ func UploadUserImage(c *gin.Context) {
 	}
 	_, err = amazon.PutFile(context.TODO(), client, input)
 	if err != nil {
-		fmt.Println("Got error uploading file:")
+		fmt.Print("Got error uploading file:")
 		fmt.Println(err)
 		return
 	}
@@ -281,5 +249,75 @@ func UploadUserImage(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"userImage": key,
+	})
+}
+
+// Followコントローラー
+func CreateFollow(c *gin.Context) {
+	var followValidation FollowValidator
+	err := c.ShouldBindJSON(&followValidation)
+	if err != nil {
+		fmt.Println(err)
+	}
+	follow := Follow{
+		UserId:   followValidation.UserId,
+		FollowId: followValidation.FollowId,
+	}
+	err = common.DB.Create(&follow).Error
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":    "Validation Error",
+			"detail": err.Error(),
+		})
+		return
+	}
+	common.DB.Model(&follow).Association("User").Find(&follow.User)
+	common.DB.Model(&follow).Association("Follow").Find(&follow.Follow)
+	c.JSON(http.StatusOK, follow)
+}
+
+func RetriveFollowsByUserId(c *gin.Context) {
+	var follows []Follow
+	err := common.DB.Where("user_id = ?", c.Param("userId")).Find(&follows).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Follows not found",
+		})
+		return
+	}
+	for i := range follows {
+		common.DB.Model(&follows[i]).Association("User").Find(&follows[i].User)
+		common.DB.Model(&follows[i]).Association("Follow").Find(&follows[i].Follow)
+	}
+	c.JSON(http.StatusOK, follows)
+}
+
+func RetriveFollowsByFollowId(c *gin.Context) {
+	var follows []Follow
+	err := common.DB.Where("follow_id = ?", c.Param("followId")).Find(&follows).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Follows not found",
+		})
+		return
+	}
+	for i := range follows {
+		common.DB.Model(&follows[i]).Association("User").Find(&follows[i].User)
+		common.DB.Model(&follows[i]).Association("Follow").Find(&follows[i].Follow)
+	}
+	c.JSON(http.StatusOK, follows)
+}
+
+func DeleteFollowById(c *gin.Context) {
+	result := common.DB.Unscoped().Delete(&Follow{}, c.Param("id"))
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": result.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "done delete follow",
 	})
 }

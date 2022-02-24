@@ -32,17 +32,10 @@ func CreateRoute(c *gin.Context) {
 		})
 		return
 	}
-	response := ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: route.Description,
-		Title:       route.Title,
-		Direction:   route.Direction,
-	}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, route)
 }
 
-func RetriveRoute(c *gin.Context) {
+func RetriveRouteById(c *gin.Context) {
 	var route *Route
 	err := common.DB.Where("id = ?", c.Param("id")).First(&route).Error
 	if err != nil {
@@ -51,45 +44,27 @@ func RetriveRoute(c *gin.Context) {
 		})
 		return
 	}
-	response := ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: route.Description,
-		Title:       route.Title,
-		Direction:   route.Direction,
-		CreatedAt:   route.CreatedAt.String(),
-		UpdatedAt:   route.UpdatedAt.String(),
-	}
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, route)
 }
 
-func UpdateRoute(c *gin.Context) {
+func UpdateRouteById(c *gin.Context) {
 	var route Route
 	var routeValidation RouteUpdateValidator
 	err := c.ShouldBindJSON(&routeValidation)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(routeValidation)
-	result := common.DB.Model(route).Where("id = ?", c.Param("id")).First(&route).Updates(routeValidation)
+	result := common.DB.Model(route).Where("id = ?", c.Param("id")).First(&route).Updates(routeValidation).First(&route)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": "failed to update",
 		})
 		return
 	}
-	c.JSON(http.StatusOK, ResponseRoute{
-		ID:          route.ID,
-		UserId:      route.UserId,
-		Description: routeValidation.Description,
-		Title:       routeValidation.Title,
-		Direction:   routeValidation.Direction,
-		CreatedAt:   route.CreatedAt.String(),
-		UpdatedAt:   route.UpdatedAt.String(),
-	})
+	c.JSON(http.StatusOK, route)
 }
 
-func DeleteRoute(c *gin.Context) {
+func DeleteRouteById(c *gin.Context) {
 	result := common.DB.Delete(&Route{}, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -102,7 +77,7 @@ func DeleteRoute(c *gin.Context) {
 	})
 }
 
-func GetRoutes(c *gin.Context) {
+func GetRoutesByUserId(c *gin.Context) {
 	var routes *[]Route
 	err := common.DB.Where("user_id = ?", c.Param("id")).Find(&routes).Error
 	if err != nil {

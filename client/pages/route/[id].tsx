@@ -149,7 +149,7 @@ const RouteComponent = (): JSX.Element => {
         title,
         description,
         direction,
-        userId: store.id,
+        userId: store.user.id,
       })
       .then((response) => {
         console.log(response);

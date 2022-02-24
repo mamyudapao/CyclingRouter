@@ -16,13 +16,17 @@ type PropsType = {
   name: string;
   biography: string | null;
   location: string | null;
-  birthday: Date | null;
+  birthday: Date | string;
+  weight: number;
+  height: number;
   image: File | undefined;
   updateProps: (
     newName?: string,
-    newBiography?: string | null,
-    newLocation?: string | null,
-    newBirthday?: Date | null
+    newBiography?: string,
+    newLocation?: string,
+    newWeight?: number,
+    newHeight?: number,
+    newBirthday?: Date | string
   ) => void;
   updateImageProps: (newImage: File | undefined) => void;
   update: () => void;
@@ -30,7 +34,7 @@ type PropsType = {
 
 const AlertDialog = (props: PropsType): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [birthday, setBirthday] = useState<Date | null>(props.birthday);
+  const [birthday, setBirthday] = useState<Date | string>(props.birthday);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -73,6 +77,8 @@ const AlertDialog = (props: PropsType): JSX.Element => {
                 undefined,
                 event.target.value,
                 undefined,
+                undefined,
+                undefined,
                 undefined
               );
             }}
@@ -86,6 +92,38 @@ const AlertDialog = (props: PropsType): JSX.Element => {
                 undefined,
                 undefined,
                 event.target.value,
+                undefined,
+                undefined,
+                undefined
+              );
+            }}
+          ></TextField>
+          <TextField
+            label="体重"
+            value={props.weight}
+            type="number"
+            onChange={(event) => {
+              props.updateProps(
+                undefined,
+                undefined,
+                undefined,
+                Number.parseInt(event.target.value),
+                undefined,
+                undefined
+              );
+            }}
+          ></TextField>
+          <TextField
+            label="身長"
+            value={props.height}
+            type="number"
+            onChange={(event) => {
+              props.updateProps(
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                Number.parseInt(event.target.value),
                 undefined
               );
             }}
@@ -95,8 +133,15 @@ const AlertDialog = (props: PropsType): JSX.Element => {
               label="誕生日"
               value={props.birthday}
               onChange={(newValue) => {
-                setBirthday(newValue);
-                props.updateProps(undefined, undefined, undefined, newValue);
+                setBirthday(newValue!);
+                props.updateProps(
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  newValue!
+                );
               }}
               renderInput={(params) => <TextField {...params} />}
             />

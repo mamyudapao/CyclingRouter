@@ -20,13 +20,17 @@ const Header = (props: any): JSX.Element => {
               <a>Home</a>
             </Link>
           </li>
-          <li>AUTHORS</li>
+          <li>
+            <Link href="/timeline">
+              <a>TimeLine</a>
+            </Link>
+          </li>
           <li>EXPLORE</li>
           <li>BLOG</li>
           <li>CONTACT</li>
         </div>
         <div className={styles.right}>
-          {store.accessToken !== null && (
+          {store.accessToken !== "" && (
             <>
               <li>
                 <Link href="/profile">
@@ -37,7 +41,7 @@ const Header = (props: any): JSX.Element => {
               </li>
             </>
           )}
-          {store.accessToken === null && (
+          {store.accessToken === "" && (
             <>
               <li>
                 <Link href="signup">SignUp</Link>

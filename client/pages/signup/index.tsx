@@ -6,10 +6,6 @@ import { TextField, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { signInAction, UserState } from "../../reducks/user/userSlice";
 
-import axios from "../../axisoApi"; //TODO: スペル修正
-import store from "../../reducks/store/store";
-import router from "next/router";
-
 const SignUp = (): JSX.Element => {
   const [email, setEmail] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
