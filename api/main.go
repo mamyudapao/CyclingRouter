@@ -55,8 +55,9 @@ func main() {
 	}))
 
 	v1 := r.Group("/api")
-	users.AuthRouter(v1.Group("auth/"))
-	users.UsersRouter(v1.Group("users/"))
+	users.AuthRouter(v1.Group("/auth"))
+	users.UsersRouter(v1.Group("/users"))
+	users.FollowRouter(v1.Group("/follow"))
 	routes.RoutersRouter(v1.Group("/routes"))
 	timelines.TweetRouter(v1.Group("/tweets"))
 	timelines.TweetLikeRouter(v1.Group("/likes"))

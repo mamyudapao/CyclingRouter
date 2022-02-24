@@ -16,3 +16,10 @@ func UsersRouter(router *gin.RouterGroup) {
 	router.POST("/:id/image", UploadUserImageById)
 	router.DELETE("/:id", DeleteUserById)
 }
+
+func FollowRouter(router *gin.RouterGroup) {
+	router.POST("/", CreateFollow)
+	router.GET("/followings/:userId", RetriveFollowsByUserId)
+	router.GET("/followers/:followId", RetriveFollowsByFollowId)
+	router.DELETE("/:id", DeleteFollowById)
+}

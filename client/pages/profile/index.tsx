@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Route } from "../../types/routes";
 import { Tweet } from "../../types/timelines";
 import TweetComponent from "../../components/Timeline/TweetComponent";
+import { getDate, getMonth, getYear } from "date-fns";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
@@ -32,6 +33,7 @@ const Profile = (): JSX.Element => {
   const [routes, setRoutes] = useState<Route[] | null>(null);
   const [tweets, setTweets] = useState<Tweet[] | null>(null);
   const [displayRoutes, setDisplayRoutes] = useState(true); //falseの時びツイートを表示
+  const date = new Date(store.user.birthday);
 
   const getRoute = async () => {
     await axios.get(`/routes/user/${store.user.id}`).then((response) => {
@@ -154,7 +156,15 @@ const Profile = (): JSX.Element => {
             ></Image>
             <p>Following: 210 Followers: 111</p>
             <p>Location: {store.user.location}</p>
-            <p>Birthday: {store.user.birthday}</p>
+            <p>
+              Birthday:
+              {getYear(date) +
+                "年" +
+                (getMonth(date) + 1) +
+                "月" +
+                getDate(date) +
+                "日"}
+            </p>
           </div>
           <div className={Styles.centerBlock}>
             <div className={Styles.profileBlock}>

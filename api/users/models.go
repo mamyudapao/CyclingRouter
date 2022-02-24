@@ -16,8 +16,16 @@ type User struct {
 	UserImage string `gorm:"column:user_image;" json:"userImage"`
 	Location  string `gorm:"column:location" json:"location"`
 	Birthday  string `gorm:"column:birthday" json:"birthday"`
-	Height    uint8  `gorm:"column:height" json:"height"`
 	Weight    uint8  `gorm:"column:weight" json:"weight"`
+	Height    uint8  `gorm:"column:height" json:"height"`
+	common.GormModel
+}
+
+type Follow struct {
+	UserId   int  `gorm:"column:user_id; not null; uniqueIndex:unique_follow" json:"userId"`
+	FollowId int  `gorm:"column:follow_id; not null; uniqueIndex:unique_follow" json:"followId"`
+	User     User `gorm:"foreignKey:UserId" json:"user"`
+	Follow   User `gorm:"foreignKey:FollowId" json:"follow"`
 	common.GormModel
 }
 
@@ -30,13 +38,9 @@ func (user *User) setPassword(password string) error {
 	return nil
 }
 
-func (user *User) checkPassword(password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-}
-
 func AutoMigrate() {
 	db := common.GetDB()
-	err := db.AutoMigrate(&User{})
+	err := db.AutoMigrate(&User{}, &Follow{})
 	if err != nil {
 		log.Println(err)
 	}

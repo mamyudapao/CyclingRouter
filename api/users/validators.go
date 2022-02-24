@@ -15,3 +15,8 @@ type UserUpdateValidator struct {
 	Height    uint   `form:"height" json:"height"`
 	Weight    uint   `form:"weight" json:"weight"`
 }
+
+type FollowValidator struct {
+	UserId   int `form:"user_id" json:"userId" binding:"required"`
+	FollowId int `form:"followId" json:"followId" binding:"required"`
+}

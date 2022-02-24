@@ -251,3 +251,73 @@ func UploadUserImageById(c *gin.Context) {
 		"userImage": key,
 	})
 }
+
+// Followコントローラー
+func CreateFollow(c *gin.Context) {
+	var followValidation FollowValidator
+	err := c.ShouldBindJSON(&followValidation)
+	if err != nil {
+		fmt.Println(err)
+	}
+	follow := Follow{
+		UserId:   followValidation.UserId,
+		FollowId: followValidation.FollowId,
+	}
+	err = common.DB.Create(&follow).Error
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg":    "Validation Error",
+			"detail": err.Error(),
+		})
+		return
+	}
+	common.DB.Model(&follow).Association("User").Find(&follow.User)
+	common.DB.Model(&follow).Association("Follow").Find(&follow.Follow)
+	c.JSON(http.StatusOK, follow)
+}
+
+func RetriveFollowsByUserId(c *gin.Context) {
+	var follows []Follow
+	err := common.DB.Where("user_id = ?", c.Param("userId")).Find(&follows).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Follows not found",
+		})
+		return
+	}
+	for i := range follows {
+		common.DB.Model(&follows[i]).Association("User").Find(&follows[i].User)
+		common.DB.Model(&follows[i]).Association("Follow").Find(&follows[i].Follow)
+	}
+	c.JSON(http.StatusOK, follows)
+}
+
+func RetriveFollowsByFollowId(c *gin.Context) {
+	var follows []Follow
+	err := common.DB.Where("follow_id = ?", c.Param("followId")).Find(&follows).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Follows not found",
+		})
+		return
+	}
+	for i := range follows {
+		common.DB.Model(&follows[i]).Association("User").Find(&follows[i].User)
+		common.DB.Model(&follows[i]).Association("Follow").Find(&follows[i].Follow)
+	}
+	c.JSON(http.StatusOK, follows)
+}
+
+func DeleteFollowById(c *gin.Context) {
+	result := common.DB.Unscoped().Delete(&Follow{}, c.Param("id"))
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": result.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "done delete follow",
+	})
+}
