@@ -33,7 +33,7 @@ const Header = (props: any): JSX.Element => {
           {store.accessToken !== "" && (
             <>
               <li>
-                <Link href="/profile">
+                <Link href={`${store.user.id}/profile`}>
                   <a>
                     <FontAwesomeIcon icon={faUserCircle} />
                   </a>
