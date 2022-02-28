@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../reducks/user/userSlice";
 
 const Login = (props: any): JSX.Element => {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
 
   const dispatch = useDispatch();
 

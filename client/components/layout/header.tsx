@@ -17,23 +17,25 @@ const Header = (props: any): JSX.Element => {
         <div className={styles.center}>
           <li>
             <Link href="/home">
-              <a>Home</a>
+              <a>ホーム</a>
             </Link>
           </li>
           <li>
             <Link href="/timeline">
-              <a>TimeLine</a>
+              <a>タイムライン</a>
             </Link>
           </li>
-          <li>EXPLORE</li>
-          <li>BLOG</li>
-          <li>CONTACT</li>
+          <Link href="/routers">
+            <li>経路を探す</li>
+          </Link>
+          <li>ブログ</li>
+          <li>連絡</li>
         </div>
         <div className={styles.right}>
           {store.accessToken !== "" && (
             <>
               <li>
-                <Link href={`${store.user.id}/profile`}>
+                <Link href={`/${store.user.id}/profile`} replace={true}>
                   <a>
                     <FontAwesomeIcon icon={faUserCircle} />
                   </a>

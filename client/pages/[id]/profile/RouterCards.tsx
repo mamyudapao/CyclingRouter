@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Route } from "../../types/routes";
+import { Route } from "../../../types/routes";
 import { Card } from "@mui/material";
 import Styles from "./profile.module.scss";
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
