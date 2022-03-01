@@ -9,3 +9,10 @@ export interface User extends GormModel {
   weight: number;
   height: number;
 }
+
+export interface Follow extends GormModel {
+  userId: number;
+  followId: number;
+  user: User;
+  follow: User;
+}

@@ -8,7 +8,7 @@ import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import Image from "next/Image";
+import Image from "next/image";
 import { Like, Tweet } from "../../types/timelines";
 import { parseJSON, getDate, getYear, getMonth } from "date-fns";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import { Button, CardMedia, Fade, Paper, Popover, Popper } from "@mui/material";
 import Link from "next/link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PopupState, { bindPopper, bindToggle } from "material-ui-popup-state";
+import { StyleSharp } from "@mui/icons-material";
 
 type PropsType = {
   tweet: Tweet;
@@ -63,12 +64,16 @@ const TweetComponent = (props: PropsType) => {
     <Card>
       <CardHeader
         avatar={
-          <Avatar>
-            <Image
-              src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.user.userImage}`}
-              layout="fill"
-            />
-          </Avatar>
+          <div className={Styles.avatar}>
+            <Link href={`/${props.tweet.user.id}/profile`}>
+              <Avatar>
+                <Image
+                  src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.user.userImage}`}
+                  layout="fill"
+                />
+              </Avatar>
+            </Link>
+          </div>
         }
         title={props.tweet.user.username}
         action={

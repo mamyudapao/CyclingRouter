@@ -1,18 +1,17 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Reply } from "../../types/timelines";
-import { Avatar, CardHeader, IconButton } from "@mui/material";
+import { Avatar, CardHeader } from "@mui/material";
 import Image from "next/image";
 import { getDate, getMonth, getYear, parseJSON } from "date-fns";
 import { useState } from "react";
 import Styles from "./index.module.scss";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Props } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 type PropsType = {
   replies: Reply[];
@@ -28,12 +27,16 @@ const CommentCard = (props: Reply) => {
       <Card variant="outlined">
         <CardHeader
           avatar={
-            <Avatar>
-              <Image
-                src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.user.userImage}`}
-                layout="fill"
-              />
-            </Avatar>
+            <div className={Styles.avatar}>
+              <Link href={`/${props.user.id}/profile`}>
+                <Avatar>
+                  <Image
+                    src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.user.userImage}`}
+                    layout="fill"
+                  />
+                </Avatar>
+              </Link>
+            </div>
           }
           title={props.user.username}
           subheader={timeString}

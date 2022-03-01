@@ -4,7 +4,7 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-import Divider from "../design/Divider";
+import DndDivider from "./DndDvider";
 import Styles from "./index.module.scss";
 import { faCompass, faTrash } from "@fortawesome/free-solid-svg-icons";
 type PropsType = {
@@ -67,7 +67,7 @@ const DnD = (props: PropsType): JSX.Element => {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Divider
+                      <DndDivider //TODO: Dividerを作り直す
                         index={index + 1}
                         bgColor="#ffbf00"
                         primary="経路"
@@ -75,7 +75,7 @@ const DnD = (props: PropsType): JSX.Element => {
                         width="80%"
                         info={index}
                         button={buttonDefinition}
-                      ></Divider>
+                      ></DndDivider>
                     </div>
                   )}
                 </Draggable>

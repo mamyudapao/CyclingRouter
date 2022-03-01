@@ -19,6 +19,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Styles from "./index.module.scss";
 import PopupState, { bindPopper, bindToggle } from "material-ui-popup-state";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Link from "next/link";
 
 type PropsType = {
   tweet: Tweet;
@@ -58,12 +59,16 @@ const TweetDetailComponent = (props: PropsType) => {
     <Card>
       <CardHeader
         avatar={
-          <Avatar>
-            <Image
-              src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.user.userImage}`}
-              layout="fill"
-            />
-          </Avatar>
+          <div>
+            <Link href={`/${props.tweet.user.id}/profile`}>
+              <Avatar>
+                <Image
+                  src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.tweet.user.userImage}`}
+                  layout="fill"
+                />
+              </Avatar>
+            </Link>
+          </div>
         }
         title={props.tweet.user.username}
         action={

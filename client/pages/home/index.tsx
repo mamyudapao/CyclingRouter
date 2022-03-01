@@ -140,7 +140,7 @@ const home = (): JSX.Element => {
       })
       .then((response) => {
         console.log(response);
-        router.push("/profile");
+        router.push(`/${store.user.id}/profile`);
       });
   };
 

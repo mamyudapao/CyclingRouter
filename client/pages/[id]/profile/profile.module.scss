@@ -57,6 +57,13 @@
   }
 }
 
+.wrapperContent {
+  display: flex;
+  .leftSide {
+    width: 60%;
+    height: 150px;
+  }
+}
 #buttonActive {
   background-color: #0087ff;
   color: white;

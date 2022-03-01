@@ -9,7 +9,7 @@ import { UserState } from "../../reducks/user/userSlice";
 import Image from "next/image";
 import UploadButton from "../../components/common/ImageUpload";
 
-const TimeLine = () => {
+const TimeLine = (props: any) => {
   const store = useSelector((state: UserState) => state);
   const [tweets, setTweets] = useState<Tweet[] | undefined>(undefined);
   const [content, setContent] = useState<string>("");

@@ -16,7 +16,7 @@ type ButtonDefinition = {
 
 type DividerProps = {
   button?: ButtonDefinition;
-  icon: IconDefinition;
+  index?: number;
   info?: any;
   bgColor: string;
   primary: any;
@@ -24,7 +24,7 @@ type DividerProps = {
   width: string;
 };
 
-const InsetDivider = (props: DividerProps): JSX.Element => {
+const DndDivider = (props: DividerProps): JSX.Element => {
   return (
     <>
       <List
@@ -36,11 +36,19 @@ const InsetDivider = (props: DividerProps): JSX.Element => {
       >
         <ListItem>
           <ListItemAvatar>
-            <Avatar sx={{ bgcolor: props.bgColor }}>
-              <FontAwesomeIcon icon={props.icon} />
-            </Avatar>
+            <Avatar sx={{ bgcolor: props.bgColor }}>{props.index}</Avatar>
           </ListItemAvatar>
           <ListItemText primary={props.primary} secondary={props.secondary} />
+          {props.button && (
+            <button
+              className={Styles.button}
+              onClick={(event) => {
+                props.button?.buttonFunction(event, props.info);
+              }}
+            >
+              <FontAwesomeIcon icon={props.button.icon} />
+            </button>
+          )}
         </ListItem>
         <Divider />
       </List>
@@ -48,4 +56,4 @@ const InsetDivider = (props: DividerProps): JSX.Element => {
   );
 };
 
-export default InsetDivider;
+export default DndDivider;
