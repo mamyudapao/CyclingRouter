@@ -26,7 +26,7 @@ const Header = (props: any): JSX.Element => {
             </Link>
           </li>
           <Link href="/routers">
-            <li>経路を探す</li>
+            <a>経路を探す</a>
           </Link>
           <li>ブログ</li>
           <li>連絡</li>

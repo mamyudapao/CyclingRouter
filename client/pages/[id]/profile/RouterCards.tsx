@@ -20,10 +20,20 @@ const RoutersCards = (props: PropsType): JSX.Element => {
             height="150"
           ></Image>
           <div className={Styles.routeDescription}>
-            <Link href={`/route/${route.id}`}>
-              <a>{route.title}</a>
-            </Link>
-            <p>{route.description}</p>
+            {route.title.length > 7 && (
+              <Link href={`/route/${route.id}`}>
+                <a>{route.title.slice(0, 7) + "..."}</a>
+              </Link>
+            )}
+            {route.title.length <= 7 && (
+              <Link href={`/route/${route.id}`}>
+                <a>{route.title}</a>
+              </Link>
+            )}
+            {route.description.length > 15 && (
+              <p>{route.description.slice(0, 15) + "..."}</p>
+            )}
+            {route.description.length <= 15 && <p>{route.description}</p>}
           </div>
         </Card>
       </div>
