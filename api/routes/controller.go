@@ -32,6 +32,7 @@ func CreateRoute(c *gin.Context) {
 		})
 		return
 	}
+	common.DB.Model(&route).Association("User").Find(&route.User)
 	c.JSON(http.StatusOK, route)
 }
 
@@ -44,6 +45,7 @@ func RetriveRouteById(c *gin.Context) {
 		})
 		return
 	}
+	common.DB.Model(&route).Association("User").Find(&route.User)
 	c.JSON(http.StatusOK, route)
 }
 
@@ -78,7 +80,7 @@ func DeleteRouteById(c *gin.Context) {
 }
 
 func GetRoutesByUserId(c *gin.Context) {
-	var routes *[]Route
+	var routes []Route
 	err := common.DB.Where("user_id = ?", c.Param("id")).Find(&routes).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -86,13 +88,14 @@ func GetRoutesByUserId(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"routes": routes,
-	})
+	for i := range routes {
+		common.DB.Model(&routes[i]).Association("User").Find(&routes[i].User)
+	}
+	c.JSON(http.StatusOK, routes)
 }
 
 func GetAllRoutes(c *gin.Context) {
-	var routes *[]Route
+	var routes []Route
 	err := common.DB.Find(&routes).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -100,9 +103,10 @@ func GetAllRoutes(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"routes": routes,
-	})
+	for i := range routes {
+		common.DB.Model(&routes[i]).Association("User").Find(&routes[i].User)
+	}
+	c.JSON(http.StatusOK, routes)
 }
 
 func testFunc(c *gin.Context) {
