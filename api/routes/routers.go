@@ -10,7 +10,7 @@ func RoutersRouter(router *gin.RouterGroup) {
 	router.PUT("/:id", UpdateRouteById)
 	//複数コース
 	router.GET("/user/:id", GetRoutesByUserId)
-
+	router.GET("/", GetAllRoutes)
 	//テスト
 	router.POST("/test", testFunc)
 }

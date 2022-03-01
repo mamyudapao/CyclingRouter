@@ -91,6 +91,20 @@ func GetRoutesByUserId(c *gin.Context) {
 	})
 }
 
+func GetAllRoutes(c *gin.Context) {
+	var routes *[]Route
+	err := common.DB.Find(&routes).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Route not found",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"routes": routes,
+	})
+}
+
 func testFunc(c *gin.Context) {
 
 }
