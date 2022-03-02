@@ -1,7 +1,6 @@
 import Styles from "./index.module.scss";
 import { useState } from "react";
 import { Card, Button } from "@mui/material";
-// iconのインポート
 import DnD from "../../components/DataDisplay/DnD";
 import Dialog from "./Dialog";
 import DataView from "../../components/DataDisplay/DataView";
@@ -32,28 +31,22 @@ const home = (): JSX.Element => {
   const router = useRouter();
   // 経路のリクエスト用
   const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
-  const [destination, setDestination] = useState<
-    google.maps.LatLngLiteral | undefined
-  >(undefined);
+  const [destination, setDestination] = useState<google.maps.LatLngLiteral>();
   const [center, setCenter] = useState<google.maps.LatLngLiteral>({
     lat: 35.69575,
     lng: 139.77521,
   });
-  const [origin, setOrigin] = useState<google.maps.LatLngLiteral | undefined>(
-    undefined
-  );
+  const [origin, setOrigin] = useState<google.maps.LatLngLiteral>();
   const [distance, setDistance] = useState(0);
   const [waypoints, setWaypoints] =
     useState<google.maps.DirectionsWaypoint[]>();
-  const [response, setResponse] = useState<
-    google.maps.DirectionsResult | undefined
-  >(undefined);
+  const [response, setResponse] = useState<google.maps.DirectionsResult>();
 
   const [image, setImage] = useState<File>();
 
   // autocomplete用
   const [autocomplete, setAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
+    useState<google.maps.places.Autocomplete>();
 
   const onPlaceChanged = () => {
     const positionJson = autocomplete!.getPlace().geometry?.location?.toJSON();
@@ -64,14 +57,13 @@ const home = (): JSX.Element => {
 
   const getDirections = (
     event: any //TODO: any解消
-  ) => {
+  ): void => {
     if (event !== undefined) {
-      console.log(event);
       setOrigin(markerPositions[0]);
       setDestination(markerPositions[markerPositions.length - 1]);
       const tempWaypoints = markerPositions
         .filter((_, index) => index !== 0 && markerPositions.length - 1)
-        .map((position: google.maps.LatLngLiteral, index: number) => {
+        .map((position, index) => {
           return { location: position };
         });
       setWaypoints([...tempWaypoints] as Array<google.maps.DirectionsWaypoint>);
@@ -134,7 +126,7 @@ const home = (): JSX.Element => {
   };
 
   const createData = async (title: string, description: string) => {
-    const direction = JSON.stringify(markerPositions);
+    const direction = JSON.stringify(markerPositions); //TODO: mysqlのtypeを治す
     if (image === undefined) {
       await axios
         .post<Route>("/routes/", {
@@ -148,11 +140,8 @@ const home = (): JSX.Element => {
           router.push(`/${store.user.id}/profile`);
         });
     } else {
-      console.log(image);
-      let routeId: string = "0";
-      const formData = new FormData();
-      const blob = new Blob([image], { type: "image" });
-      formData.append("image", blob, image.name);
+      let routeId = "0";
+      const formData = convertImage(image);
       await axios
         .post<Route>("/routes/", {
           title,

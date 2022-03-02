@@ -12,14 +12,13 @@ import {
 } from "../../../reducks/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import AlertDialog from "./Dialog";
-import Link from "next/link";
 import { Route } from "../../../types/routes";
 import { Tweet } from "../../../types/timelines";
 import TweetComponent from "../../../components/Timeline/TweetComponent";
 import { getDate, getMonth, getYear } from "date-fns";
 import { Follow, User } from "../../../types/users";
 import { useRouter } from "next/router";
-import MyProfileComponent from "./MyProfileComponent";
+import { convertImage } from "../../../utils/imageUpload";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
@@ -36,44 +35,39 @@ const Profile = (props: any): JSX.Element => {
   const [weight, setWeight] = useState<number>(store.user.weight);
   const [height, setHeight] = useState<number>(store.user.height);
   const [image, setImage] = useState<File>();
-  const [routes, setRoutes] = useState<Route[] | null>(null);
-  const [tweets, setTweets] = useState<Tweet[] | null>(null);
+  const [routes, setRoutes] = useState<Route[]>();
+  const [tweets, setTweets] = useState<Tweet[]>();
   const [displayRoutes, setDisplayRoutes] = useState(true); //falseの時びツイートを表示
-  const [followings, setFollowings] = useState<Follow[] | null>(null);
-  const [followers, setFollowers] = useState<Follow[] | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [followings, setFollowings] = useState<Follow[]>();
+  const [followers, setFollowers] = useState<Follow[]>();
+  const [user, setUser] = useState<User>();
 
   //followComponentを制御
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
 
   const getRoute = async () => {
-    await axios
-      .get<Route[]>(`/routes/user/${router.query.id}`)
-      .then((response) => {
-        console.log(response);
-        setRoutes(response.data);
-      });
+    await axios.get<Route[]>(`/routes/user/${userId}`).then((response) => {
+      console.log(response);
+      setRoutes(response.data);
+    });
   };
 
   const getMyOwnTweets = async () => {
-    await axios
-      .get<Tweet[]>(`/tweets/user/${router.query.id}`)
-      .then((response) => {
-        console.log(response.data);
-        setTweets(response.data);
-      });
+    await axios.get<Tweet[]>(`/tweets/user/${userId}`).then((response) => {
+      console.log(response.data);
+      setTweets(response.data);
+    });
   };
 
   const deleteTweet = (tweetId: number) => {
     axios.delete(`tweets/${tweetId}`).then((response) => {
-      console.log(response.data);
       getMyOwnTweets();
     });
   };
 
   const getUser = async () => {
-    await axios.get(`users/${router.query.id}`).then((response) => {
+    await axios.get<User>(`users/${userId}`).then((response) => {
       setUser(response.data);
       setBirthday(response.data.birthday);
       setDate(new Date(response.data.birthday));
@@ -82,24 +76,19 @@ const Profile = (props: any): JSX.Element => {
 
   const getFollowings = async () => {
     await axios
-      .get<Follow[]>(`follow/followings/${router.query.id}`)
+      .get<Follow[]>(`follow/followings/${userId}`)
       .then((response) => {
-        console.log(response.data);
         setFollowings(response.data);
       });
   };
 
   const getFollowers = async () => {
-    await axios
-      .get<Follow[]>(`follow/followers/${router.query.id}`)
-      .then((response) => {
-        console.log(response.data);
-        setFollowers(response.data);
-      });
+    await axios.get<Follow[]>(`follow/followers/${userId}`).then((response) => {
+      setFollowers(response.data);
+    });
   };
 
   useEffect(() => {
-    console.log(router.query.id);
     if (router.query.id !== undefined) {
       getRoute();
       getMyOwnTweets();
@@ -117,9 +106,7 @@ const Profile = (props: any): JSX.Element => {
     newBirthday?: Date | string
   ) => {
     if (newName !== undefined) {
-      console.log(newName);
       setName(newName);
-      console.log(name);
     }
     if (newBiography !== undefined) {
       setBiography(newBiography);
@@ -136,25 +123,18 @@ const Profile = (props: any): JSX.Element => {
     if (newHeight !== undefined) {
       setHeight(newHeight);
     }
-    console.log(name, biography, location, birthday, image, weight, height);
-  };
-
-  const updateImage = (image: File | undefined) => {
-    if (typeof image != (undefined && null)) {
-      setImage(image);
-    }
   };
 
   const submitImage = () => {
-    const formData = new FormData();
-    const blob = new Blob([image!], { type: "image" });
-    formData.append("image", blob, image?.name);
-    dispatch(
-      updateProfileIconsAction({
-        id: store.user.id!,
-        image: formData,
-      })
-    );
+    if (image !== undefined) {
+      const formData = convertImage(image);
+      dispatch(
+        updateProfileIconsAction({
+          id: store.user.id!,
+          image: formData,
+        })
+      );
+    }
   };
 
   const sendNewInfoToAPIServer = () => {
@@ -176,20 +156,17 @@ const Profile = (props: any): JSX.Element => {
   return (
     <>
       <Card className={Styles.card} variant="outlined">
-        {router.query.id == store.user.id.toString() && (
+        {userId == store.user.id.toString() && (
           <div className={Styles.changeButton}>
             <AlertDialog
-              {...{
-                name,
-                biography,
-                location,
-                birthday,
-                image,
-                weight,
-                height,
-              }}
+              name={name}
+              biography={biography}
+              location={location}
+              birthday={birthday}
+              weight={weight}
+              height={height}
               updateProps={updateUserProfile}
-              updateImageProps={updateImage}
+              setImage={setImage}
               update={sendNewInfoToAPIServer}
             />
           </div>
@@ -203,7 +180,7 @@ const Profile = (props: any): JSX.Element => {
               className={Styles.profileImage}
             ></Image>
             <p>
-              {followings !== null && (
+              {followings !== undefined && (
                 <FollowComponent
                   open={open}
                   title={"Followings"}
@@ -213,7 +190,7 @@ const Profile = (props: any): JSX.Element => {
                   }}
                 />
               )}
-              {followers !== null && (
+              {followers !== undefined && (
                 <FollowComponent
                   open={open}
                   title={"Followers"}
@@ -259,11 +236,11 @@ const Profile = (props: any): JSX.Element => {
               ツイート
             </Button>
             <div>
-              {routes !== null && displayRoutes && (
+              {routes !== undefined && displayRoutes && (
                 <RoutersCards routes={routes} />
               )}
               <div className={Styles.tweets}>
-                {tweets !== null &&
+                {tweets !== undefined &&
                   !displayRoutes &&
                   tweets.map((tweet, index) => {
                     return (
@@ -283,17 +260,4 @@ const Profile = (props: any): JSX.Element => {
     </>
   );
 };
-
-// export async function getStaticProps() {
-//   let data: any;
-//   await axios.get(`/routes/user/8`).then((response) => {
-//     console.log(response);
-//     data = response.data.routes;
-//   });
-//   console.log(data);
-//   return {
-//     props: data,
-//   };
-// }
-
 export default Profile;
