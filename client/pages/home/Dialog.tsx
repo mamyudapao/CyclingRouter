@@ -6,16 +6,19 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import ImageUpload from "../../components/common/ImageUpload";
+import { PinDropTwoTone } from "@mui/icons-material";
+import { Dispatch, SetStateAction } from "react";
 
 type PropsType = {
-  sendData: (title: string, description: string) => void;
+  sendData: (title: string, description: string, image?: File) => void;
+  setImage: Dispatch<SetStateAction<File | undefined>>;
 };
 
 export default function FormDialog(props: PropsType): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-
   const handleClick = () => {
     setOpen(!open);
   };
@@ -50,6 +53,10 @@ export default function FormDialog(props: PropsType): JSX.Element {
           />
         </DialogContent>
         <DialogActions>
+          <ImageUpload
+            message={"画像を投稿する！"}
+            setImage={props.setImage}
+          ></ImageUpload>
           <Button onClick={handleClick}>キャンセル</Button>
           <Button
             onClick={() => {

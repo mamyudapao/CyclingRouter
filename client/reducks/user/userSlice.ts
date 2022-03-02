@@ -97,6 +97,7 @@ export const updateProfileIconsAction = createAsyncThunk<
   { userImage: string },
   { image: FormData; id: number }
 >("users/updateProfileIconsAction", async (updateObj) => {
+  console.log(updateObj.image);
   const response = await axios.post<{ userImage: string }>(
     `users/${updateObj.id}/image`,
     updateObj.image,

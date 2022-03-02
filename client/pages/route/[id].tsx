@@ -25,6 +25,7 @@ const mapContainerStyle = {
 const initialRoute: Route = {
   id: "",
   direction: "",
+  user: "",
   title: "",
   description: "",
   userId: "",
@@ -153,7 +154,7 @@ const RouteComponent = (): JSX.Element => {
       })
       .then((response) => {
         console.log(response);
-        router.push("/profile");
+        router.push(`/${store.user.id}/profile`);
       });
   };
 
@@ -207,20 +208,22 @@ const RouteComponent = (): JSX.Element => {
           )}
         </div>
       </div>
-      <div>
-        <Button variant="contained" onClick={getDirections}>
-          経路を求める
-        </Button>
-        <RouteFormDialog
-          buttonText="コースを更新する！"
-          title="コースを更新"
-          titleValue={route.title}
-          descriptionValue={route.description}
-          contentText="更新する内容を入力してください。"
-          sendData={createData}
-          onClickText="コースを更新する"
-        />
-      </div>
+      {route.userId === store.user.id.toString() && (
+        <div>
+          <Button variant="contained" onClick={getDirections}>
+            経路を求める
+          </Button>
+          <RouteFormDialog
+            buttonText="コースを更新する！"
+            title="コースを更新"
+            titleValue={route.title}
+            descriptionValue={route.description}
+            contentText="更新する内容を入力してください。"
+            sendData={createData}
+            onClickText="コースを更新する"
+          />
+        </div>
+      )}
     </Card>
   );
 };

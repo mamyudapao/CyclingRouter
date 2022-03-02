@@ -5,10 +5,12 @@ type RouteCreationValidator struct {
 	Title       string `form:"title" json:"title" binding:"required,min=4,max=50"`
 	Description string `form:"description" json:"description" binding:"max=300"`
 	Direction   string `form:"direction" json:"direction" binding:"required"`
+	Image       string `form:"image" json:"image"`
 }
 type RouteUpdateValidator struct {
 	UserId      int    `form:"user_id" json:"userId" binding:"required,number"`
 	Title       string `form:"title" json:"title" binding:"required,min=4,max=50"`
 	Description string `form:"description" json:"description" binding:"max=300"`
 	Direction   string `form:"direction" json:"direction" binding:"required"`
+	Image       string `form:"image" json:"image"`
 }

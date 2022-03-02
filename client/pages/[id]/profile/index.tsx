@@ -48,10 +48,12 @@ const Profile = (props: any): JSX.Element => {
   const [date, setDate] = useState<Date>();
 
   const getRoute = async () => {
-    await axios.get(`/routes/user/${router.query.id}`).then((response) => {
-      console.log(response);
-      setRoutes(response.data.routes);
-    });
+    await axios
+      .get<Route[]>(`/routes/user/${router.query.id}`)
+      .then((response) => {
+        console.log(response);
+        setRoutes(response.data);
+      });
   };
 
   const getMyOwnTweets = async () => {

@@ -13,6 +13,7 @@ type Route struct {
 	Direction   string     `json:"direction" gorm:"column:direction; not null"`
 	Title       string     `json:"title" gorm:"column:title; not null"`
 	Description string     `json:"description" gorm:"column:description;"`
+	Image       string     `json:"image" gorm:"column:image;default:routeDefault.jpg"`
 	common.GormModel
 }
 

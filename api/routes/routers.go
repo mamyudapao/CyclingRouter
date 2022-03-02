@@ -11,6 +11,6 @@ func RoutersRouter(router *gin.RouterGroup) {
 	//複数コース
 	router.GET("/user/:id", GetRoutesByUserId)
 	router.GET("/", GetAllRoutes)
-	//テスト
-	router.POST("/test", testFunc)
+	// コースのトプ画を登録
+	router.PUT("/:id/image", UploadRouteImage)
 }

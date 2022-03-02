@@ -1,10 +1,13 @@
 package routes
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gin-gonic/gin"
+	amazon "github.com/mamyudapao/CyclingRouter/aws"
 	"github.com/mamyudapao/CyclingRouter/common"
 )
 
@@ -24,6 +27,7 @@ func CreateRoute(c *gin.Context) {
 		Direction:   routeValidation.Direction,
 		Title:       routeValidation.Title,
 		Description: routeValidation.Description,
+		Image:       routeValidation.Image,
 	}
 	err = common.DB.Create(&route).Error
 	if err != nil {
@@ -109,6 +113,49 @@ func GetAllRoutes(c *gin.Context) {
 	c.JSON(http.StatusOK, routes)
 }
 
-func testFunc(c *gin.Context) {
+func UploadRouteImage(c *gin.Context) {
+	bucketName := "cycling-router-bucket"
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		fmt.Println(err)
+	}
+	awsInstance, err := amazon.InitAWS()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	client := s3.NewFromConfig(awsInstance)
+	key := header.Filename
+	input := &s3.PutObjectInput{
+		Bucket: &bucketName,
+		Key:    &key,
+		Body:   file,
+	}
+	_, err = amazon.PutFile(context.TODO(), client, input)
+	if err != nil {
+		fmt.Print("Got error uploading file:")
+		fmt.Println(err)
+		return
+	}
 
+	//ここから画像のファイル名をDBに保存する
+	var router Route
+	err = common.DB.Where("id = ?", c.Param("id")).First(&router).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "Route not found",
+		})
+		return
+	}
+	router.Image = key
+	err = common.DB.Save(&router).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"Image": key,
+	})
 }

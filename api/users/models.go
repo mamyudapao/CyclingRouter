@@ -13,7 +13,7 @@ type User struct {
 	Email     string `gorm:"column:email;unique; not null" json:"email"`
 	Password  string `gorm:"column:password;not null;" json:"-"`
 	Biography string `gorm:"column:biography;" json:"biography"`
-	UserImage string `gorm:"column:user_image;" json:"userImage"`
+	UserImage string `gorm:"column:user_image;default:userDefault.png" json:"userImage"`
 	Location  string `gorm:"column:location" json:"location"`
 	Birthday  string `gorm:"column:birthday" json:"birthday"`
 	Weight    uint8  `gorm:"column:weight" json:"weight"`

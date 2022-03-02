@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Route } from "../../../types/routes";
 import { Card } from "@mui/material";
 import Styles from "./profile.module.scss";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 type PropsType = {
   routes: Route[];
@@ -15,7 +14,7 @@ const RoutersCards = (props: PropsType): JSX.Element => {
       <div key={index.toString()}>
         <Card className={Styles.routerCard}>
           <Image
-            src="/../public/new-google-map.jpg"
+            src={`https://ddx5fuyp1f5xu.cloudfront.net/${route.image}`}
             width="200"
             height="150"
           ></Image>

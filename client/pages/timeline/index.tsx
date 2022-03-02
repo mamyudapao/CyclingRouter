@@ -118,11 +118,7 @@ const TimeLine = (props: any) => {
             className={Styles.postForm}
           />
           <div className={Styles.postButton}>
-            <UploadButton
-              message="画像を追加する"
-              setImage={setImage}
-              imageFunction={() => {}}
-            />
+            <UploadButton message="画像を追加する" setImage={setImage} />
             <Button variant="contained" onClick={() => postTweet()}>
               投稿する!
             </Button>

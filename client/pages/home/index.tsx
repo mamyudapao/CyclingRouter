@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import { useRouter } from "next/router";
 import { formatNumber } from "../../utils/numConverter";
+import { convertImage } from "../../utils/imageUpload";
+import { Route } from "../../types/routes";
 
 //少数第一位で四捨五入
 
@@ -46,6 +48,8 @@ const home = (): JSX.Element => {
   const [response, setResponse] = useState<
     google.maps.DirectionsResult | undefined
   >(undefined);
+
+  const [image, setImage] = useState<File>();
 
   // autocomplete用
   const [autocomplete, setAutocomplete] =
@@ -129,19 +133,45 @@ const home = (): JSX.Element => {
     }
   };
 
-  const createData = (title: string, description: string) => {
+  const createData = async (title: string, description: string) => {
     const direction = JSON.stringify(markerPositions);
-    axios
-      .post("/routes/", {
-        title,
-        description,
-        direction,
-        userId: store.user.id,
-      })
-      .then((response) => {
-        console.log(response);
-        router.push(`/${store.user.id}/profile`);
-      });
+    if (image === undefined) {
+      await axios
+        .post<Route>("/routes/", {
+          title,
+          description,
+          direction,
+          userId: store.user.id,
+        })
+        .then((response) => {
+          console.log(response);
+          router.push(`/${store.user.id}/profile`);
+        });
+    } else {
+      console.log(image);
+      let routeId: string = "0";
+      const formData = new FormData();
+      const blob = new Blob([image], { type: "image" });
+      formData.append("image", blob, image.name);
+      await axios
+        .post<Route>("/routes/", {
+          title,
+          description,
+          direction,
+          userId: store.user.id,
+          image: image.name,
+        })
+        .then((response) => {
+          routeId = response.data.id;
+        });
+      if (routeId !== "0") {
+        await axios.put(`/routes/${routeId}/image`, formData, {
+          headers: {
+            "Content-Type": `multipart/form-data`,
+          },
+        });
+      }
+    }
   };
 
   const googleMapOptionsObject: GoogleMapOptions = {
@@ -206,7 +236,7 @@ const home = (): JSX.Element => {
           <Button variant="contained" onClick={getDirections}>
             経路を求める
           </Button>
-          <Dialog sendData={createData}></Dialog>
+          <Dialog sendData={createData} setImage={setImage}></Dialog>
         </div>
       </Card>
     </>

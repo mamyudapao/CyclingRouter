@@ -4,7 +4,6 @@ import Styles from "./index.module.scss";
 
 type PropsType = {
   setImage: Dispatch<SetStateAction<File | undefined>>;
-  imageFunction?: (image: File | undefined) => void;
   message: string;
 };
 
