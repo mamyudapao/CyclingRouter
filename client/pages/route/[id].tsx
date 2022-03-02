@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "../../axisoApi";
+import axios from "../../axiosApi";
 import { Route } from "../../types/routes";
 import GoogleMapComponent from "../../components/GoogleMap/GoogleMap";
 import RouteFormDialog from "../../components/GoogleMap/RouteFormDialog";

@@ -1,7 +1,7 @@
 import Styles from "./index.module.scss";
 import TweetComponent from "../../components/Timeline/TweetComponent";
 import { useEffect, useState } from "react";
-import axios from "../../axisoApi";
+import axios from "../../axiosApi";
 import { Like, Tweet } from "../../types/timelines";
 import { Avatar, Button, TextField } from "@mui/material";
 import { useSelector } from "react-redux";

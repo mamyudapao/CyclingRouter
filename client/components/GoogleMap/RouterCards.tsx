@@ -1,7 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Route } from "../../types/routes";
-import { Avatar, Card, CardHeader, CardMedia } from "@mui/material";
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Typography,
+} from "@mui/material";
 import Styles from "./index.module.scss";
 
 type PropsType = {
@@ -10,10 +17,10 @@ type PropsType = {
 
 const RouterCard = (props: PropsType) => {
   return (
-    <Card>
+    <Card className={Styles.routerCard}>
       <CardHeader
         avatar={
-          <div className={Styles.avatar}>
+          <div className={Styles.profile}>
             <Link href={`/${props.route.user.id}/profile`}>
               <Avatar>
                 <Image
@@ -24,9 +31,22 @@ const RouterCard = (props: PropsType) => {
             </Link>
           </div>
         }
-        title={props.route.user.username}
+        title={<h3>{props.route.user.username}</h3>}
       />
-      <CardMedia component="img" image="" />
+      <Link href={`/route/${props.route.id}`}>
+        <div className={Styles.link}>
+          <CardContent>
+            <Typography variant="h4" component="h4">
+              {props.route.title}
+            </Typography>
+            <Typography variant="inherit">{props.route.description}</Typography>
+          </CardContent>
+          <CardMedia
+            src={`https://ddx5fuyp1f5xu.cloudfront.net/${props.route.image}`}
+            component="img"
+          />
+        </div>
+      </Link>
     </Card>
   );
 };

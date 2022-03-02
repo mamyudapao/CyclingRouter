@@ -1,10 +1,9 @@
-import RoutersCards from "./RouterCards";
 import FollowComponent from "../../../components/Profile/FollowComponent";
 import { Button, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import Styles from "./profile.module.scss";
 import Image from "next/image";
-import axios from "../../../axisoApi";
+import axios from "../../../axiosApi";
 import {
   UserState,
   updateProfileAction,
@@ -19,6 +18,7 @@ import { getDate, getMonth, getYear } from "date-fns";
 import { Follow, User } from "../../../types/users";
 import { useRouter } from "next/router";
 import { convertImage } from "../../../utils/imageUpload";
+import RouterCard from "../../../components/GoogleMap/RouterCards";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
@@ -48,14 +48,12 @@ const Profile = (props: any): JSX.Element => {
 
   const getRoute = async () => {
     await axios.get<Route[]>(`/routes/user/${userId}`).then((response) => {
-      console.log(response);
       setRoutes(response.data);
     });
   };
 
   const getMyOwnTweets = async () => {
     await axios.get<Tweet[]>(`/tweets/user/${userId}`).then((response) => {
-      console.log(response.data);
       setTweets(response.data);
     });
   };
@@ -224,7 +222,13 @@ const Profile = (props: any): JSX.Element => {
               ツイート
             </Button>
             <div>
-              {routes && displayRoutes && <RoutersCards routes={routes} />}
+              {routes && displayRoutes && (
+                <div className={Styles.routes}>
+                  {routes.map((route, index) => {
+                    return <RouterCard route={route} key={index}></RouterCard>;
+                  })}
+                </div>
+              )}
               <div className={Styles.tweets}>
                 {tweets &&
                   !displayRoutes &&

@@ -1,48 +1,30 @@
 .card {
   margin: auto;
   width: 80%;
-
   .changeButton {
     margin: 0;
     padding: 0;
     text-align: right;
   }
   .profile {
-    display: flex;
-
+    display: grid;
+    grid-template-columns: 1fr 3fr;
     border-top: 1px solid #ccc;
     .imageBlock {
       margin-top: 1.5em;
     }
     .centerBlock {
       text-align: center;
-      width: 80%;
-      // height: 100%;
-      max-width: 80%;
-      display: block;
-
-      p {
-        text-align: center;
-      }
       .profileBlock {
         border-bottom: 1px solid #ccc;
-        width: 75%;
-        margin-left: 10%;
+        width: 100%;
         margin-bottom: 1em;
       }
-      .routerCard {
-        text-align: center;
-        display: flex;
-        width: 60%;
-        margin-left: 16%;
-        margin-bottom: 1rem;
-        padding: 1.5rem;
-        a {
-          font-size: 1.5em;
-        }
-        .routeDescription {
+      .routes {
+        width: 30em;
+        margin: 0 auto;
+        p {
           text-align: center;
-          margin: 0 auto;
         }
       }
       .tweets {

@@ -10,7 +10,7 @@ import {
   AutoCompleteOptions,
   DirectionsServiceOptions,
 } from "../../components/GoogleMap/types";
-import axios from "../../axisoApi";
+import axios from "../../axiosApi";
 import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import { useRouter } from "next/router";

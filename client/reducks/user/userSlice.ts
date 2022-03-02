@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "../../axisoApi";
+import axios from "../../axiosApi";
 import router from "next/router";
 import { User } from "../../types/users";
 

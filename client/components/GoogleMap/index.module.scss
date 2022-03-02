@@ -1,15 +1,11 @@
 .routerCard {
-  text-align: center;
-  display: flex;
-  width: 60%;
-  margin-left: 16%;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
-  a {
-    font-size: 1.5em;
-  }
-  .routeDescription {
-    text-align: center;
-    margin: 0 auto;
-  }
+  text-align: left;
+  font-size: 1em;
+  width: 30em;
+}
+.profile {
+  cursor: pointer;
+}
+.link {
+  cursor: pointer;
 }
