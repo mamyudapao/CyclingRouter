@@ -6,9 +6,9 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  FilledInput,
   FormControl,
   InputLabel,
+  OutlinedInput,
 } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,7 +68,7 @@ const SignUp = (): JSX.Element => {
               <InputLabel htmlFor="filled-adornment-password">
                 Password
               </InputLabel>
-              <FilledInput
+              <OutlinedInput
                 type={passwordVisible ? "text" : "password"}
                 value={password}
                 id="password-form"

@@ -1,21 +1,35 @@
-import { TextField, Button, Card } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Card,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+} from "@mui/material";
 import Styles from "./index.module.scss";
 import { useState } from "react";
-
-import axios from "../../axisoApi";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginAction } from "../../reducks/user/userSlice";
+import Image from "next/image";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const Login = (props: any): JSX.Element => {
-  const [email, setEmail] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
+const Login = (): JSX.Element => {
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const dispatch = useDispatch();
 
   const sendInfo = async () => {
-    if (email !== null && password !== null) {
+    if (email && password) {
       dispatch(loginAction({ email, password }));
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -23,31 +37,51 @@ const Login = (props: any): JSX.Element => {
       <div className={Styles.wrapper}>
         <h1>Login!!</h1>
         <Card className={Styles.card}>
-          <div className={Styles.forms}>
-            <TextField
-              id="email-form"
-              label="Email"
-              variant="outlined"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-            />
-            <TextField
-              id="password-form"
-              label="Password"
-              variant="outlined"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
+          <div className={Styles.contentWrapper}>
+            <Image src="/../public/5243.jpg" width="450vh" height="250vh" />
+            <div className={Styles.forms}>
+              <TextField
+                sx={{ m: 2 }}
+                id="email-form"
+                label="Email"
+                variant="outlined"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              />
+              <FormControl variant="outlined" sx={{ m: 2 }}>
+                <InputLabel htmlFor="filled-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  type={passwordVisible ? "text" : "password"}
+                  value={password}
+                  id="password-form"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {passwordVisible ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </div>
+            <Button
+              className={Styles.sendButton}
+              variant="contained"
+              onClick={sendInfo}
+            >
+              ログインする
+            </Button>
           </div>
-          <Button
-            className={Styles.sendButton}
-            variant="contained"
-            onClick={sendInfo}
-          >
-            送信する
-          </Button>
         </Card>
       </div>
     </>

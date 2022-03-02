@@ -27,6 +27,7 @@ const initialRoute: Route = {
   direction: "",
   user: "",
   title: "",
+  image: "",
   description: "",
   userId: "",
 };
@@ -35,27 +36,16 @@ const RouteComponent = (): JSX.Element => {
   const router = useRouter();
   const { id } = router.query;
   const store = useSelector((state: UserState) => state);
-  const [mapRef, setMapRef] = useState<google.maps.Map | undefined>(undefined);
-  const [center, setCenter] = useState<google.maps.LatLngLiteral | undefined>(
-    undefined
-  );
+  const [mapRef, setMapRef] = useState<google.maps.Map>();
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>();
   const [route, setRoute] = useState<Route>(initialRoute);
-  const [markers, setMarkers] = useState<
-    google.maps.LatLngLiteral[] | undefined
-  >(undefined);
-  const [origin, setOrigin] = useState<google.maps.LatLngLiteral | undefined>(
-    undefined
-  );
-  const [destination, setDestination] = useState<
-    google.maps.LatLngLiteral | undefined
-  >(undefined);
+  const [markers, setMarkers] = useState<google.maps.LatLngLiteral[]>();
+  const [origin, setOrigin] = useState<google.maps.LatLngLiteral>();
+  const [destination, setDestination] = useState<google.maps.LatLngLiteral>();
   const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
-  const [waypoints, setWaypoints] = useState<
-    google.maps.DirectionsWaypoint[] | undefined
-  >(undefined);
-  const [response, setResponse] = useState<
-    google.maps.DirectionsResult | undefined
-  >(undefined);
+  const [waypoints, setWaypoints] =
+    useState<google.maps.DirectionsWaypoint[]>();
+  const [response, setResponse] = useState<google.maps.DirectionsResult>();
   const [distance, setDistance] = useState<number>(0);
 
   const directionsCallback = (
@@ -66,7 +56,7 @@ const RouteComponent = (): JSX.Element => {
       let sumDistance = 0;
       if (result !== null) {
         result.routes[0].legs.forEach((leg) => {
-          if (leg.distance !== undefined) {
+          if (leg.distance) {
             sumDistance += leg.distance.value;
           }
         });
@@ -82,8 +72,7 @@ const RouteComponent = (): JSX.Element => {
   const getDirections = (
     event: any //TODO: any解消
   ) => {
-    if (event !== undefined && markers !== undefined) {
-      console.log(event);
+    if (event && markers) {
       setOrigin(markers[0]);
       setDestination(markers[markers.length - 1]);
       const tempWaypoints = markers
@@ -97,12 +86,12 @@ const RouteComponent = (): JSX.Element => {
   };
 
   const getPosition = (position: google.maps.MapMouseEvent) => {
-    if (markers === undefined || markers.length < 6) {
-      if (mapRef?.getCenter() !== undefined) {
+    if (!markers || markers.length < 6) {
+      if (mapRef?.getCenter()) {
         setCenter(mapRef.getCenter()!.toJSON());
       }
       let json = position.latLng?.toJSON();
-      if (json !== undefined && markers !== undefined) {
+      if (json && markers) {
         const newMarkerPositionsArray = [
           ...markers,
           { lat: json.lat, lng: json.lng },
@@ -119,18 +108,15 @@ const RouteComponent = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (id !== undefined && markers === undefined) {
+    if (id && !markers) {
       axios.get<Route>(`/routes/${id}`).then((response) => {
-        console.log(response);
         setMarkers(
           JSON.parse(response.data.direction) as google.maps.LatLngLiteral[]
         );
         setRoute(response.data);
-        console.log(markers);
-        console.log(route);
       });
     }
-    if (markers !== undefined && origin === undefined) {
+    if (markers && !origin) {
       setOrigin(markers[0]);
       setDestination(markers[markers.length - 1]);
       const tempWaypoints = markers
@@ -153,7 +139,6 @@ const RouteComponent = (): JSX.Element => {
         userId: store.user.id,
       })
       .then((response) => {
-        console.log(response);
         router.push(`/${store.user.id}/profile`);
       });
   };
@@ -200,7 +185,7 @@ const RouteComponent = (): JSX.Element => {
           />
         </div>
         <div>
-          {markers != undefined && (
+          {markers && (
             <DnD
               positions={[...markers]}
               setPositions={emitSetMakerPositions}

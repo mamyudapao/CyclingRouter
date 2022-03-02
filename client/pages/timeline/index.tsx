@@ -8,10 +8,11 @@ import { useSelector } from "react-redux";
 import { UserState } from "../../reducks/user/userSlice";
 import Image from "next/image";
 import UploadButton from "../../components/common/ImageUpload";
+import { convertImage } from "../../utils/imageUpload";
 
 const TimeLine = (props: any) => {
   const store = useSelector((state: UserState) => state);
-  const [tweets, setTweets] = useState<Tweet[] | undefined>(undefined);
+  const [tweets, setTweets] = useState<Tweet[]>();
   const [content, setContent] = useState<string>("");
   const [image, setImage] = useState<File>();
 
@@ -36,10 +37,8 @@ const TimeLine = (props: any) => {
           id = response.data.id;
           setContent("");
         });
-      if (image !== undefined) {
-        const formData = new FormData();
-        const blob = new Blob([image!], { type: "image" });
-        formData.append("image", blob, image?.name);
+      if (image) {
+        const formData = convertImage(image);
         await axios
           .post(`/tweets/${id}/imageUpload`, formData, {
             headers: {
@@ -118,14 +117,14 @@ const TimeLine = (props: any) => {
             className={Styles.postForm}
           />
           <div className={Styles.postButton}>
-            <UploadButton message="画像を追加する" setImage={setImage} />
+            <UploadButton message="画像" setImage={setImage} />
             <Button variant="contained" onClick={() => postTweet()}>
-              投稿する!
+              投稿
             </Button>
           </div>
         </div>
         <div className={Styles.timeline}>
-          {tweets !== undefined &&
+          {tweets &&
             tweets.map((tweet, index) => {
               return (
                 <div className={Styles.tweetCard}>

@@ -89,7 +89,7 @@ const Profile = (props: any): JSX.Element => {
   };
 
   useEffect(() => {
-    if (router.query.id !== undefined) {
+    if (router.query.id) {
       getRoute();
       getMyOwnTweets();
       getFollowings();
@@ -105,28 +105,16 @@ const Profile = (props: any): JSX.Element => {
     newHeight?: number,
     newBirthday?: Date | string
   ) => {
-    if (newName !== undefined) {
-      setName(newName);
-    }
-    if (newBiography !== undefined) {
-      setBiography(newBiography);
-    }
-    if (newLocation !== undefined) {
-      setLocation(newLocation);
-    }
-    if (newBirthday !== undefined) {
-      setBirthday(newBirthday);
-    }
-    if (newWeight !== undefined) {
-      setWeight(newWeight);
-    }
-    if (newHeight !== undefined) {
-      setHeight(newHeight);
-    }
+    if (newName) setName(newName);
+    if (newBiography) setBiography(newBiography);
+    if (newLocation) setLocation(newLocation);
+    if (newBirthday) setBirthday(newBirthday);
+    if (newWeight) setWeight(newWeight);
+    if (newHeight) setHeight(newHeight);
   };
 
   const submitImage = () => {
-    if (image !== undefined) {
+    if (image) {
       const formData = convertImage(image);
       dispatch(
         updateProfileIconsAction({
@@ -149,7 +137,7 @@ const Profile = (props: any): JSX.Element => {
         height: height,
       })
     );
-    if (image != undefined) {
+    if (image) {
       submitImage();
     }
   };
@@ -180,7 +168,7 @@ const Profile = (props: any): JSX.Element => {
               className={Styles.profileImage}
             ></Image>
             <p>
-              {followings !== undefined && (
+              {followings && (
                 <FollowComponent
                   open={open}
                   title={"Followings"}
@@ -190,7 +178,7 @@ const Profile = (props: any): JSX.Element => {
                   }}
                 />
               )}
-              {followers !== undefined && (
+              {followers && (
                 <FollowComponent
                   open={open}
                   title={"Followers"}
@@ -204,7 +192,7 @@ const Profile = (props: any): JSX.Element => {
             <p>Location: {user?.location}</p>
             <p>
               Birthday:
-              {date !== undefined && !Number.isNaN(date.getDate())
+              {date && !Number.isNaN(date.getDate())
                 ? getYear(date) +
                   "年" +
                   (getMonth(date) + 1) +
@@ -236,11 +224,9 @@ const Profile = (props: any): JSX.Element => {
               ツイート
             </Button>
             <div>
-              {routes !== undefined && displayRoutes && (
-                <RoutersCards routes={routes} />
-              )}
+              {routes && displayRoutes && <RoutersCards routes={routes} />}
               <div className={Styles.tweets}>
-                {tweets !== undefined &&
+                {tweets &&
                   !displayRoutes &&
                   tweets.map((tweet, index) => {
                     return (

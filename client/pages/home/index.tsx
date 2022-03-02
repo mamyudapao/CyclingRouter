@@ -50,7 +50,7 @@ const home = (): JSX.Element => {
 
   const onPlaceChanged = () => {
     const positionJson = autocomplete!.getPlace().geometry?.location?.toJSON();
-    if (positionJson !== undefined) {
+    if (positionJson) {
       setCenter({ lat: positionJson.lat, lng: positionJson.lng });
     }
   };
@@ -58,7 +58,7 @@ const home = (): JSX.Element => {
   const getDirections = (
     event: any //TODO: any解消
   ): void => {
-    if (event !== undefined) {
+    if (event) {
       setOrigin(markerPositions[0]);
       setDestination(markerPositions[markerPositions.length - 1]);
       const tempWaypoints = markerPositions
@@ -79,7 +79,7 @@ const home = (): JSX.Element => {
       let sumDistance = 0;
       if (result !== null) {
         result.routes[0].legs.forEach((leg) => {
-          if (leg.distance !== undefined) {
+          if (leg.distance) {
             sumDistance += leg.distance.value;
           }
         });
@@ -111,11 +111,11 @@ const home = (): JSX.Element => {
 
   const getPosition = (position: google.maps.MapMouseEvent) => {
     if (markerPositions.length < 6) {
-      if (mapRef?.getCenter() !== undefined) {
+      if (mapRef?.getCenter()) {
         setCenter(mapRef.getCenter()!.toJSON());
       }
       let json = position.latLng?.toJSON();
-      if (json !== undefined) {
+      if (json) {
         const newMarkerPositionsArray = [
           ...markerPositions,
           { lat: json.lat, lng: json.lng },
@@ -127,7 +127,7 @@ const home = (): JSX.Element => {
 
   const createData = async (title: string, description: string) => {
     const direction = JSON.stringify(markerPositions); //TODO: mysqlのtypeを治す
-    if (image === undefined) {
+    if (!image) {
       await axios
         .post<Route>("/routes/", {
           title,

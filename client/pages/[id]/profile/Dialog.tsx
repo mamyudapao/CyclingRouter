@@ -42,9 +42,6 @@ const AlertDialog = (props: PropsType): JSX.Element => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleEmitUserProfile = () => {
-    setOpen(false);
-  };
 
   return (
     <div>

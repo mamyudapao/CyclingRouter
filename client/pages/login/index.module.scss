@@ -1,18 +1,20 @@
 .wrapper {
   text-align: center;
+  color: white;
 }
 
 .card {
   width: 80%;
+  height: 85vh;
   margin: 0 auto;
 
   .forms {
     display: flex;
     flex-direction: column;
+    margin: 2em auto;
     width: 70%;
-    margin: 100px auto 30px auto;
-    * {
-      margin-bottom: 10px;
+    .textField {
+      margin-bottom: 2em;
     }
   }
   .sendButton {

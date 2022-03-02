@@ -46,10 +46,10 @@ const Header = (props: any): JSX.Element => {
           {store.accessToken === "" && (
             <>
               <li>
-                <Link href="signup">SignUp</Link>
+                <Link href="/signup">SignUp</Link>
               </li>
               <li>
-                <Link href="login">LogIn</Link>
+                <Link href="/login">LogIn</Link>
               </li>
             </>
           )}
