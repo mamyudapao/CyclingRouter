@@ -98,7 +98,7 @@ const SignUp = (): JSX.Element => {
           </div>
           <div className={styles.imageWrapper}>
             <Image
-              src="/../public/undraw_bike_ride_7xit.svg"
+              src={`https://ddx5fuyp1f5xu.cloudfront.net/undraw_bike_ride_7xit.png`}
               width="300vh"
               height="300vh"
             ></Image>

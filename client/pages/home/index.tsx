@@ -1,5 +1,5 @@
 import Styles from "./index.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Button } from "@mui/material";
 import DnD from "../../components/DataDisplay/DnD";
 import Dialog from "./Dialog";
@@ -29,6 +29,7 @@ const mapContainerStyle = {
 const home = (): JSX.Element => {
   const store = useSelector((state: UserState) => state);
   const router = useRouter();
+  const weight = store.user.weight !== 0 ? store.user.weight : 65;
   // 経路のリクエスト用
   const [directionLoaded, setDirectionLoaded] = useState<boolean>(false);
   const [destination, setDestination] = useState<google.maps.LatLngLiteral>();
@@ -125,6 +126,10 @@ const home = (): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    console.log(weight);
+  });
+
   const createData = async (title: string, description: string) => {
     const direction = JSON.stringify(markerPositions); //TODO: mysqlのtypeを治す
     if (!image) {
@@ -190,7 +195,7 @@ const home = (): JSX.Element => {
   };
 
   const autoCompleteOptionsObject: AutoCompleteOptions = {
-    onLoad: (autoComplete) => {
+    onLoad: (autoComplete: any) => {
       setAutocomplete(autoComplete);
     },
     onPlaceChanged: onPlaceChanged,
@@ -215,7 +220,7 @@ const home = (): JSX.Element => {
                 distance={formatNumber(distance / 1000, 1)}
                 time={formatNumber((distance / 1000 / 25) * 60, 1)}
                 calories={formatNumber(
-                  10 * 65 * (distance / 1000 / 25) * 1.05,
+                  10 * weight * (distance / 1000 / 25) * 1.05,
                   1
                 )}
               ></DataView>
@@ -242,7 +247,9 @@ const home = (): JSX.Element => {
           <Button variant="contained" onClick={getDirections}>
             経路を求める
           </Button>
-          <Dialog sendData={createData} setImage={setImage}></Dialog>
+          {store.accessToken !== "" && (
+            <Dialog sendData={createData} setImage={setImage}></Dialog>
+          )}
         </div>
       </Card>
     </>

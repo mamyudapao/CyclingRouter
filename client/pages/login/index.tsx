@@ -38,7 +38,11 @@ const Login = (): JSX.Element => {
         <h1>Login!!</h1>
         <Card className={Styles.card}>
           <div className={Styles.contentWrapper}>
-            <Image src="/../public/5243.jpg" width="450vh" height="250vh" />
+            <Image
+              src={`https://ddx5fuyp1f5xu.cloudfront.net/5243.jpg`}
+              width="450vh"
+              height="250vh"
+            />
             <div className={Styles.forms}>
               <TextField
                 sx={{ m: 2 }}
