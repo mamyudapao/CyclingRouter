@@ -4,18 +4,28 @@ import axios from "../../axiosApi";
 import { Route } from "../../types/routes";
 import { useEffect, useState } from "react";
 import RoutersCards from "../../components/GoogleMap/RouterCards";
+import { useSelector } from "react-redux";
+import { UserState } from "../../reducks/user/userSlice";
 
 const Routers = () => {
   const [routers, setRoutes] = useState<Route[]>();
   const [leftRouters, setLeftRouters] = useState<Route[]>();
   const [rightRouters, setRightRouters] = useState<Route[]>();
 
+  const store = useSelector((state: UserState) => state);
+
   const getRouters = async () => {
-    await axios.get<Route[]>("/routes/").then((response) => {
-      setRoutes(response.data);
-      setLeftRouters(leftProps(response.data));
-      setRightRouters(rightProps(response.data));
-    });
+    await axios
+      .get<Route[]>("/routes/", {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setRoutes(response.data);
+        setLeftRouters(leftProps(response.data));
+        setRightRouters(rightProps(response.data));
+      });
   };
 
   useEffect(() => {

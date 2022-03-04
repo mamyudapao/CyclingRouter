@@ -47,43 +47,77 @@ const Profile = (props: any): JSX.Element => {
   const [date, setDate] = useState<Date>();
 
   const getRoute = async () => {
-    await axios.get<Route[]>(`/routes/user/${userId}`).then((response) => {
-      setRoutes(response.data);
-    });
+    await axios
+      .get<Route[]>(`/routes/user/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setRoutes(response.data);
+      });
   };
 
   const getMyOwnTweets = async () => {
-    await axios.get<Tweet[]>(`/tweets/user/${userId}`).then((response) => {
-      setTweets(response.data);
-    });
+    await axios
+      .get<Tweet[]>(`/tweets/user/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setTweets(response.data);
+      });
   };
 
   const deleteTweet = (tweetId: number) => {
-    axios.delete(`tweets/${tweetId}`).then((response) => {
-      getMyOwnTweets();
-    });
+    axios
+      .delete(`tweets/${tweetId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        getMyOwnTweets();
+      });
   };
 
   const getUser = async () => {
-    await axios.get<User>(`users/${userId}`).then((response) => {
-      setUser(response.data);
-      setBirthday(response.data.birthday);
-      setDate(new Date(response.data.birthday));
-    });
+    await axios
+      .get<User>(`users/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setUser(response.data);
+        setBirthday(response.data.birthday);
+        setDate(new Date(response.data.birthday));
+      });
   };
 
   const getFollowings = async () => {
     await axios
-      .get<Follow[]>(`follow/followings/${userId}`)
+      .get<Follow[]>(`follow/followings/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
       .then((response) => {
         setFollowings(response.data);
       });
   };
 
   const getFollowers = async () => {
-    await axios.get<Follow[]>(`follow/followers/${userId}`).then((response) => {
-      setFollowers(response.data);
-    });
+    await axios
+      .get<Follow[]>(`follow/followers/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setFollowers(response.data);
+      });
   };
 
   useEffect(() => {

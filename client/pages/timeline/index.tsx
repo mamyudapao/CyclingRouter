@@ -17,23 +17,35 @@ const TimeLine = (props: any) => {
   const [image, setImage] = useState<File>();
 
   const getTweets = async () => {
-    axios.get<Tweet[]>("/tweets/all").then((response) => {
-      console.log(response);
-      setTweets(response.data);
-    });
+    axios
+      .get<Tweet[]>("/tweets/all", {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setTweets(response.data);
+      });
   };
 
   const postTweet = async () => {
     let id: number | undefined = undefined;
     if (content.length !== 0) {
       await axios
-        .post<Tweet>("/tweets/", {
-          content: content,
-          userId: store.user.id,
-          image: image?.name,
-        })
+        .post<Tweet>(
+          "/tweets/",
+          {
+            content: content,
+            userId: store.user.id,
+            image: image?.name,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + store.accessToken,
+            },
+          }
+        )
         .then((response) => {
-          console.log(response.data);
           id = response.data.id;
           setContent("");
         });
@@ -43,6 +55,7 @@ const TimeLine = (props: any) => {
           .post(`/tweets/${id}/imageUpload`, formData, {
             headers: {
               "content-type": "multipart/form-data",
+              Authorization: "Bearer " + store.accessToken,
             },
           })
           .then(() => {
@@ -62,7 +75,11 @@ const TimeLine = (props: any) => {
     console.log(likedIndex);
     if (likedIndex !== null) {
       await axios
-        .delete(`likes/${tweets![index].likes[likedIndex].id}`)
+        .delete(`likes/${tweets![index].likes[likedIndex].id}`, {
+          headers: {
+            Authorization: "Bearer " + store.accessToken,
+          },
+        })
         .then((response) => {
           console.log(response.data);
           tweets![index].likes.splice(index, 1);
@@ -70,10 +87,18 @@ const TimeLine = (props: any) => {
         });
     } else {
       await axios
-        .post<Like>("/likes/", {
-          userId: userId,
-          tweetId: tweetId,
-        })
+        .post<Like>(
+          "/likes/",
+          {
+            userId: userId,
+            tweetId: tweetId,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + store.accessToken,
+            },
+          }
+        )
         .then((response) => {
           console.log(response);
           const index = tweets!.findIndex((element) => element.id === tweetId);
@@ -85,10 +110,16 @@ const TimeLine = (props: any) => {
   };
 
   const deleteTweet = (tweetId: number) => {
-    axios.delete(`tweets/${tweetId}`).then((response) => {
-      console.log(response.data);
-      getTweets();
-    });
+    axios
+      .delete(`tweets/${tweetId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        getTweets();
+      });
   };
 
   useEffect(() => {

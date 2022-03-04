@@ -109,12 +109,18 @@ const RouteComponent = (): JSX.Element => {
 
   useEffect(() => {
     if (id && !markers) {
-      axios.get<Route>(`/routes/${id}`).then((response) => {
-        setMarkers(
-          JSON.parse(response.data.direction) as google.maps.LatLngLiteral[]
-        );
-        setRoute(response.data);
-      });
+      axios
+        .get<Route>(`/routes/${id}`, {
+          headers: {
+            Authorization: "Bearer " + store.accessToken,
+          },
+        })
+        .then((response) => {
+          setMarkers(
+            JSON.parse(response.data.direction) as google.maps.LatLngLiteral[]
+          );
+          setRoute(response.data);
+        });
     }
     if (markers && !origin) {
       setOrigin(markers[0]);
@@ -132,12 +138,20 @@ const RouteComponent = (): JSX.Element => {
   const createData = (title: string, description: string) => {
     const direction = JSON.stringify(markers);
     axios
-      .put(`/routes/${route.id}`, {
-        title,
-        description,
-        direction,
-        userId: store.user.id,
-      })
+      .put(
+        `/routes/${route.id}`,
+        {
+          title,
+          description,
+          direction,
+          userId: store.user.id,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + store.accessToken,
+          },
+        }
+      )
       .then((response) => {
         router.push(`/${store.user.id}/profile`);
       });

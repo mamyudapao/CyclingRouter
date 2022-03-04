@@ -129,12 +129,20 @@ const home = (): JSX.Element => {
     const direction = JSON.stringify(markerPositions); //TODO: mysqlのtypeを治す
     if (!image) {
       await axios
-        .post<Route>("/routes/", {
-          title,
-          description,
-          direction,
-          userId: store.user.id,
-        })
+        .post<Route>(
+          "/routes/",
+          {
+            title,
+            description,
+            direction,
+            userId: store.user.id,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + store.accessToken,
+            },
+          }
+        )
         .then((response) => {
           console.log(response);
           router.push(`/${store.user.id}/profile`);
@@ -143,13 +151,21 @@ const home = (): JSX.Element => {
       let routeId = "0";
       const formData = convertImage(image);
       await axios
-        .post<Route>("/routes/", {
-          title,
-          description,
-          direction,
-          userId: store.user.id,
-          image: image.name,
-        })
+        .post<Route>(
+          "/routes/",
+          {
+            title,
+            description,
+            direction,
+            userId: store.user.id,
+            image: image.name,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + store.accessToken,
+            },
+          }
+        )
         .then((response) => {
           routeId = response.data.id;
         });
@@ -157,6 +173,7 @@ const home = (): JSX.Element => {
         await axios.put(`/routes/${routeId}/image`, formData, {
           headers: {
             "Content-Type": `multipart/form-data`,
+            Authorization: "Bearer " + store.accessToken,
           },
         });
       }

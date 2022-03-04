@@ -4,6 +4,7 @@ import { Route } from "../../types/routes";
 import {
   Avatar,
   Card,
+  CardActions,
   CardContent,
   CardHeader,
   CardMedia,

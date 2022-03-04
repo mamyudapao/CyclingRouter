@@ -20,16 +20,18 @@ const Header = (props: any): JSX.Element => {
               <a>ホーム</a>
             </Link>
           </li>
-          <li>
-            <Link href="/timeline">
-              <a>タイムライン</a>
-            </Link>
-          </li>
-          <Link href="/routers">
-            <a>経路を探す</a>
-          </Link>
-          <li>ブログ</li>
-          <li>連絡</li>
+          {store.accessToken !== "" && (
+            <>
+              <li>
+                <Link href="/timeline">
+                  <a>タイムライン</a>
+                </Link>
+              </li>
+              <Link href="/routers">
+                <a>経路を探す</a>
+              </Link>
+            </>
+          )}
         </div>
         <div className={styles.right}>
           {store.accessToken !== "" && (
