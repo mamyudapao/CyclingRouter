@@ -1,12 +1,11 @@
 import styles from "./header.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBiking,
-  faSearch,
-  faBell,
-  faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
-const Header = () => {
+import Link from "next/link";
+import { faBiking, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { usersState } from "../../reducks/user/userSlice";
+const Header = (props: any): JSX.Element => {
+  const store = useSelector((state: usersState) => state);
   return (
     <>
       <ul className={styles.header}>
@@ -16,22 +15,46 @@ const Header = () => {
           </li>
         </div>
         <div className={styles.center}>
-          <li>FEED</li>
-          <li>AUTHORS</li>
-          <li>EXPLORE</li>
-          <li>BLOG</li>
-          <li>CONTACT</li>
+          <li>
+            <Link href="/">
+              <a>ホーム</a>
+            </Link>
+          </li>
+          {store.accessToken !== "" && (
+            <>
+              <li>
+                <Link href="/timeline">
+                  <a>タイムライン</a>
+                </Link>
+              </li>
+              <Link href="/routers">
+                <a>経路を探す</a>
+              </Link>
+            </>
+          )}
         </div>
         <div className={styles.right}>
-          <li>
-            <FontAwesomeIcon icon={faSearch} />
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faBell} />
-          </li>
-          <li>
-            <FontAwesomeIcon icon={faUserCircle} />
-          </li>
+          {store.accessToken !== "" && (
+            <>
+              <li>
+                <Link href={`/${store.user.id}/profile`} replace={true}>
+                  <a>
+                    <FontAwesomeIcon icon={faUserCircle} />
+                  </a>
+                </Link>
+              </li>
+            </>
+          )}
+          {store.accessToken === "" && (
+            <>
+              <li>
+                <Link href="/signup">SignUp</Link>
+              </li>
+              <li>
+                <Link href="/login">LogIn</Link>
+              </li>
+            </>
+          )}
         </div>
       </ul>
     </>

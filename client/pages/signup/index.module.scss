@@ -1,0 +1,15 @@
+.signIn {
+  display: flex;
+  text-align: center;
+}
+
+.card {
+  background-color: #ffffff;
+  width: 100%;
+  height: 90vh;
+  border-radius: 30px;
+  .button {
+    margin-top: 0.6em;
+    margin-left: 1em;
+  }
+}

@@ -1,0 +1,45 @@
+.card {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.wrapper {
+  display: flex;
+}
+
+.map {
+  margin: 1rem;
+}
+
+.rightSide {
+  width: inherit;
+}
+
+.dnd {
+  height: 100%;
+  overflow: auto;
+}
+
+.topBar {
+  display: flex;
+}
+
+.dataDisplay {
+  display: flex;
+  flex-direction: column;
+  height: 35%;
+  justify-content: flex-end;
+}
+
+#searchBox {
+  padding: 1em;
+  background-color: #fff;
+}
+
+.data {
+  display: flex;
+}
+
+#buttons {
+  display: flex;
+}

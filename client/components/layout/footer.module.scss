@@ -1,0 +1,15 @@
+.footer {
+  width: 100%;
+  bottom: 0;
+  background-color: #2699fb;
+  ul {
+    display: flex;
+    margin: 0;
+    list-style: none;
+    color: white;
+    flex-direction: row-reverse;
+  }
+}
+.logo {
+  margin-right: 2em;
+}

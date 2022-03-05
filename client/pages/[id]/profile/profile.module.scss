@@ -1,0 +1,61 @@
+.card {
+  margin: auto;
+  width: 80%;
+  .changeButton {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+  }
+  .profile {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    border-top: 1px solid #ccc;
+    .imageBlock {
+      margin-top: 1.5em;
+    }
+    .centerBlock {
+      text-align: center;
+      .profileBlock {
+        border-bottom: 1px solid #ccc;
+        width: 100%;
+        margin-bottom: 1em;
+      }
+      .routes {
+        width: 30em;
+        margin: 0 auto;
+        p {
+          text-align: center;
+        }
+      }
+      .tweets {
+        text-align: left;
+        margin-left: 16%;
+        width: 60%;
+        p {
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+.wrapperContent {
+  display: flex;
+  .leftSide {
+    width: 60%;
+    height: 150px;
+  }
+}
+#buttonActive {
+  background-color: #0087ff;
+  color: white;
+}
+
+#buttonInactive {
+  background-color: gray;
+  color: white;
+}
+
+#uploadProfile {
+  display: none;
+}

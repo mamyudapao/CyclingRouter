@@ -1,0 +1,40 @@
+.wrapper {
+  display: flex;
+  .profile {
+    width: 20%;
+    .avatar {
+      width: 200px;
+      height: 200px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 20px;
+      position: relative;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .postForm {
+      width: 100%;
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .postButton {
+      display: flex;
+      margin-top: 10px;
+      margin: 0 35%;
+      button {
+        font-size: 12px;
+      }
+    }
+  }
+  .timeline {
+    width: 60%;
+    .tweetCard {
+      font-size: 1.3em;
+      margin-bottom: 5px;
+    }
+  }
+  .info {
+    width: 20%;
+  }
+}

@@ -1,20 +1,47 @@
 package users
 
 import (
+	"errors"
+	"log"
+
 	"github.com/mamyudapao/CyclingRouter/common"
-	"gorm.io/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
-type UserModel struct {
-	Username     string `gorm:"column:username;unique"`
-	Email        string `gorm:"column:email;unique"`
-	Bio          string `gorm:"column:bio;size:1024"`
-	PasswordHash []byte `gorm:"column:password;not null"`
-	gorm.Model
+type User struct {
+	Username  string `gorm:"column:username; not null" json:"username"`
+	Email     string `gorm:"column:email;unique; not null" json:"email"`
+	Password  string `gorm:"column:password;not null;" json:"-"`
+	Biography string `gorm:"column:biography;" json:"biography"`
+	UserImage string `gorm:"column:user_image;default:userDefault.png" json:"userImage"`
+	Location  string `gorm:"column:location" json:"location"`
+	Birthday  string `gorm:"column:birthday" json:"birthday"`
+	Weight    uint8  `gorm:"column:weight" json:"weight"`
+	Height    uint8  `gorm:"column:height" json:"height"`
+	common.GormModel
+}
+
+type Follow struct {
+	UserId   int  `gorm:"column:user_id; not null; uniqueIndex:unique_follow" json:"userId"`
+	FollowId int  `gorm:"column:follow_id; not null; uniqueIndex:unique_follow" json:"followId"`
+	User     User `gorm:"foreignKey:UserId" json:"user"`
+	Follow   User `gorm:"foreignKey:FollowId" json:"follow"`
+	common.GormModel
+}
+
+func (user *User) setPassword(password string) error {
+	if len(password) == 0 {
+		return errors.New("password should not be empty")
+	}
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+	return nil
 }
 
 func AutoMigrate() {
 	db := common.GetDB()
-
-	db.AutoMigrate(&UserModel{})
+	err := db.AutoMigrate(&User{}, &Follow{})
+	if err != nil {
+		log.Println(err)
+	}
 }
