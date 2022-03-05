@@ -1,22 +1,22 @@
 import Styles from "./index.module.scss";
 import { useEffect, useState } from "react";
 import { Card, Button } from "@mui/material";
-import DnD from "../../components/DataDisplay/DnD";
+import DnD from "../components/DataDisplay/DnD";
 import Dialog from "./Dialog";
-import DataView from "../../components/DataDisplay/DataView";
-import GoogleMap from "../../components/GoogleMap/GoogleMap";
+import DataView from "../components/DataDisplay/DataView";
+import GoogleMap from "../components/GoogleMap/GoogleMap";
 import {
   GoogleMapOptions,
   AutoCompleteOptions,
   DirectionsServiceOptions,
-} from "../../components/GoogleMap/types";
-import axios from "../../axiosApi";
+} from "../components/GoogleMap/types";
+import axios from "../axiosApi";
 import { useSelector } from "react-redux";
-import { UserState } from "../../reducks/user/userSlice";
+import { UserState } from "../reducks/user/userSlice";
 import { useRouter } from "next/router";
-import { formatNumber } from "../../utils/numConverter";
-import { convertImage } from "../../utils/imageUpload";
-import { Route } from "../../types/routes";
+import { formatNumber } from "../utils/numConverter";
+import { convertImage } from "../utils/imageUpload";
+import { Route } from "../types/routes";
 
 //少数第一位で四捨五入
 
@@ -87,6 +87,7 @@ const home = (): JSX.Element => {
         //小数点以下を切り捨てる
         sumDistance = Math.round(sumDistance);
         setDistance(sumDistance);
+        console.log(result);
         setResponse(result);
       }
     }

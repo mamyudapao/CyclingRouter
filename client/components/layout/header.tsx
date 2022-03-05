@@ -16,7 +16,7 @@ const Header = (props: any): JSX.Element => {
         </div>
         <div className={styles.center}>
           <li>
-            <Link href="/home">
+            <Link href="/">
               <a>ホーム</a>
             </Link>
           </li>

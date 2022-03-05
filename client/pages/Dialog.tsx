@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import ImageUpload from "../../components/common/ImageUpload";
+import ImageUpload from "../components/common/ImageUpload";
 import { PinDropTwoTone } from "@mui/icons-material";
 import { Dispatch, SetStateAction } from "react";
 

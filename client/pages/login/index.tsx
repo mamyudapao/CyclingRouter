@@ -35,7 +35,6 @@ const Login = (): JSX.Element => {
   return (
     <>
       <div className={Styles.wrapper}>
-        <h1>Login!!</h1>
         <Card className={Styles.card}>
           <div className={Styles.contentWrapper}>
             <Image

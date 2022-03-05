@@ -3,6 +3,7 @@ import { Button, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import Styles from "./profile.module.scss";
 import Image from "next/image";
+import Head from "next/head";
 import axios from "../../../axiosApi";
 import {
   UserState,
@@ -175,6 +176,9 @@ const Profile = (props: any): JSX.Element => {
   };
   return (
     <>
+      <Head>
+        <title>{store.user.username}のプロフィール</title>
+      </Head>
       <Card className={Styles.card} variant="outlined">
         {userId == store.user.id.toString() && (
           <div className={Styles.changeButton}>

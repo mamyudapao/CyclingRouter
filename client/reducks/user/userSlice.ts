@@ -122,7 +122,7 @@ export const usersSlice = createSlice({
       state.user.username = action.payload.user.username;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      router.push("/home");
+      router.push("/");
     });
     builder.addCase(loginAction.fulfilled, (state, action) => {
       state.user.id = action.payload.user.id;
@@ -135,7 +135,7 @@ export const usersSlice = createSlice({
       state.user.height = action.payload.user.height;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      router.push("/home");
+      router.push("/");
     });
     builder.addCase(updateProfileAction.fulfilled, (state, action) => {
       console.log(action.payload);
