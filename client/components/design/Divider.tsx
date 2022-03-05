@@ -37,7 +37,7 @@ const InsetDivider = (props: DividerProps): JSX.Element => {
         <ListItem>
           <ListItemAvatar>
             <Avatar sx={{ bgcolor: props.bgColor }}>
-              <FontAwesomeIcon icon={props.icon} />
+              <FontAwesomeIcon icon={props.icon as any} />
             </Avatar>
           </ListItemAvatar>
           <ListItemText primary={props.primary} secondary={props.secondary} />

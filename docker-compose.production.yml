@@ -1,11 +1,14 @@
 version: "3.9"
 services:
   client:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile.production
     ports:
       - "3000:3000"
     volumes:
       - "./client:/app"
+      - build-image:/app/.next
   api:
     build: ./api
     env_file: ./api/.env
@@ -15,6 +18,8 @@ services:
       - "./api:/app"
     networks:
       - cycle-net
+    environment:
+      GIN_MODE: release
     depends_on:
       - mysql
   mysql:
@@ -33,6 +38,7 @@ services:
 
 volumes:
   mysql_data:
+  build-image:
 
 networks:
   cycle-net:

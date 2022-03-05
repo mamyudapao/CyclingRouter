@@ -11,7 +11,7 @@ const Header = (props: any): JSX.Element => {
       <ul className={styles.header}>
         <div className={styles.left}>
           <li className={styles.logo}>
-            <FontAwesomeIcon icon={faBiking} className="fa-lg" />
+            <FontAwesomeIcon icon={faBiking as any} className="fa-lg" />
           </li>
         </div>
         <div className={styles.center}>
@@ -39,7 +39,7 @@ const Header = (props: any): JSX.Element => {
               <li>
                 <Link href={`/${store.user.id}/profile`} replace={true}>
                   <a>
-                    <FontAwesomeIcon icon={faUserCircle} />
+                    <FontAwesomeIcon icon={faUserCircle as any} />
                   </a>
                 </Link>
               </li>

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mamyudapao/CyclingRouter/common"
@@ -17,15 +15,6 @@ func Migrate() {
 	users.AutoMigrate()
 	routes.AutoMigrate()
 	timelines.AutoMigrate()
-}
-
-func GetSomething(c *gin.Context) {
-	c.JSON(
-		http.StatusOK, gin.H{
-			"msg": "auth!!",
-		},
-	)
-
 }
 
 func main() {
@@ -63,8 +52,6 @@ func main() {
 	timelines.TweetRouter(authGroup.Group("/tweets"))
 	timelines.TweetLikeRouter(authGroup.Group("/likes"))
 	timelines.TweetReplyRouter(authGroup.Group("/reply"))
-	v2 := r.Group("/authTest").Use(middleware.Authz())
 
-	v2.GET("/", GetSomething)
 	r.Run()
 }

@@ -1,5 +1,4 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -9,8 +8,6 @@ import Image from "next/image";
 import { getDate, getMonth, getYear, parseJSON } from "date-fns";
 import { useState } from "react";
 import Styles from "./index.module.scss";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Props } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
 type PropsType = {

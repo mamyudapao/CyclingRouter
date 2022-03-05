@@ -26,7 +26,9 @@ func InitDB() {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("db err: (Init) ", err)
-		panic("Cannot Connect DB")
+	}
+	for err != nil {
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	}
 	fmt.Println("Success init")
 	DB = db

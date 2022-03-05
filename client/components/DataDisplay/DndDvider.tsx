@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import Styles from "./index.module.scss";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 type ButtonDefinition = {
   icon: IconDefinition;
@@ -46,7 +47,7 @@ const DndDivider = (props: DividerProps): JSX.Element => {
                 props.button?.buttonFunction(event, props.info);
               }}
             >
-              <FontAwesomeIcon icon={props.button.icon} />
+              <FontAwesomeIcon icon={props.button.icon as any} />
             </button>
           )}
         </ListItem>
