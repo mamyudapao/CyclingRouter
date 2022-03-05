@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "../../axisoApi";
+import axios from "../../axiosApi";
 import router from "next/router";
 import { User } from "../../types/users";
 
@@ -97,6 +97,7 @@ export const updateProfileIconsAction = createAsyncThunk<
   { userImage: string },
   { image: FormData; id: number }
 >("users/updateProfileIconsAction", async (updateObj) => {
+  console.log(updateObj.image);
   const response = await axios.post<{ userImage: string }>(
     `users/${updateObj.id}/image`,
     updateObj.image,
@@ -121,7 +122,7 @@ export const usersSlice = createSlice({
       state.user.username = action.payload.user.username;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      router.push("/home");
+      router.push("/");
     });
     builder.addCase(loginAction.fulfilled, (state, action) => {
       state.user.id = action.payload.user.id;
@@ -134,7 +135,7 @@ export const usersSlice = createSlice({
       state.user.height = action.payload.user.height;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      router.push("/home");
+      router.push("/");
     });
     builder.addCase(updateProfileAction.fulfilled, (state, action) => {
       console.log(action.payload);

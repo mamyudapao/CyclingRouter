@@ -54,14 +54,15 @@ func main() {
 		// preflightリクエストの結果をキャッシュする時間
 	}))
 
-	v1 := r.Group("/api")
-	users.AuthRouter(v1.Group("/auth"))
-	users.UsersRouter(v1.Group("/users"))
-	users.FollowRouter(v1.Group("/follow"))
-	routes.RoutersRouter(v1.Group("/routes"))
-	timelines.TweetRouter(v1.Group("/tweets"))
-	timelines.TweetLikeRouter(v1.Group("/likes"))
-	timelines.TweetReplyRouter(v1.Group("/reply"))
+	openGroup := r.Group("/api")
+	authGroup := r.Group("/api", middleware.Authz())
+	users.AuthRouter(openGroup.Group("/auth"))
+	users.UsersRouter(authGroup.Group("/users"))
+	users.FollowRouter(authGroup.Group("/follow"))
+	routes.RoutersRouter(authGroup.Group("/routes"))
+	timelines.TweetRouter(authGroup.Group("/tweets"))
+	timelines.TweetLikeRouter(authGroup.Group("/likes"))
+	timelines.TweetReplyRouter(authGroup.Group("/reply"))
 	v2 := r.Group("/authTest").Use(middleware.Authz())
 
 	v2.GET("/", GetSomething)

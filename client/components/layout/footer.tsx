@@ -3,8 +3,9 @@ const Footer = (): JSX.Element => {
   return (
     <div className={Style.footer}>
       <ul>
-        <li>Footer</li>
-        <li>Footer Contents</li>
+        <li>
+          <h2 className={Style.logo}>CyclingRouter</h2>
+        </li>
       </ul>
     </div>
   );

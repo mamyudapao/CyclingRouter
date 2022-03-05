@@ -10,7 +10,7 @@ func RoutersRouter(router *gin.RouterGroup) {
 	router.PUT("/:id", UpdateRouteById)
 	//複数コース
 	router.GET("/user/:id", GetRoutesByUserId)
-
-	//テスト
-	router.POST("/test", testFunc)
+	router.GET("/", GetAllRoutes)
+	// コースのトプ画を登録
+	router.PUT("/:id/image", UploadRouteImage)
 }

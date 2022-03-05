@@ -16,20 +16,22 @@ const Header = (props: any): JSX.Element => {
         </div>
         <div className={styles.center}>
           <li>
-            <Link href="/home">
+            <Link href="/">
               <a>ホーム</a>
             </Link>
           </li>
-          <li>
-            <Link href="/timeline">
-              <a>タイムライン</a>
-            </Link>
-          </li>
-          <Link href="/routers">
-            <li>経路を探す</li>
-          </Link>
-          <li>ブログ</li>
-          <li>連絡</li>
+          {store.accessToken !== "" && (
+            <>
+              <li>
+                <Link href="/timeline">
+                  <a>タイムライン</a>
+                </Link>
+              </li>
+              <Link href="/routers">
+                <a>経路を探す</a>
+              </Link>
+            </>
+          )}
         </div>
         <div className={styles.right}>
           {store.accessToken !== "" && (
@@ -46,10 +48,10 @@ const Header = (props: any): JSX.Element => {
           {store.accessToken === "" && (
             <>
               <li>
-                <Link href="signup">SignUp</Link>
+                <Link href="/signup">SignUp</Link>
               </li>
               <li>
-                <Link href="login">LogIn</Link>
+                <Link href="/login">LogIn</Link>
               </li>
             </>
           )}

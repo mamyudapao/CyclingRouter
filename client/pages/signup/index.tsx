@@ -1,27 +1,39 @@
 import Image from "next/image";
 import styles from "./index.module.scss";
 import { useState } from "react";
-import { TextField, Button } from "@mui/material";
-
+import {
+  TextField,
+  Button,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+} from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
 import { useDispatch, useSelector } from "react-redux";
 import { signInAction, UserState } from "../../reducks/user/userSlice";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const SignUp = (): JSX.Element => {
-  const [email, setEmail] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
-  const [password2, setPassword2] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>();
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+
+  const handleClickShowPassword = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   const dispatch = useDispatch();
-  const store = useSelector((state: UserState) => state);
 
   const sendAccountInfo = async () => {
-    if (email !== null && username !== null && password !== null) {
+    if (email && username && password) {
       dispatch(
         signInAction({
-          email: email!,
-          username: username!,
-          password: password!,
+          email: email,
+          username: username,
+          password: password,
         })
       );
     }
@@ -29,8 +41,12 @@ const SignUp = (): JSX.Element => {
   return (
     <>
       <div className={styles.signIn}>
-        <div className={styles.leftSide}>
-          <h1>SignUp</h1>
+        <div className={styles.card}>
+          <h1>Make A Good Workout Habits!</h1>
+          <h2>Make and Share Your Course!!</h2>
+          <h1>
+            <PeopleIcon />
+          </h1>
           <div className={styles.formWrapper}>
             <TextField
               id="email-form"
@@ -48,40 +64,47 @@ const SignUp = (): JSX.Element => {
                 setUsername(e.target.value);
               }}
             />
-            <TextField
-              id="password-form"
-              label="Password"
-              variant="outlined"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-            <TextField
-              id="password2-form"
-              label="Paddword2"
-              variant="outlined"
-              onChange={(e) => {
-                setPassword2(e.target.value);
-              }}
-            />
-            <Button variant="contained" onClick={sendAccountInfo}>
+            <FormControl variant="outlined">
+              <InputLabel htmlFor="filled-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                type={passwordVisible ? "text" : "password"}
+                value={password}
+                id="password-form"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {passwordVisible ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+            <Button
+              variant="contained"
+              onClick={sendAccountInfo}
+              className={styles.button}
+            >
               送信する
             </Button>
           </div>
-        </div>
-        <div className={styles.rightSide}>
-          <h1>Make A Good Workout Habits!</h1>
-          <h2>Make and Shere Your Cours!!</h2>
           <div className={styles.imageWrapper}>
             <Image
-              src="/../public/undraw_bike_ride_7xit.svg"
-              width="300"
-              height="300"
+              src={`https://ddx5fuyp1f5xu.cloudfront.net/undraw_bike_ride_7xit.png`}
+              width="300vh"
+              height="300vh"
             ></Image>
           </div>
         </div>
       </div>
-      <h1>Username {}</h1>
     </>
   );
 };

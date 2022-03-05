@@ -9,16 +9,18 @@ import { useSelector } from "react-redux";
 import store from "../reducks/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import Head from "next/head";
 const persistor = persistStore(store);
 
 const App = ({ Component, pageProps }: any): JSX.Element => {
   const [auth, setAuth] = useState(Cookie.get("token"));
   pageProps.auth = auth;
   pageProps.setAuth = setAuth;
-  //if authがundefined | nullだったらHeaderが非ログイン仕様。
-  //else ログイン仕様のHeaderにする
   return (
     <>
+      <Head>
+        <title>CyclingRouter</title>
+      </Head>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Header auth={pageProps.auth} />

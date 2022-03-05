@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Dialog,
   Button,
@@ -10,7 +10,7 @@ import {
 import AdapterDayjs from "@mui/lab/AdapterDayjs";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { DatePicker } from "@mui/lab";
-import ImageUploader from "./ImageUpload";
+import ImageUploader from "../../../components/common/ImageUpload";
 
 type PropsType = {
   name: string;
@@ -19,7 +19,7 @@ type PropsType = {
   birthday: Date | string;
   weight: number;
   height: number;
-  image: File | undefined;
+  setImage: Dispatch<SetStateAction<File | undefined>>;
   updateProps: (
     newName?: string,
     newBiography?: string,
@@ -28,7 +28,6 @@ type PropsType = {
     newHeight?: number,
     newBirthday?: Date | string
   ) => void;
-  updateImageProps: (newImage: File | undefined) => void;
   update: () => void;
 };
 
@@ -41,9 +40,6 @@ const AlertDialog = (props: PropsType): JSX.Element => {
   };
 
   const handleClose = () => {
-    setOpen(false);
-  };
-  const handleEmitUserProfile = () => {
     setOpen(false);
   };
 
@@ -147,8 +143,8 @@ const AlertDialog = (props: PropsType): JSX.Element => {
             />
           </LocalizationProvider>
           <ImageUploader
-            image={props.image}
-            updateFunction={props.updateImageProps}
+            setImage={props.setImage}
+            message="プロフィール画像を変更する"
           ></ImageUploader>
         </DialogContent>
         <DialogActions>

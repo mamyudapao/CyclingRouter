@@ -1,10 +1,10 @@
-import RoutersCards from "./RouterCards";
 import FollowComponent from "../../../components/Profile/FollowComponent";
 import { Button, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import Styles from "./profile.module.scss";
 import Image from "next/image";
-import axios from "../../../axisoApi";
+import Head from "next/head";
+import axios from "../../../axiosApi";
 import {
   UserState,
   updateProfileAction,
@@ -12,14 +12,14 @@ import {
 } from "../../../reducks/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import AlertDialog from "./Dialog";
-import Link from "next/link";
 import { Route } from "../../../types/routes";
 import { Tweet } from "../../../types/timelines";
 import TweetComponent from "../../../components/Timeline/TweetComponent";
 import { getDate, getMonth, getYear } from "date-fns";
 import { Follow, User } from "../../../types/users";
 import { useRouter } from "next/router";
-import MyProfileComponent from "./MyProfileComponent";
+import { convertImage } from "../../../utils/imageUpload";
+import RouterCard from "../../../components/GoogleMap/RouterCards";
 
 //TODO: S3を準備する
 //TODO: follow機能をつける
@@ -36,69 +36,93 @@ const Profile = (props: any): JSX.Element => {
   const [weight, setWeight] = useState<number>(store.user.weight);
   const [height, setHeight] = useState<number>(store.user.height);
   const [image, setImage] = useState<File>();
-  const [routes, setRoutes] = useState<Route[] | null>(null);
-  const [tweets, setTweets] = useState<Tweet[] | null>(null);
+  const [routes, setRoutes] = useState<Route[]>();
+  const [tweets, setTweets] = useState<Tweet[]>();
   const [displayRoutes, setDisplayRoutes] = useState(true); //falseの時びツイートを表示
-  const [followings, setFollowings] = useState<Follow[] | null>(null);
-  const [followers, setFollowers] = useState<Follow[] | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [followings, setFollowings] = useState<Follow[]>();
+  const [followers, setFollowers] = useState<Follow[]>();
+  const [user, setUser] = useState<User>();
 
   //followComponentを制御
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
 
   const getRoute = async () => {
-    await axios.get(`/routes/user/${router.query.id}`).then((response) => {
-      console.log(response);
-      setRoutes(response.data.routes);
-    });
+    await axios
+      .get<Route[]>(`/routes/user/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setRoutes(response.data);
+      });
   };
 
   const getMyOwnTweets = async () => {
     await axios
-      .get<Tweet[]>(`/tweets/user/${router.query.id}`)
+      .get<Tweet[]>(`/tweets/user/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
       .then((response) => {
-        console.log(response.data);
         setTweets(response.data);
       });
   };
 
   const deleteTweet = (tweetId: number) => {
-    axios.delete(`tweets/${tweetId}`).then((response) => {
-      console.log(response.data);
-      getMyOwnTweets();
-    });
+    axios
+      .delete(`tweets/${tweetId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        getMyOwnTweets();
+      });
   };
 
   const getUser = async () => {
-    await axios.get(`users/${router.query.id}`).then((response) => {
-      setUser(response.data);
-      setBirthday(response.data.birthday);
-      setDate(new Date(response.data.birthday));
-    });
+    await axios
+      .get<User>(`users/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
+      .then((response) => {
+        setUser(response.data);
+        setBirthday(response.data.birthday);
+        setDate(new Date(response.data.birthday));
+      });
   };
 
   const getFollowings = async () => {
     await axios
-      .get<Follow[]>(`follow/followings/${router.query.id}`)
+      .get<Follow[]>(`follow/followings/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
       .then((response) => {
-        console.log(response.data);
         setFollowings(response.data);
       });
   };
 
   const getFollowers = async () => {
     await axios
-      .get<Follow[]>(`follow/followers/${router.query.id}`)
+      .get<Follow[]>(`follow/followers/${userId}`, {
+        headers: {
+          Authorization: "Bearer " + store.accessToken,
+        },
+      })
       .then((response) => {
-        console.log(response.data);
         setFollowers(response.data);
       });
   };
 
   useEffect(() => {
-    console.log(router.query.id);
-    if (router.query.id !== undefined) {
+    if (router.query.id) {
       getRoute();
       getMyOwnTweets();
       getFollowings();
@@ -114,45 +138,24 @@ const Profile = (props: any): JSX.Element => {
     newHeight?: number,
     newBirthday?: Date | string
   ) => {
-    if (newName !== undefined) {
-      console.log(newName);
-      setName(newName);
-      console.log(name);
-    }
-    if (newBiography !== undefined) {
-      setBiography(newBiography);
-    }
-    if (newLocation !== undefined) {
-      setLocation(newLocation);
-    }
-    if (newBirthday !== undefined) {
-      setBirthday(newBirthday);
-    }
-    if (newWeight !== undefined) {
-      setWeight(newWeight);
-    }
-    if (newHeight !== undefined) {
-      setHeight(newHeight);
-    }
-    console.log(name, biography, location, birthday, image, weight, height);
-  };
-
-  const updateImage = (image: File | undefined) => {
-    if (typeof image != (undefined && null)) {
-      setImage(image);
-    }
+    if (newName) setName(newName);
+    if (newBiography) setBiography(newBiography);
+    if (newLocation) setLocation(newLocation);
+    if (newBirthday) setBirthday(newBirthday);
+    if (newWeight) setWeight(newWeight);
+    if (newHeight) setHeight(newHeight);
   };
 
   const submitImage = () => {
-    const formData = new FormData();
-    const blob = new Blob([image!], { type: "image" });
-    formData.append("image", blob, image?.name);
-    dispatch(
-      updateProfileIconsAction({
-        id: store.user.id!,
-        image: formData,
-      })
-    );
+    if (image) {
+      const formData = convertImage(image);
+      dispatch(
+        updateProfileIconsAction({
+          id: store.user.id!,
+          image: formData,
+        })
+      );
+    }
   };
 
   const sendNewInfoToAPIServer = () => {
@@ -167,27 +170,27 @@ const Profile = (props: any): JSX.Element => {
         height: height,
       })
     );
-    if (image != undefined) {
+    if (image) {
       submitImage();
     }
   };
   return (
     <>
+      <Head>
+        <title>{store.user.username}のプロフィール</title>
+      </Head>
       <Card className={Styles.card} variant="outlined">
-        {router.query.id == store.user.id.toString() && (
+        {userId == store.user.id.toString() && (
           <div className={Styles.changeButton}>
             <AlertDialog
-              {...{
-                name,
-                biography,
-                location,
-                birthday,
-                image,
-                weight,
-                height,
-              }}
+              name={name}
+              biography={biography}
+              location={location}
+              birthday={birthday}
+              weight={weight}
+              height={height}
               updateProps={updateUserProfile}
-              updateImageProps={updateImage}
+              setImage={setImage}
               update={sendNewInfoToAPIServer}
             />
           </div>
@@ -201,7 +204,7 @@ const Profile = (props: any): JSX.Element => {
               className={Styles.profileImage}
             ></Image>
             <p>
-              {followings !== null && (
+              {followings && (
                 <FollowComponent
                   open={open}
                   title={"Followings"}
@@ -211,7 +214,7 @@ const Profile = (props: any): JSX.Element => {
                   }}
                 />
               )}
-              {followers !== null && (
+              {followers && (
                 <FollowComponent
                   open={open}
                   title={"Followers"}
@@ -225,7 +228,7 @@ const Profile = (props: any): JSX.Element => {
             <p>Location: {user?.location}</p>
             <p>
               Birthday:
-              {date !== undefined && !Number.isNaN(date.getDate())
+              {date && !Number.isNaN(date.getDate())
                 ? getYear(date) +
                   "年" +
                   (getMonth(date) + 1) +
@@ -257,11 +260,15 @@ const Profile = (props: any): JSX.Element => {
               ツイート
             </Button>
             <div>
-              {routes !== null && displayRoutes && (
-                <RoutersCards routes={routes} />
+              {routes && displayRoutes && (
+                <div className={Styles.routes}>
+                  {routes.map((route, index) => {
+                    return <RouterCard route={route} key={index}></RouterCard>;
+                  })}
+                </div>
               )}
               <div className={Styles.tweets}>
-                {tweets !== null &&
+                {tweets &&
                   !displayRoutes &&
                   tweets.map((tweet, index) => {
                     return (
@@ -281,17 +288,4 @@ const Profile = (props: any): JSX.Element => {
     </>
   );
 };
-
-// export async function getStaticProps() {
-//   let data: any;
-//   await axios.get(`/routes/user/8`).then((response) => {
-//     console.log(response);
-//     data = response.data.routes;
-//   });
-//   console.log(data);
-//   return {
-//     props: data,
-//   };
-// }
-
 export default Profile;

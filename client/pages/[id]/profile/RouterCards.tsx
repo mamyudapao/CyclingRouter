@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Route } from "../../../types/routes";
 import { Card } from "@mui/material";
 import Styles from "./profile.module.scss";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 type PropsType = {
   routes: Route[];
@@ -15,15 +14,25 @@ const RoutersCards = (props: PropsType): JSX.Element => {
       <div key={index.toString()}>
         <Card className={Styles.routerCard}>
           <Image
-            src="/../public/new-google-map.jpg"
+            src={`https://ddx5fuyp1f5xu.cloudfront.net/${route.image}`}
             width="200"
             height="150"
           ></Image>
           <div className={Styles.routeDescription}>
-            <Link href={`/route/${route.id}`}>
-              <a>{route.title}</a>
-            </Link>
-            <p>{route.description}</p>
+            {route.title.length > 7 && (
+              <Link href={`/route/${route.id}`}>
+                <a>{route.title.slice(0, 7) + "..."}</a>
+              </Link>
+            )}
+            {route.title.length <= 7 && (
+              <Link href={`/route/${route.id}`}>
+                <a>{route.title}</a>
+              </Link>
+            )}
+            {route.description.length > 15 && (
+              <p>{route.description.slice(0, 15) + "..."}</p>
+            )}
+            {route.description.length <= 15 && <p>{route.description}</p>}
           </div>
         </Card>
       </div>

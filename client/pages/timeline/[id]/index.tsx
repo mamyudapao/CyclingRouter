@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { UserState } from "../../../reducks/user/userSlice";
 import Styles from "./index.module.scss";
 
-import axios from "../../../axisoApi";
+import axios from "../../../axiosApi";
 import TweetCommentComponent from "../../../components/Timeline/TweetCommentComponent";
 import Image from "next/image";
 import { Button, TextField } from "@mui/material";

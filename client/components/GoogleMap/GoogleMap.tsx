@@ -36,9 +36,6 @@ type PropsType = {
 };
 
 const GoogleMapComponent = (props: PropsType): JSX.Element => {
-  useEffect(() => {
-    console.log(props);
-  });
   return (
     <LoadScript
       googleMapsApiKey={process.env.NEXT_PUBLIC_googleMapsApiKey!}
