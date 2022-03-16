@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "export": "next export",
+    "lint": "next lint",
+    "debug": "node --inspect=0.0.0.0:9229 node_modules/next/dist/bin/next"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",

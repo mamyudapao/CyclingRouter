@@ -1,15 +1,28 @@
 {
-  // IntelliSense を使用して利用可能な属性を学べます。
-  // 既存の属性の説明をホバーして表示します。
-  // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    // For server side rendering debug
     {
-      "name": "Attach to Process",
-      "type": "go",
-      "request": "attach",
-      "mode": "local",
-      "processId": 0
+      "type": "node", // 固定
+      "request": "attach", // 固定
+      "name": "Next: Node", // 好きな名前で
+      "port": 9229, // 3. のポートと合わせる
+      "address": "localhost", // 基本的に固定
+      "localRoot": "${workspaceFolder}", // 固定
+      "remoteRoot": "/src", // Docker内のモジュールのRootディレクトリ
+      "protocol": "inspector" // 固定
+    },
+    // For client side rendering debug
+    {
+      "type": "chrome", // 固定 (ブラウザを変えたい場合は1.のインストールとともに変更してください
+      "request": "launch", // 固定
+      "name": "Next: Chrome", // 好きな名前で
+      "url": "http://localhost:3000", // DockerComponseのポートと、サービスのディレクトリなど、お好みでカスタマイズしてください
+      "webRoot": "${workspaceFolder}", // 固定
+      "sourceMapPathOverrides": {
+        // 固定
+        "webpack:///./*": "${webRoot}/src/*"
+      }
     }
   ]
 }

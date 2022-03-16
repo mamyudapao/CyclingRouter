@@ -1,0 +1,584 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Network resource template part1
+Resources:
+  # VPCの設定
+  cyclingrouterVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: cyclingrouterVpc
+
+  ############### Subnet, RouteTable, IGW ###############
+  # コンテナ周りの設定
+  ## コンテナアプリ用のプライベートサブネット
+  cyclingrouterSubnetPrivateContainer1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.8.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-container-1a
+        - Key: Type
+          Value: Isolated
+  cyclingrouterSubnetPrivateContainer1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.9.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-container-1c
+        - Key: Type
+          Value: Isolated
+  ## コンテナアプリ用のルートテーブル
+  cyclingrouterRouteApp:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: cyclingrouterVpc
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-route-app
+  ## コンテナサブネットへルート紐付け
+  cyclingrouterRouteAppAssociation1A:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteApp
+      SubnetId:
+        Ref: cyclingrouterSubnetPrivateContainer1A
+  cyclingrouterRouteAppAssociation1C:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteApp
+      SubnetId:
+        Ref: cyclingrouterSubnetPrivateContainer1C
+
+  # DB周りの設定
+  ## DB用のプライベートサブネット
+  cyclingrouterSubnetPrivateDb1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.16.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-db-1a
+        - Key: Type
+          Value: Isolated
+  cyclingrouterSubnetPrivateDb1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.17.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-db-1c
+        - Key: Type
+          Value: Isolated
+  ## DB用のルートテーブル
+  cyclingrouterRouteDb:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: cyclingrouterVpc
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-route-db
+  ## DBサブネットへルート紐付け
+  cyclingrouterRouteDbAssociation1A:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteDb
+      SubnetId:
+        Ref: cyclingrouterSubnetPrivateDb1A
+  cyclingrouterRouteDbAssociation1C:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteDb
+      SubnetId:
+        Ref: cyclingrouterSubnetPrivateDb1C
+
+  # Ingress周りの設定
+  ## Ingress用のパブリックサブネット
+  cyclingrouterSubnetPublicIngress1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-public-ingress-1a
+        - Key: Type
+          Value: Public
+  cyclingrouterSubnetPublicIngress1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-public-ingress-1c
+        - Key: Type
+          Value: Public
+  ## Ingress用のルートテーブル
+  cyclingrouterRouteIngress:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: cyclingrouterVpc
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-route-ingress
+  ## Ingressサブネットへルート紐付け
+  cyclingrouterRouteIngressAssociation1A:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteIngress
+      SubnetId:
+        Ref: cyclingrouterSubnetPublicIngress1A
+  cyclingrouterRouteIngressAssociation1C:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteIngress
+      SubnetId:
+        Ref: cyclingrouterSubnetPublicIngress1C
+  ## Ingress用ルートテーブルのデフォルトルート
+  cyclingrouterRouteIngressDefault:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteIngress
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: cyclingrouterIgw
+    DependsOn:
+      - cyclingrouterVpcgwAttachment
+
+  # 管理用サーバ周りの設定
+  ## 管理用のパブリックサブネット
+  cyclingrouterSubnetPublicManagement1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.240.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-public-management-1a
+        - Key: Type
+          Value: Public
+  cyclingrouterSubnetPublicManagement1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.241.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-public-management-1c
+        - Key: Type
+          Value: Public
+  ## 管理用サブネットのルートはIngressと同様として作成する
+  cyclingrouterRouteManagementAssociation1A:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteIngress
+      SubnetId:
+        Ref: cyclingrouterSubnetPublicManagement1A
+  cyclingrouterRouteManagementAssociation1C:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: cyclingrouterRouteIngress
+      SubnetId:
+        Ref: cyclingrouterSubnetPublicManagement1C
+
+  # インターネットへ通信するためのゲートウェイの作成
+  cyclingrouterIgw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-igw
+  cyclingrouterVpcgwAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: cyclingrouterVpc
+      InternetGatewayId:
+        Ref: cyclingrouterIgw
+
+  # VPCエンドポイント周りの設定
+  ## VPCエンドポイント(Egress通信)用のプライベートサブネット
+  cyclingrouterSubnetPrivateEgress1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.248.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-egress-1a
+        - Key: Type
+          Value: Isolated
+  cyclingrouterSubnetPrivateEgress1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.249.0/24
+      VpcId:
+        Ref: cyclingrouterVpc
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-subnet-private-egress-1c
+        - Key: Type
+          Value: Isolated
+
+  ############### Security groups ###############
+  # セキュリティグループの生成
+  ## インターネット公開のセキュリティグループの生成
+  cyclingrouterSgIngress:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ingress
+      GroupName: ingress
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: from 0.0.0.0/0:80
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+        - CidrIpv6: ::/0
+          Description: from ::/0:80
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-ingress
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## 管理用サーバ向けのセキュリティグループの生成
+  cyclingrouterSgManagement:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group of management server
+      GroupName: management
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-management
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## バックエンドコンテナアプリ用セキュリティグループの生成
+  cyclingrouterSgContainer:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group of backend app
+      GroupName: container
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-container
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## フロントエンドコンテナアプリ用セキュリティグループの生成
+  cyclingrouterSgFrontContainer:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group of front container app
+      GroupName: front-container
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-front-container
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## 内部用ロードバランサ用のセキュリティグループの生成
+  cyclingrouterSgInternal:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for internal load balancer
+      GroupName: internal
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-internal
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## DB用セキュリティグループの生成
+  cyclingrouterSgDb:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group of database
+      GroupName: database
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-db
+      VpcId:
+        Ref: cyclingrouterVpc
+  ## VPCエンドポイント用セキュリティグループの生成
+  cyclingrouterSgEgress:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group of VPC Endpoint
+      GroupName: egress
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: cyclingrouter-sg-vpce
+      VpcId:
+        Ref: cyclingrouterVpc
+
+  # ルール紐付け
+  ## Internet LB -> Front Container
+  cyclingrouterSgFrontContainerFromsSgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTP for Ingress
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgFrontContainer
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgIngress
+          - GroupId
+      ToPort: 80
+  ## Front Container -> Internal LB
+  cyclingrouterSgInternalFromSgFrontContainer:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTP for front container
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgInternal
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgFrontContainer
+          - GroupId
+      ToPort: 80
+  ## Internal LB -> Back Container
+  cyclingrouterSgContainerFromSgInternal:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTP for internal lb
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgContainer
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgInternal
+          - GroupId
+      ToPort: 80
+  ## Back container -> DB
+  cyclingrouterSgDbFromSgContainerTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: MySQL protocol from backend App
+      FromPort: 3306
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgDb
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgContainer
+          - GroupId
+      ToPort: 3306
+  ## Front container -> DB
+  cyclingrouterSgDbFromSgFrontContainerTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: MySQL protocol from frontend App
+      FromPort: 3306
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgDb
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgFrontContainer
+          - GroupId
+      ToPort: 3306
+  ## Management server -> DB
+  cyclingrouterSgDbFromSgManagementTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: MySQL protocol from management server
+      FromPort: 3306
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgDb
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgManagement
+          - GroupId
+      ToPort: 3306
+  ## Management server -> Internal LB
+  cyclingrouterSgInternalFromSgManagementTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTP for management server
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgInternal
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgManagement
+          - GroupId
+      ToPort: 80
+  ### Back container -> VPC endpoint
+  cyclingrouterSgVpceFromSgContainerTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTPS for Container App
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgEgress
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgContainer
+          - GroupId
+      ToPort: 443
+  ### Front container -> VPC endpoint
+  cyclingrouterSgVpceFromSgFrontContainerTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTPS for Front Container App
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgEgress
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgFrontContainer
+          - GroupId
+      ToPort: 443
+  ### Management Server -> VPC endpoint
+  cyclingrouterSgVpceFromSgManagementTCP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: HTTPS for management server
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgEgress
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - cyclingrouterSgManagement
+          - GroupId
+      ToPort: 443

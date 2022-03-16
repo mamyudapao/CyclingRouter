@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/mamyudapao/CyclingRouter/common"
+	"github.com/mamyudapao/CyclingRouter/healthCheck"
 	"github.com/mamyudapao/CyclingRouter/middleware"
 	"github.com/mamyudapao/CyclingRouter/routes"
 	"github.com/mamyudapao/CyclingRouter/timelines"
@@ -19,8 +19,8 @@ func Migrate() {
 
 func main() {
 
-	common.InitDB() //DBに接続
-	Migrate()
+	// common.InitDB() //DBに接続
+	// Migrate()
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -46,6 +46,7 @@ func main() {
 	openGroup := r.Group("/api")
 	authGroup := r.Group("/api", middleware.Authz())
 	users.AuthRouter(openGroup.Group("/auth"))
+	healthCheck.HealthCheckRouter(openGroup.Group("/healthcheck"))
 	users.UsersRouter(authGroup.Group("/users"))
 	users.FollowRouter(authGroup.Group("/follow"))
 	routes.RoutersRouter(authGroup.Group("/routes"))
@@ -53,5 +54,5 @@ func main() {
 	timelines.TweetLikeRouter(authGroup.Group("/likes"))
 	timelines.TweetReplyRouter(authGroup.Group("/reply"))
 
-	r.Run()
+	r.Run(":80")
 }

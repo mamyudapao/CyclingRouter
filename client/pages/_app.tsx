@@ -25,7 +25,6 @@ const App = ({ Component, pageProps }: any): JSX.Element => {
         <PersistGate loading={null} persistor={persistor}>
           <Header auth={pageProps.auth} />
           <Component {...pageProps} />
-          <Footer />
         </PersistGate>
       </Provider>
     </>

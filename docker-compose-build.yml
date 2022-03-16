@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile.production
+    image: 924931973281.dkr.ecr.ap-northeast-1.amazonaws.com/cyclingrouter-client:latest
+    ports:
+      - "3000:3000"
+  api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.production
+    image: 924931973281.dkr.ecr.ap-northeast-1.amazonaws.com/cyclingrouter-api:latest
+    environment:
+      AWS_ACCESS_KEY_ID: AKIA5OWR54CQWEC5IF5Z
+      AWS_SECRET_ACCESS_KEY: y3RZJksCF5nEf8ptqnkG9UG0Q4HFXp22+MWWB6b
+      AWS_REGION: ap-northeast-1
+      GIN_MODE: release
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+  mysql:
+    platform: linux/x86_64
+    image: 924931973281.dkr.ecr.ap-northeast-1.amazonaws.com/cyclingrouter-mysql:latest
+    env_file:
+      - ./mysql.env
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
