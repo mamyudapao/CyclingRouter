@@ -6,8 +6,6 @@ Frontend: Next.js, TypeScript
 Backend: Go, MySQL  
 Infraなど: Git, GitHub, Docker, JWT認証, AWS(S3, CloudFront)  
 外部API: Google Maps API  
-今後デプロイするためにAWSを学習中です。
-以下のような構成でデプロイを目指しています
 ![インフラ図](./infra.png)
 ## 実装機能
 * ルート関係
