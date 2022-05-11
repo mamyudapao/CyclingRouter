@@ -26,4 +26,3 @@ Infraなど: Git, GitHub, Docker, JWT認証, AWS(S3, CloudFront)
 
 ## 今後の目標
 * CICDの構築
-* AWSにデプロイ
