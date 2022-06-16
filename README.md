@@ -23,6 +23,3 @@ Infraなど: Git, GitHub, Docker, JWT認証, AWS(S3, CloudFront)
   * 年齢、ユーザーネーム等の基本事項の登録
   * ツイート一覧
   * 投稿した経路一覧
-
-## 今後の目標
-* CICDの構築
